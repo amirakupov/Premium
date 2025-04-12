@@ -5,8 +5,8 @@ export default function Footer() {
     <footer style={{ marginTop: '2rem', padding: '1rem', borderTop: '1px solid #ccc' }}>
       <div>
         <h3>Контакты</h3>
-        <p>Адрес: г. Москва, ул. Примерная, 10</p>
-        <p>Телефон: +7 (999) 123-45-67</p>
+        <p>Адрес: г. Ufa, ул. Amira Iakupova, 10</p>
+        <p>Телефон: +7 (999) 999-999-999</p>
         <p>Email: info@neurologyclinic.ru</p>
       </div>
 

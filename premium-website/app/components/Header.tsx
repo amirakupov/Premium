@@ -30,10 +30,12 @@ export default function Header() {
         <Link href="/services">Услуги</Link>
         <Link href="/doctors">Врачи</Link>
         <Link href="/prices">Цены</Link>
-        <Link href="/emergency">Скорая</Link>
         <Link href="/consultation">Записаться</Link>
         <Link href="/#contacts">Контакты</Link>
         <Link href="/#address">Адрес</Link>
+        <Link href="/emergency" className={styles.emergencyLink}>
+          Вызывать скорую
+        </Link>
       </nav>
 
       {/* DESKTOP SEARCH */}
@@ -70,9 +72,6 @@ export default function Header() {
           <Link href="/prices" onClick={() => setMenuOpen(false)}>
             Цены
           </Link>
-          <Link href="/emergency" onClick={() => setMenuOpen(false)}>
-            Скорая
-          </Link>
           <Link href="/consultation" onClick={() => setMenuOpen(false)}>
             Записаться
           </Link>
@@ -81,6 +80,13 @@ export default function Header() {
           </Link>
           <Link href="/#address" onClick={() => setMenuOpen(false)}>
             Адрес
+          </Link>
+          <Link
+            href="/emergency"
+            onClick={() => setMenuOpen(false)}
+            className={styles.emergencyLink}
+          >
+            Скорая
           </Link>
 
           {/* Mobile Search (optional) */}
