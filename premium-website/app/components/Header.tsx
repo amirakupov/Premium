@@ -1,45 +1,91 @@
 // app/components/Header.tsx
+
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import SearchBar from './Searchbar';
-import { CSSProperties } from 'react';
-
-const headerStyle: CSSProperties = {
-  backgroundColor: '#fdfdfd', // Milk white
-  display: 'flex',
-  alignItems: 'center',
-  padding: '0 2rem',
-  height: '60px',
-  borderBottom: '1px solid #eaeaea',
-};
+import styles from './Header.module.css';
 
 export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  // If you want to close by tapping the blurred background:
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
-    <header style={headerStyle}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-        Clinic Logo
-      </div>
-      <nav
-        style={{
-          display: 'flex',
-          gap: '2rem',
-          flex: 1,
-          justifyContent: 'center',
-        }}
-      >
+    <header className={styles.header}>
+      {/* LEFT: LOGO */}
+      <div className={styles.logo}>PREMIUM</div>
+
+      {/* DESKTOP NAV */}
+      <nav className={styles.nav}>
         <Link href="/services">Услуги</Link>
         <Link href="/doctors">Врачи</Link>
         <Link href="/prices">Цены</Link>
-        <Link href="/emergency">Скорая Помощь</Link>
+        <Link href="/emergency">Скорая</Link>
         <Link href="/consultation">Записаться</Link>
         <Link href="/#contacts">Контакты</Link>
         <Link href="/#address">Адрес</Link>
       </nav>
 
-      {/* The snippet's search circle (50x50 + border + padding + icon) */}
-      <div style={{ marginLeft: '2rem' }}>
+      {/* DESKTOP SEARCH */}
+      <div className={styles.desktopSearch}>
         <SearchBar />
+      </div>
+
+      {/* BURGER or CLOSE (MOBILE ONLY) */}
+      <button
+        className={`${styles.burger} ${menuOpen ? styles.rotateIcon : ''}`}
+        onClick={toggleMenu}
+        aria-label="Mobile Menu"
+      >
+        {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+      </button>
+
+      {/* FULLSCREEN OVERLAY (MOBILE) */}
+      <div
+        className={`${styles.mobileNav} ${
+          menuOpen ? styles.mobileNavOpen : ''
+        }`}
+        onClick={closeMenu} /* if you want to close by tapping the blur */
+      >
+        <div
+          className={styles.mobileNavContent}
+          onClick={(e) => e.stopPropagation()} /* prevent close when tapping menu */
+        >
+          <Link href="/services" onClick={() => setMenuOpen(false)}>
+            Услуги
+          </Link>
+          <Link href="/doctors" onClick={() => setMenuOpen(false)}>
+            Врачи
+          </Link>
+          <Link href="/prices" onClick={() => setMenuOpen(false)}>
+            Цены
+          </Link>
+          <Link href="/emergency" onClick={() => setMenuOpen(false)}>
+            Скорая
+          </Link>
+          <Link href="/consultation" onClick={() => setMenuOpen(false)}>
+            Записаться
+          </Link>
+          <Link href="/#contacts" onClick={() => setMenuOpen(false)}>
+            Контакты
+          </Link>
+          <Link href="/#address" onClick={() => setMenuOpen(false)}>
+            Адрес
+          </Link>
+
+          {/* Mobile Search (optional) */}
+          <SearchBar />
+        </div>
       </div>
     </header>
   );

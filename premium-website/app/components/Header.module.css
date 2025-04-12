@@ -1,0 +1,124 @@
+/* app/components/Header.module.css */
+
+/* =============== HEADER LAYOUT =============== */
+
+.header {
+    background-color: #fdfdfd; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    border-bottom: 1px solid #eaeaea;
+    position: relative;
+  }
+  
+  .logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #181515;
+  }
+  
+  /* Desktop Nav (horizontal) */
+  .nav {
+    display: flex;
+    gap: 2rem;
+    margin: 0 2rem;
+    align-items: center;
+    color: #181515;
+  }
+  
+  /* Desktop Search Bar */
+  .desktopSearch {
+    margin-left: 2rem;
+  }
+  
+  /* =============== BURGER/CLOSE ICON =============== */
+  
+  .burger {
+    display: none; 
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    color: #181515;
+  }
+  
+  .rotateIcon {
+    transform: rotate(180deg);
+  }
+  
+  /* =============== FULLSCREEN OVERLAY (MOBILE) =============== */
+  
+  .mobileNav {
+    /* hidden on desktop */
+    display: none;       
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  
+    /* place content above the pseudo-element */
+    pointer-events: none;
+    
+    /* slide from top: -100% -> 0 */
+    transform: translateY(-100%);
+    transition: transform 0.5s ease;
+    z-index: 9999;
+  }
+  
+  /* The blurred background using a pseudo-element */
+  .mobileNav::before {
+    content: "";
+    position: absolute;
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+  
+    /* translucent dark background + blur */
+    background-color: rgba(0, 0, 0, 0.3);
+    -webkit-backdrop-filter: blur(8px); /* Safari prefix */
+    backdrop-filter: blur(8px);
+  
+    pointer-events: auto;
+  }
+  
+  /* The actual menu content, stacked in center */
+  .mobileNavContent {
+    position: relative; /* to appear above ::before */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 2rem;
+  
+    pointer-events: auto; /* crucial so the links and close button are clickable */
+  }
+  
+  .mobileNavOpen {
+    transform: translateY(0);
+  }
+  
+  /* =============== RESPONSIVENESS =============== */
+  
+  @media (max-width: 768px) {
+    .nav,
+    .desktopSearch {
+      display: none;
+    }
+  
+    .burger {
+      display: block;
+    }
+  
+    .mobileNav {
+      display: block; /* now we can see + animate the transform for mobile */
+    }
+  }
+  
+  
+  

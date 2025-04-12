@@ -5,9 +5,7 @@ import styles from './Searchbar.module.css';
 export default function SearchBar() {
   return (
     <form className={styles.searchForm} action="#">
-      <input type="search" placeholder="Ищи тут:)" />
-      
-      {/* Instead of <i class="fa fa-search" />, we use a React icon */}
+      <input type="search" placeholder=" Ищи тут:)" />
       <div className={styles.iconWrapper}>
         <BsSearch className={styles.icon} />
       </div>

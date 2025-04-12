@@ -1,10 +1,11 @@
+/* app/components/SearchBar.module.css */
 
 /* The outer circle */
 .searchForm {
   position: relative;
   width: 50px;
   height: 50px;
-  background: rgb(213, 237, 246);
+  background: rgb(213, 237, 246);  /* Light blue-ish background */
   box-sizing: border-box;
   border-radius: 25px;
   border: 2px solid #181515;
@@ -26,10 +27,10 @@
   border-radius: 20px;
   padding: 0 20px;
   box-sizing: border-box;
-  color: black
+  color: black; /* missing semicolon fixed */
 }
 
-/* The icon wrapper: position it absolutely, center the icon */
+/* The icon wrapper: positions the icon in the center */
 .iconWrapper {
   position: absolute;
   top: 50%;
@@ -45,13 +46,13 @@
   transition: all 0.8s;
 }
 
-/* The icon itself: can set a default color, size, etc. */
+/* The icon itself: default color & size */
 .icon {
-  color: #181515;   
-  font-size: 1.2em;  /* Adjust icon size */
+  color: #181515;
+  font-size: 1.2em;
 }
 
-/* Hover effect: expand the circle from 50px → 300px, show input, recolor icon background */
+/* Hover effect: expand from 50px → 300px, show input, shift icon to the left */
 .searchForm:hover {
   width: 300px;
 }
@@ -63,9 +64,49 @@
 .searchForm:hover .iconWrapper {
   left: 10px;
   transform: translate(0, -50%);
-  background: rgb(213, 237, 246); /* Purple background behind the icon */
+  background: rgb(213, 237, 246); /* keep same light blue or change to taste */
 }
 
 .searchForm:hover .icon {
-  color: #2f2e2e;         /* White icon on purple background */
+  color: #2f2e2e; /* Slightly darker gray when hovered */
+}
+
+/* ===================== */
+/*   RESPONSIVE STYLES   */
+/* ===================== */
+
+/* 
+   For smaller screens (e.g. mobile < 480px), we can reduce sizes 
+   so the bar doesn't overflow or look huge on small devices.
+*/
+@media screen and (max-width: 480px) {
+  .searchForm {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+  }
+  .searchForm:hover {
+    width: 240px; /* narrower expansion on small screens */
+  }
+  .iconWrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+  }
+  .icon {
+    font-size: 1em;
+  }
+  .searchForm input {
+    height: 32px;
+  }
+}
+
+/*
+   For larger screens (e.g. desktops > 1200px),
+   we can allow more space if desired.
+*/
+@media screen and (min-width: 1200px) {
+  .searchForm:hover {
+    width: 400px; /* Expand more on very large screens */
+  }
 }
