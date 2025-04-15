@@ -31,15 +31,6 @@ export default function Footer() {
 
       <div style={{ marginTop: '1rem' }}>
         <h3>Карта</h3>
-        <iframe
-          title="clinic-map"
-          src="https://maps.google.com/..."
-          width="100%"
-          height="200"
-          style={{ border: 0 }}
-          allowFullScreen={true}
-          loading="lazy"
-        ></iframe>
       </div>
     </footer>
   )

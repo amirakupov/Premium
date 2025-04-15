@@ -1,0 +1,85 @@
+.container {
+    width: 100%;
+    max-width: 480px; /* limit width for mobile? optional */
+    margin: 0 auto;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* Title at the top */
+  .heading {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    color: #2f2f2f;
+  }
+  
+  /* Buttons row at the top – horizontally scrollable if needed. 
+     You can keep them in a normal row or style them differently. */
+  .buttonsContainer {
+    display: flex;
+    overflow-x: auto; 
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth; 
+    /* If you want to automatically center an active button, you'd store refs and call scrollIntoView */
+  }
+  
+  .navButton {
+    flex: 0 0 auto;
+    border: none;
+    border-radius: 20px;
+    background-color: #fbfbfb;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.2rem;
+    cursor: pointer;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap; 
+  }
+  .navButton:hover {
+    background-color: #2f2f2f;
+    color: #fff;
+  }
+  
+  .activeNavButton {
+    background-color: #2f2f2f;
+    color: #fff;
+    transform: scale(1.1);
+  }
+  
+  /* The horizontally scrollable slides container 
+     "gap" ensures space between slides, so next slides peek in. */
+  .slidesWrapper {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem; 
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0.5rem; /* some horizontal padding so first/last slides aren't flush */
+  }
+  
+  /* Each slide only takes ~80% width, so we see partial next slide. 
+     "scroll-snap-align: center" tries to center each slide in the viewport on release. */
+  .slide {
+    flex: 0 0 80%;
+    scroll-snap-align: center; 
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background-color: #fdfdfd;
+    overflow: hidden;
+    padding: 0.5rem;
+  }
+  
+  .slide img {
+    border-radius: 12px;
+  }
+  

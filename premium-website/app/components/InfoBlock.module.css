@@ -1,0 +1,152 @@
+.carouselContainer {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;  /* optional maximum width */
+    margin: 0 auto;     /* center container horizontally */
+    background-color: #f8f8f8;
+    padding: 1rem 0;
+    overflow: hidden;
+  }
+  
+  /* The wrapper that hides the overflow for slides */
+  .slidesWrapper {
+    width: 90%;                 /* fill up to 90% for better breathing room on mobile */
+    margin: 0 auto;             /* center horizontally */
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* The track that moves left/right by translateX */
+  .slidesTrack {
+    display: flex;
+    transition: transform 0.5s ease; 
+  }
+  
+  /* Each slide occupies full width */
+  .slide {
+    position: relative;
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 40px; 
+    overflow: hidden; 
+    background-color: #f8f8f8; /* matching background or white? */
+  }
+  
+  /* If the <img> itself needs rounding. 
+     If using next/image with layout="responsive", 
+     the container approach is more typical. */
+  .slide img {
+    border-radius: 20px;
+  }
+  
+  /* Base styling for overlay buttons */
+  .slideButton {
+    position: absolute;
+    width: 170px;
+    height: 57px;
+    background-color: #2976c7;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
+  .slideButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Slide-specific button overrides */
+  .aboutButton {
+    background-color: #ffaf00;
+    width: 150px;
+    height: 40px;
+  }
+  .aboutButton:hover {
+    background-color: #cc8c00;
+  }
+  
+  .emergencyButton {
+    background-color: #ff4d4f;
+    width: 230px;
+    height: 50px;
+    border: 2px solid #181515;
+  }
+  .emergencyButton:hover {
+    background-color: #c63738;
+  }
+  
+  .mainButton {
+    background-color: #2976c7; 
+    width: 170px;
+    border: 2px solid #181515;
+  }
+  .mainButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Dot container for pagination, one set for entire carousel */
+  .dotsContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .dot:hover {
+    background-color: #999;
+  }
+  .activeDot {
+    background-color: #333;
+  }
+  
+  /* Example text styling in slides */
+  .slide h2 {
+    color: #2976c7;
+    margin-bottom: 0.5rem;
+  }
+  .slide p {
+    color: #333;
+  }
+  
+  /* ========== Responsive Adjustments ========== */
+  @media (max-width: 768px) {
+    .slidesWrapper {
+      width: 95%; /* narrower margin, giving more space on phone screens */
+    }
+  
+    .slide {
+      padding: 1rem;
+      border-radius: 10px;
+    }
+  
+    .slideButton {
+      width: 140px;
+      height: 45px;
+      font-size: 0.9rem;
+    }
+  
+    /* If you need different button positions for mobile, 
+       you can do something like:
+    .mainButton {
+      top: 60% !important;
+      left: 40% !important;
+    }
+    */
+    
+    .dot {
+      width: 10px;
+      height: 10px;
+    }
+  }  
+  
