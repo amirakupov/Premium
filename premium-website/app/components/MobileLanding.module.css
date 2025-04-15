@@ -21,8 +21,8 @@
   .buttonsContainer {
     display: flex;
     overflow-x: auto; 
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth; 
     /* If you want to automatically center an active button, you'd store refs and call scrollIntoView */
@@ -33,9 +33,9 @@
     border: none;
     border-radius: 20px;
     background-color: #fbfbfb;
-    color: #333;
+    color: #C5C5C5;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 400;
     padding: 0.75rem 1.2rem;
     cursor: pointer;
     margin: 0.25rem;
@@ -43,6 +43,8 @@
     text-align: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: nowrap; 
+    width: 110px;
+    height: 50px;
   }
   .navButton:hover {
     background-color: #2f2f2f;

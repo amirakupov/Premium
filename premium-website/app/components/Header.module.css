@@ -8,14 +8,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    height: 60px;
+    height: 70px;
     border-bottom: 1px solid #fdfdfd;
     position: relative;
   }
   
   .logo {
-    font-weight: bold;
-    font-size: 1.2rem;
+    font-weight: 600;
+    font-size: 1.7rem;
     color: #181515;
   }
   
@@ -67,7 +67,7 @@
     display: none; 
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     cursor: pointer;
     transition: transform 0.3s ease;
     color: #181515;
