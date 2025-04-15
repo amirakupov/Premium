@@ -1,0 +1,82 @@
+/* Import Inter font: minimalistic, clean */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Container matches the width from your carousel (mobile style) */
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  background-color: #fdfdfd; /* or #f8f8f8, to match your style */
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* a subtle shadow for minimalistic style */
+  text-align: left; /* or center, if you prefer */
+}
+
+/* Use Inter, bold, bigger for heading */
+.heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem; /* bigger style for heading */
+  margin-bottom: 1rem;
+  color: #2f2f2f;  /* minimalistic dark gray */
+  text-transform: uppercase; /* optional, if you want uppercase look */
+}
+
+/* The main quote text: regular or medium weight Inter */
+.quoteText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.figmaImageContainer {
+    margin-top: 1.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 320px; /* fill the container (which is now 60% of parent) */
+    height: 100px;
+    margin-left: 38rem;
+  }
+  
+  .figmaImageContainer img {
+    width: 120px; /* fill the container (which is now 60% of parent) */
+    height: 60px;
+    display: block;
+  }
+/* MOBILE OVERRIDE */
+/* In mobile, we want the figma frame to be centered under the text */
+@media (max-width: 768px) {
+    .container {
+      max-width: 100%; /* full width for mobile */
+      padding: 1rem;
+    }
+    
+    .heading {
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    
+    .quoteText {
+      font-size: 0.95rem;
+      text-align: center;
+    }
+    
+    .figmaImageContainer {
+      margin: 1.5rem auto 0 auto; /* center horizontally */
+      width: 90%;                /* adjust width as desired */
+      height: auto;              /* let image scale proportionally */
+    }
+    
+    .figmaImageContainer img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
