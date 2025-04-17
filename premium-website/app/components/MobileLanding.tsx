@@ -4,10 +4,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './MobileLanding.module.css';
 import Quote from './Quote';
+import Services from './Services';
 
 const slidesData = [
   { src: '/mobile/about1.svg', label: 'О нас' },
-  { src: '/mobile/services1.svg', label: 'Сервисы' },
+  { src: '/mobile/services1.svg', label: 'Услуги' },
   { src: '/mobile/emergency1.svg', label: 'Скорая' },
 ];
 
@@ -84,6 +85,7 @@ export default function MobileLanding() {
         ))}
       </div>
       <Quote />
+      <Services />
     </div>
   );
 }

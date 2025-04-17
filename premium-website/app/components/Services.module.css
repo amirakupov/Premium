@@ -1,0 +1,37 @@
+.servicesSection {
+    padding: 4rem 0;
+  }
+  
+  .heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: black;
+  }
+  
+  .servicesContainer {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  
+  /* Desktop: 3‑column grid */
+  @media (min-width: 768px) {
+    .servicesContainer {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+  
+  /* Mobile: horizontal scroll */
+  @media (max-width: 767px) {
+    .servicesContainer {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 0 1rem;
+      -webkit-overflow-scrolling: touch; /* smooth flick on iOS */
+    }
+  }
+  

@@ -3,11 +3,12 @@ import useIsMobile from './hooks/useIsMobile';
 import MobileLanding from './components/MobileLanding';
 import InfoBlock from './components/InfoBlock';
 import Quote from './components/Quote';
-import ServicesPreview from './components/Services';
+
 import DoctorsPreview from './components/Doctors';
 import Achievements from './components/Achievements';
 import ClinicPhotos from './components/ClinicFotos';
 import Reviews from './components/Reviews';
+import Services from './components/Services';
 
 export default function HomePage() {
   const isMobile = useIsMobile(768);
@@ -23,7 +24,7 @@ export default function HomePage() {
       <>
         <InfoBlock />
         <Quote />
-        <ServicesPreview />
+        <Services />
         <DoctorsPreview />
         <Achievements />
         <ClinicPhotos />
