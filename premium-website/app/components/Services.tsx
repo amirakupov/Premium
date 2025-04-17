@@ -58,7 +58,7 @@ const servicesData = [
 const Services: React.FC = () => {
   return (
     <div className={styles.servicesSection}>
-    <h2 className={styles.heading}>СЕРВИСЫ КЛИНИКИ</h2>
+    <h2 className={styles.heading}>МЫ ПРЕДЛАГАЕМ</h2>
       
       {/* Service Cards Grid */}
       <div className={styles.servicesContainer}>

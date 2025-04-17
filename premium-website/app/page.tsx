@@ -25,9 +25,9 @@ export default function HomePage() {
         <InfoBlock />
         <Quote />
         <Services />
+        <ClinicPhotos />
         <DoctorsPreview />
         <Achievements />
-        <ClinicPhotos />
         <Reviews />
       </>
     );

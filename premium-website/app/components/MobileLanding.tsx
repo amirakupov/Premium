@@ -5,6 +5,7 @@ import Image from 'next/image';
 import styles from './MobileLanding.module.css';
 import Quote from './Quote';
 import Services from './Services';
+import ClinicFotos from './ClinicFotos';
 
 const slidesData = [
   { src: '/mobile/about1.svg', label: 'О нас' },
@@ -86,6 +87,7 @@ export default function MobileLanding() {
       </div>
       <Quote />
       <Services />
+      <ClinicFotos />
     </div>
   );
 }
