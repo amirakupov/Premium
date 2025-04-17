@@ -1,0 +1,62 @@
+/* Doctors.module.css */
+
+.doctorsSection {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 12rem;       /* horizontal padding reduced to 2rem */
+    box-sizing: border-box; /* include padding in width calculations */
+  }
+  
+  .heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #1d1d1d;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .gridWrapper {
+    display: grid;
+    gap: 2px; /* tighten spacing between cards */
+    justify-content: center;
+    justify-items: center;
+    grid-template-columns: 1fr;
+  }
+  
+  /* Small screens: 2 columns */
+  @media (min-width: 640px) {
+    .gridWrapper {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* Medium screens: 3 columns */
+  @media (min-width: 768px) {
+    .gridWrapper {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  /* Large screens: 4 columns */
+  @media (min-width: 1024px) {
+    .gridWrapper {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 639px) {
+    .doctorsSection {
+      padding: 2rem 1rem; /* reduce horizontal padding */
+    }
+    .heading {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .gridWrapper {
+      gap: 2px; /* match desktop gap on mobile */
+    }
+  }
+  
