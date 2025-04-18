@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.detailWrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.imageWrapper {
+  flex: 0 0 75%;
+  position: relative;
+  height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+  transition: transform 0.3s ease;
+}
+
+.imageWrapper:hover .image {
+  transform: scale(1.05);
+}
+
+.textWrapper {
+  flex: 0 0 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Titles and text */
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d1d1d;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.sectionHeader {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1d1d1d;
+  margin-bottom: 1rem;
+}
+
+.longDescription {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+/* Записаться button */
+.bookButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #1d1d1d;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+  align-self: start;
+}
+
+.bookButton:hover {
+  background-color: #333;
+}
+
+/* MOBILE: stack with image above text */
+@media (max-width: 767px) {
+  .container {
+    padding: 2rem 1rem;
+  }
+  .detailWrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .imageWrapper {
+    height: 200px;
+  }
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .sectionHeader {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .longDescription {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
