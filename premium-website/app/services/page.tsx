@@ -43,7 +43,8 @@ const servicesData = [
 export default function ServicesPage() {
   return (
     <main className={styles.container}>
-      <div className={styles.frame}>
+      {/* Desktop frame */}
+      <div className={styles.frameDesktop}>
         <Image
           src="/services/Service.svg"
           alt="Services Frame"
@@ -52,9 +53,22 @@ export default function ServicesPage() {
         />
       </div>
 
+      {/* Mobile frame */}
+      <div className={styles.frameMobile}>
+        <Image
+          src="/services/ServiceMob.svg"
+          alt="Services Frame Mobile"
+          fill
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
+
       <h1 className={styles.title}>
-        изучи наши сервисы блабла бла
+      Полный спектр решений для эффективного улучшения вашего ухода
       </h1>
+      <p className={styles.subtitle}>
+        Лучшие медицинские услуги для вашего здоровья и комфорта
+      </p>
 
       <section className={styles.servicesContainer}>
         {servicesData.map((s) => (
