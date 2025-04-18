@@ -29,9 +29,7 @@ export default function Header() {
       <nav className={styles.nav}>
         <Link href="/services">Услуги</Link>
         <Link href="/doctors">Врачи</Link>
-        <Link href="/prices">Цены</Link>
-        <Link href="/consultation">Записаться</Link>
-        <Link href="/#contacts">Контакты</Link>
+        <Link href="/contacts">Контакты</Link>
         <Link href="/#address">Адрес</Link>
         <Link href="/emergency" className={styles.emergencyLink}>
           Вызывать скорую
