@@ -15,7 +15,7 @@ export default function DoctorCard({
   imgSrc,
   name,
   specialty,
-  bio = 'Опытный специалист с индивидуальным подходом.',
+  bio,
   onBook,
 }: DoctorCardProps) {
   const [flipped, setFlipped] = useState(false);
@@ -40,7 +40,6 @@ export default function DoctorCard({
           flipped ? styles.flipped : ''
         }`}
       >
-        {/* === FRONT === */}
         <div className={styles.cardFace}>
           <img src={imgSrc} alt={name} className={styles.image} />
           <div className={styles.overlay}>

@@ -3,6 +3,7 @@
 import React from 'react';
 import DoctorCard from './DoctorCard';
 import styles from './Doctors.module.css';
+import { useRouter } from 'next/navigation';
 
 const doctorsData = [
   {
@@ -36,8 +37,9 @@ const doctorsData = [
 ];
 
 export default function Doctors() {
-  const handleBook = (name: string) => {
-    alert(`Запись к доктору: ${name}`);
+  const router = useRouter();
+  const handleBook = () => {
+    router.push('/contacts');
   };
 
   return (
@@ -51,7 +53,7 @@ export default function Doctors() {
             name={doc.name}
             specialty={doc.specialty}
             bio={doc.bio}
-            onBook={() => handleBook(doc.name)}
+            onBook={handleBook}
           />
         ))}
       </div>

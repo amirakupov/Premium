@@ -67,14 +67,8 @@ export default function Header() {
           <Link href="/doctors" onClick={() => setMenuOpen(false)}>
             Врачи
           </Link>
-          <Link href="/prices" onClick={() => setMenuOpen(false)}>
-            Цены
-          </Link>
-          <Link href="/consultation" onClick={() => setMenuOpen(false)}>
+          <Link href="/contacts" onClick={() => setMenuOpen(false)}>
             Записаться
-          </Link>
-          <Link href="/#contacts" onClick={() => setMenuOpen(false)}>
-            Контакты
           </Link>
           <Link href="/#address" onClick={() => setMenuOpen(false)}>
             Адрес
