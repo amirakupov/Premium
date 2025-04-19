@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { services } from '../data';
 import styles from './page.module.css';
 
-interface ServicePageProps { params: { slug: string } }
-
 export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export default async function ServiceDetailPage({ params }: ServicePageProps) {
-  const { slug } = await Promise.resolve(params);
+export default async function ServiceDetailPage({ params }) {
+  // `params` is a Promise<{ slug: string }>
+  const { slug } = await params;
+
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
 
