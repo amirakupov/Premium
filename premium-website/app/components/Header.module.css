@@ -16,9 +16,7 @@
     border-bottom: 1px solid #fdfdfd;
     z-index: 10000; 
   }
-  :global(main) {
-    padding-top: 70px;
-  }
+
   
   .logo {
     font-weight: 600;
