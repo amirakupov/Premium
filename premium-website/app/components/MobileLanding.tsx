@@ -20,36 +20,30 @@ export default function MobileLanding() {
 
   // Listen to scroll events to figure out which slide is in view
   useEffect(() => {
-    const slidesEl = slidesRef.current;
-    if (!slidesEl) return;
-
     function handleScroll() {
-      const containerWidth = slidesEl.clientWidth;
-      const scrollLeft = slidesEl.scrollLeft;
-      const slideWidthWithGap = containerWidth * 0.8 + 16; 
-        /* 0.8 if each slide is 80% of container, plus gap=16px (~1rem) */
-      const index = Math.round(scrollLeft / slideWidthWithGap);
-      setCurrentSlide(index);
+      const el = slidesRef.current;
+      if (!el) return;                  // ← narrow here
+      const containerWidth = el.clientWidth;
+      const scrollLeft     = el.scrollLeft;
+      const slideWidthGap  = containerWidth * 0.8 + 16;
+      setCurrentSlide(Math.round(scrollLeft / slideWidthGap));
     }
-
-    slidesEl.addEventListener('scroll', handleScroll, { passive: true });
-    return () => slidesEl.removeEventListener('scroll', handleScroll);
+  
+    const el = slidesRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
   }, []);
+  
 
   // Smooth scroll to a given slide index
-  const handleScrollToSlide = (slideIndex: number) => {
-    const slidesEl = slidesRef.current;
-    if (!slidesEl) return;
-
-    const containerWidth = slidesEl.clientWidth;
-    const slideWidthWithGap = containerWidth * 0.8 + 16; // matching what's in handleScroll
-    slidesEl.scrollTo({
-      left: slideWidthWithGap * slideIndex,
-      behavior: 'smooth',
-    });
-    setCurrentSlide(slideIndex);
+  const handleScrollToSlide = (index: number) => {
+    const el = slidesRef.current;
+    if (!el) return;
+    const slideWidthGap = el.clientWidth * 0.8 + 16;
+    el.scrollTo({ left: slideWidthGap * index, behavior: 'smooth' });
+    setCurrentSlide(index);
   };
-
   return (
     <div className={styles.container}>
       {/* Title */}
