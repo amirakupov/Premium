@@ -23,7 +23,14 @@ export default function Header() {
   return (
     <header className={styles.header}>
       {/* LEFT: LOGO */}
-      <div className={styles.logo}>PREMIUM</div>
+      <Link 
+        href="/" 
+        className={styles.logo} 
+        aria-label="Homepage"
+        onClick={closeMenu} 
+      >
+        PREMIUM
+      </Link>
 
       {/* DESKTOP NAV */}
       <nav className={styles.nav}>

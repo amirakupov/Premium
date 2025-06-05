@@ -7,29 +7,29 @@ import styles from './InfoBlock.module.css';
 
 const slidesData = [
   {
-    src: '/infoblock/Main.svg',
-    buttons: [
-      {
-        text: 'Услуги',
-        link: '/services',
-        style: { top: '53%', left: '42%' }, // Adjust for desktop
-        buttonClass: 'mainButton',
-      },
-    ],
-  },
-  {
-    src: '/infoblock/About.svg',
+    src: '/infoblock/About-6.svg',
     buttons: [
       {
         text: 'Подробнее',
         link: '/about',
-        style: { top: '39%', left: '8%' },
+        style: { top: '76%', left: '10%' },
         buttonClass: 'aboutButton',
       },
     ],
   },
   {
-    src: '/infoblock/Emergency.svg',
+    src: '/infoblock/Main-2.svg',
+    buttons: [
+      {
+        text: 'Услуги',
+        link: '/services',
+        style: { top: '53%', left: '42%' },
+        buttonClass: 'mainButton',
+      },
+    ],
+  },
+  {
+    src: '/infoblock/Emergency-2.svg',
     buttons: [
       {
         text: 'Вызвать скорую',

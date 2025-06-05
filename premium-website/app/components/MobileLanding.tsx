@@ -9,9 +9,9 @@ import ClinicFotos from './ClinicFotos';
 import Doctors from './Doctors';
 
 const slidesData = [
-  { src: '/mobile/about1.svg', label: 'О нас' },
-  { src: '/mobile/services1.svg', label: 'Услуги' },
-  { src: '/mobile/emergency1.svg', label: 'Скорая' },
+  { src: '/mobile/about5.svg', label: 'О нас' },
+  { src: '/mobile/services2.svg', label: 'Услуги' },
+  { src: '/mobile/emergency2.svg', label: 'Скорая' },
 ];
 
 export default function MobileLanding() {

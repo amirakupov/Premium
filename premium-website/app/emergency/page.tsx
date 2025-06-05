@@ -10,7 +10,7 @@ export default function EmergencyPage() {
       {/* Desktop frame */}
       <div className={styles.frameDesktop}>
         <Image
-          src="/infoblock/Emergency.svg"
+          src="/infoblock/Emergency-2.svg"
           alt="Emergency Frame"
           fill
           style={{ objectFit: 'contain' }}

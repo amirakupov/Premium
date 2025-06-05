@@ -1,32 +1,40 @@
-/* Import Inter font: minimalistic, clean */
+/* ──────────────────────────────────────────────────────────────────── */
+/*     Импорт шрифта Inter (минималистично, «чисто»)                  */
+/* ──────────────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-/* Container matches the width from your carousel (mobile style) */
+/* ──────────────────────────────────────────────────────────────────── */
+/* 1) Обёртка для всего блока «цитата + подпись»                        */
+/* ──────────────────────────────────────────────────────────────────── */
 .container {
+  position: relative;       /* если захочется абсолютного позиционирования подписи */
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
   padding: 1rem;
   box-sizing: border-box;
 
-  background-color: #fdfdfd; /* or #f8f8f8, to match your style */
+  background-color: #fdfdfd; /* светлый фон */
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* a subtle shadow for minimalistic style */
-  text-align: left; /* or center, if you prefer */
+  text-align: left;
 }
 
-/* Use Inter, bold, bigger for heading */
+/* ──────────────────────────────────────────────────────────────────── */
+/* 2) Заголовок цитаты: Inter, 700, uppercase                           */
+/* ──────────────────────────────────────────────────────────────────── */
 .heading {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
-  font-size: 1.4rem; /* bigger style for heading */
+  font-size: 1.4rem;
   margin-bottom: 1rem;
-  color: #2f2f2f;  /* minimalistic dark gray */
-  text-transform: uppercase; /* optional, if you want uppercase look */
+  color: #2f2f2f;
+  text-transform: uppercase;
 }
 
-/* The main quote text: regular or medium weight Inter */
+/* ──────────────────────────────────────────────────────────────────── */
+/* 3) Сам текст цитаты: Inter 400, регулярный                           */
+/* ──────────────────────────────────────────────────────────────────── */
 .quoteText {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
@@ -36,47 +44,101 @@
   margin-bottom: 1rem;
 }
 
-.figmaImageContainer {
-    margin-top: 1.5rem;
-    border-radius: 12px;
-    overflow: hidden;
-    width: 320px; /* fill the container (which is now 60% of parent) */
-    height: 100px;
-    margin-left: 38rem;
-  }
-  
-  .figmaImageContainer img {
-    width: 120px; /* fill the container (which is now 60% of parent) */
-    height: 60px;
-    display: block;
-  }
-/* MOBILE OVERRIDE */
-/* In mobile, we want the figma frame to be centered under the text */
+/* ──────────────────────────────────────────────────────────────────── */
+/* 4) Контейнер «подписи» (портрет + текст), спозиционирован под текст  */
+/* и прижат вправо                                                       */
+/* ──────────────────────────────────────────────────────────────────── */
+.signatureContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* прижать вправо */
+  margin-top: 1.5rem;        /* отступ сверху, чтобы было под всеми <p> */
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* 4.1) Обёртка для круглой фотографии                                  */
+/* ──────────────────────────────────────────────────────────────────── */
+.doctorImageWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;     /* запрещаем ужиматься */
+  margin-right: 1rem; /* расстояние между фото и текстом */
+}
+.doctorImageWrapper img,
+.doctorImage {
+  border-radius: 50%; /* если используете класс непосредственно на Image */
+  object-fit: cover;  /* чтобы фотография не «растягивалась» */
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* 4.2) Блок текста (имя + должность), компоновка по колонке            */
+/* ──────────────────────────────────────────────────────────────────── */
+.doctorText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* 4.2.1) Имя доктора: Inter 600                                         */
+/* ──────────────────────────────────────────────────────────────────── */
+.doctorName {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2f2f2f;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* 4.2.2) Должность: Inter 400                                           */
+/* ──────────────────────────────────────────────────────────────────── */
+.doctorTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin: 0;
+  color: #555;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* 5) Мобильная «брейкпоинт-настройка» (max-width: 768px)                */
+/*    Центрируем quoteText + подпись                                      */
+/* ──────────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .container {
-      max-width: 100%; /* full width for mobile */
-      padding: 1rem;
-    }
-    
-    .heading {
-      font-size: 1.2rem;
-      text-align: center;
-    }
-    
-    .quoteText {
-      font-size: 0.95rem;
-      text-align: center;
-    }
-    
-    .figmaImageContainer {
-      margin: 1.5rem auto 0 auto; /* center horizontally */
-      width: 90%;                /* adjust width as desired */
-      height: auto;              /* let image scale proportionally */
-    }
-    
-    .figmaImageContainer img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+  .container {
+    max-width: 100%;
+    padding: 1rem;
   }
+
+  .heading {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .quoteText {
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .signatureContainer {
+    justify-content: center; /* подпись по центру на мобайле */
+    margin-top: 1.5rem;
+  }
+
+  .doctorImageWrapper {
+    width: 64px;
+    height: 64px;
+    margin-right: 0.75rem;
+  }
+
+  .doctorName {
+    font-size: 1.1rem;
+  }
+
+  .doctorTitle {
+    font-size: 0.9rem;
+  }
+}
