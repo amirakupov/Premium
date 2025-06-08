@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './InfoBlock.module.css';
 
 const slidesData = [
   {
-    src: '/infoblock/About-6.svg',
+    src: '/infoblock/About-10.svg',
     buttons: [
       {
         text: 'Подробнее',
-        link: '/about',
+        link: '/doctors',
         style: { top: '76%', left: '10%' },
         buttonClass: 'aboutButton',
       },
@@ -29,7 +29,7 @@ const slidesData = [
     ],
   },
   {
-    src: '/infoblock/Emergency-2.svg',
+    src: '/infoblock/Emergency-3.svg',
     buttons: [
       {
         text: 'Вызвать скорую',
@@ -46,7 +46,7 @@ export default function InfoBlock() {
   const router = useRouter();
 
   // Optional auto-rotation
-  /*
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex(prev =>
@@ -55,7 +55,7 @@ export default function InfoBlock() {
     }, 5000);
     return () => clearInterval(interval);
   }, [currentIndex]);
-  */
+
 
   const handleDotClick = (index: number) => {
     setCurrentIndex(index);

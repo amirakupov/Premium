@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { services } from '../data';
+import { services } from '../data/services';
 import styles from './page.module.css';
 
 export async function generateStaticParams() {

@@ -9,6 +9,7 @@ import Achievements from './components/Achievements';
 import ClinicPhotos from './components/ClinicFotos';
 import Reviews from './components/Reviews';
 import Services from './components/Services';
+import CookieBanner from './components/CookieBanner';
 
 export default function HomePage() {
   const isMobile = useIsMobile(768);
@@ -29,6 +30,7 @@ export default function HomePage() {
         <DoctorsPreview />
         <Achievements />
         <Reviews />
+        <CookieBanner />
       </>
     );
   }

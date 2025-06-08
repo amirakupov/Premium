@@ -6,11 +6,17 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './ClinicFotos.module.css';
 
-// Array of image paths in public/clinic/
 const photos: string[] = [
-  '/clinic/clinic2.jpg',
-  '/clinic/clinic3.jpg',
-  '/clinic/clinic1.jpg',
+  '/clinic/clinic10.jpg',
+  '/clinic/clinic11.jpg',
+  '/clinic/clinic7.jpg',
+  '/clinic/clinic6.jpg',
+  '/clinic/clinic5.jpg',
+  '/clinic/clinic4.jpg',
+  '/clinic/clinic12.jpg',
+  '/clinic/clinic13.jpg',
+  '/clinic/clinic14.jpg',
+  '/clinic/clinic9.jpg',
 ];
 
 export default function ClinicFotos() {

@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --clr-bg:        #ffffff;
+  --clr-text:      #333333;
+  --clr-subtext:   #555555;
+  --clr-accent:    #006bb3;
+  --clr-link:      #004a7c;
+  --spacing-v:     1.5rem;
+  --spacing-h:     1rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-v) var(--spacing-h);
+  background: var(--clr-bg);
+  font-family: 'Poppins', sans-serif;
+  color: var(--clr-text);
+  line-height: 1.6;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  text-align: center;
+  margin-bottom: var(--spacing-v);
+}
+
+.intro {
+  font-size: 1rem;
+  color: var(--clr-subtext);
+  margin-bottom: calc(var(--spacing-v) * 1.2);
+}
+
+.section {
+  margin-bottom: calc(var(--spacing-v) * 1.5);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--clr-accent);
+  margin-bottom: var(--spacing-h);
+}
+
+.text {
+  font-size: 1rem;
+  color: var(--clr-subtext);
+}
+
+.list {
+  padding-left: 1.25rem;
+  margin: 0;
+  list-style-type: disc;
+}
+
+.list li {
+  margin-bottom: 0.5rem;
+}
+
+.link {
+  color: var(--clr-link);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.link:hover {
+  color: var(--clr-accent);
+}
+
+/* Адаптив */
+@media (max-width: 767px) {
+  .container {
+    padding: var(--spacing-v) 1rem;
+  }
+  .title {
+    font-size: 1.75rem;
+  }
+  .sectionTitle {
+    font-size: 1.1rem;
+  }
+}

@@ -39,7 +39,7 @@ export default function Header() {
         <Link href="/contacts">Контакты</Link>
         <Link href="/#address">Адрес</Link>
         <Link href="/emergency" className={styles.emergencyLink}>
-          Вызывать скорую
+          Экстренная помощь
         </Link>
       </nav>
 
