@@ -20,7 +20,7 @@ export default function TransportPage() {
       {/* Mobile frame */}
       <div className={styles.frameMobile}>
         <Image
-          src="/mobile/emergency1.svg"
+          src="/mobile/emergency2.svg"
           alt="Transport Frame Mobile"
           fill
           style={{ objectFit: 'contain' }}

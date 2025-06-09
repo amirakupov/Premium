@@ -38,6 +38,7 @@ export default function Header() {
         <Link href="/doctors">Врачи</Link>
         <Link href="/contacts">Контакты</Link>
         <Link href="/#address">Адрес</Link>
+        <Link href="/eeg">ЭЭГ</Link>
         <Link href="/emergency" className={styles.emergencyLink}>
           Экстренная помощь
         </Link>
@@ -74,6 +75,9 @@ export default function Header() {
           <Link href="/doctors" onClick={() => setMenuOpen(false)}>
             Врачи
           </Link>
+          <Link href="/eeg" onClick={() => setMenuOpen(false)}>
+            ЭЭГ
+          </Link>
           <Link href="/contacts" onClick={() => setMenuOpen(false)}>
             Записаться
           </Link>
@@ -85,7 +89,7 @@ export default function Header() {
             onClick={() => setMenuOpen(false)}
             className={styles.emergencyLink}
           >
-            Скорая
+            Санитарная помощь
           </Link>
 
           {/* Mobile Search (optional) */}

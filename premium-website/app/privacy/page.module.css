@@ -1,53 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-:root {
-  --clr-bg:        #ffffff;
-  --clr-text:      #333333;
-  --clr-subtext:   #555555;
-  --clr-accent:    #006bb3;
-  --clr-link:      #004a7c;
-  --spacing-v:     1.5rem;
-  --spacing-h:     1rem;
-}
-
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: var(--spacing-v) var(--spacing-h);
-  background: var(--clr-bg);
+  padding: 1.5rem 1rem;
+  background: #ffffff;
   font-family: 'Poppins', sans-serif;
-  color: var(--clr-text);
+  color: #333333;
   line-height: 1.6;
 }
 
 .title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--clr-accent);
+  color: #006bb3;
   text-align: center;
-  margin-bottom: var(--spacing-v);
+  margin-bottom: 1.5rem;
 }
 
 .intro {
   font-size: 1rem;
-  color: var(--clr-subtext);
-  margin-bottom: calc(var(--spacing-v) * 1.2);
+  color: #555555;
+  margin-bottom: 1.8rem;
 }
 
 .section {
-  margin-bottom: calc(var(--spacing-v) * 1.5);
+  margin-bottom: 2.25rem;
 }
 
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--clr-accent);
-  margin-bottom: var(--spacing-h);
+  color: #006bb3;
+  margin-bottom: 1rem;
 }
 
 .text {
   font-size: 1rem;
-  color: var(--clr-subtext);
+  color: #555555;
 }
 
 .list {
@@ -55,24 +45,23 @@
   margin: 0;
   list-style-type: disc;
 }
-
 .list li {
   margin-bottom: 0.5rem;
 }
 
 .link {
-  color: var(--clr-link);
+  color: #004a7c;
   text-decoration: underline;
   transition: color 0.2s ease;
 }
 .link:hover {
-  color: var(--clr-accent);
+  color: #006bb3;
 }
 
 /* Адаптив */
 @media (max-width: 767px) {
   .container {
-    padding: var(--spacing-v) 1rem;
+    padding: 1.5rem 1rem;
   }
   .title {
     font-size: 1.75rem;

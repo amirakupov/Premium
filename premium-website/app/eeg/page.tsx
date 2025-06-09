@@ -33,6 +33,7 @@ export default function EegPage() {
       {/* Pricing */}
       <section className={styles.pricing}>
         <h3 className={styles.sectionTitle}>Форматы и цены</h3>
+        <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -63,6 +64,7 @@ export default function EegPage() {
             </tr>
           </tbody>
         </table>
+        </div>
         <p className={styles.note}>Запись результатов на CD/DVD — бесплатно.</p>
       </section>
 
