@@ -50,7 +50,7 @@ export default function ClinicFotos() {
     <div className={styles.carousel}>
       {/* Header & description */}
       <h2 className={styles.heading}>НАША ГАЛЕРЕЯ</h2>
-      <p className={styles.subheading}>Мы используем самое современное и качественное оборудование для вашего здоровья. Мы уделяем большое внимание пукпук пук пукпук пукпук. Более того пукпукпук пук пук бла бла бла</p>
+      <p className={styles.subheading}>Мы используем самое современное и качественное оборудование в связке с приятным интерьером для вашего комфорта</p>
 
       {/* Image slider */}
       <div className={styles.slides} ref={slidesRef}>
