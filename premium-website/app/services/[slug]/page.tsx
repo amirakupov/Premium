@@ -42,11 +42,97 @@ export default async function ServiceDetailPage({
           <p className={styles.longDescription}>{service.longDescription}</p>
 
           {/* Записаться button */}
-          <Link href="/contact" className={styles.bookButton}>
+          <Link href="/contacts" className={styles.bookButton}>
             Записаться
           </Link>
         </div>
       </div>
+      {slug === 'analiz' && service.analysesList && (
+      <section className={styles.analysisSection}>
+        <h2>СПИСОК АНАЛИЗОВ</h2>
+        <table className={styles.analysisTable}>
+          <thead>
+            <tr>
+              <th>Код</th>
+              <th>Название</th>
+              <th>Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {service.analysesList.map((a, idx) => (
+              <tr key={idx}>
+                <td>{a.code}</td>
+                <td>{a.name}</td>
+                <td>{a.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+    {slug === 'kabinet' && service.procedureList && (
+      <section className={styles.analysisSection}>
+        <h2>НАШИ ПРОЦЕДУРКИ</h2>
+        <table className={styles.analysisTable}>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {service.procedureList?.map((a, idx) => (
+              <tr key={idx}>
+                <td>{a.name}</td>
+                <td>{a.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+    {slug === 'spravki' && service.adminReferences && (
+      <section className={styles.analysisSection}>
+        <h2>СПРАВКИ</h2>
+        <table className={styles.analysisTable}>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {service.adminReferences?.map((a, idx) => (
+              <tr key={idx}>
+                <td>{a.name}</td>
+                <td>{a.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+    {slug === 'physiotherapy' && service.physioProcedures && (
+      <section className={styles.analysisSection}>
+        <h2>СПИСОК УСЛУГ</h2>
+        <table className={styles.analysisTable}>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {service.physioProcedures?.map((a, idx) => (
+              <tr key={idx}>
+                <td>{a.name}</td>
+                <td>{a.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
     </main>
   );
 }

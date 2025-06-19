@@ -1,3 +1,8 @@
+import { analysesData } from "./analysesData";
+import { proceduresData } from "./proceduresData";
+import { adminReferencesData } from "./adminReferencesData";
+import { physioProceduresData } from "./physioProceduresData";
+
 export interface Service {
     id: number;
     slug: string;
@@ -6,6 +11,23 @@ export interface Service {
     price: string;
     description: string;
     longDescription: string;
+    analysesList?: {
+      code: string;
+      name: string;
+      price: string;
+    }[];
+    procedureList?: {
+      name: string;
+      price: string;
+    }[];
+    adminReferences?: {
+      name: string;
+      price: string;
+    }[];
+    physioProcedures?: {
+      name: string;
+      price: string;
+    }[];
   }
   
   export const services: Service[] = [
@@ -80,7 +102,7 @@ export interface Service {
     },
     {
       id: 6,
-      slug: 'capelnicy',
+      slug: 'blocade',
       imageSrc: '/services/blocade.png',
       serviceName: 'Блокады',
       price: '250₽',
@@ -112,6 +134,7 @@ export interface Service {
       price: '250₽',
       description: 'Узнайте о здоровье всё за 2 часа!',
       longDescription: `Сдаем кровь, мочу, гормоны, генетику — даже малышам без слез. Срочные анализы** за 60 минут (для справок, перед отпуском). Без боли и стресса: иглы-бабочки, мультики для детей `,
+      analysesList: analysesData,
     },
     {
       id: 9,
@@ -120,7 +143,8 @@ export interface Service {
       serviceName: 'Кабинет Процедур',
       price: '250₽',
       description: 'Лечение без страха',
-      longDescription: `Капельницы для иммунитета, энергии, детокса. Перевязки** после операций/травм (аккуратно и без боли). Уколы (в/м, в/в) — мастерство «попасть в вену с первого раза`,
+      longDescription: `Капельницы для иммунитета, энергии, детокса. Перевязки после операций/травм (аккуратно и без боли). Уколы (в/м, в/в) — мастерство «попасть в вену с первого раза`,
+      procedureList: proceduresData,
     },
     {
       id: 10,
@@ -142,6 +166,7 @@ export interface Service {
         - 086/у — для вузов/работы  
         - В детсад/школу — без очередей  
         - На COVID 19 `,
+      adminReferences: adminReferencesData,
     },
     {
       id: 12,
@@ -193,6 +218,22 @@ export interface Service {
 - Суставы, лимфоузлы, рубцы — оценка за 2 минуты  
 - Малышам: нейросонография (мозг), тазобедренные суставы  `,
     },
+    {
+      id: 15,
+      slug: 'physiotherapy',
+      imageSrc: '/services/physiotherapy.png',
+      serviceName: 'Физиотерапия',
+      price: '250₽',
+      description: 'Восстанавливаем тело без таблеток и побочек',
+      longDescription: `Электрофорез, ультразвук, магнитотерапия — подбираем индивидуально:  
+    - Убираем боль и воспаление без лекарств  
+    - Ускоряем заживление после травм и операций  
+    - Улучшаем кровообращение и подвижность суставов  
+    - Снимаем отёки и напряжение мышц  
+    - Безопасно даже для детей и пожилых  
 
+    Идеально при остеохондрозе, артрозе, невралгии и спазмах`,
+    physioProcedures: physioProceduresData,
+    }
   ];
   

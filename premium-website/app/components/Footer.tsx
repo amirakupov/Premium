@@ -24,7 +24,6 @@ export default function Footer() {
 
             <div className={styles.column}>
               <h4 className={styles.title}>Услуги</h4>
-              <Link href="/contacts" className={styles.link}>Запись на МРТ</Link>
               <Link href="/contacts" className={styles.link}>Заявка</Link>
               <Link href="/documents" className={styles.link}>Документы</Link>
             </div>
@@ -39,7 +38,7 @@ export default function Footer() {
                 Пн–Сб: 9:00–19:00
               </p>
               <p className={styles.text}>
-                <a href="tel:+79999999999" className={styles.link}>8 (999) 999-999</a>
+                <a href="tel:+7(987)369-55-09" className={styles.link}>+7(987)369-55-09</a>
               </p>
               <p className={styles.text}>
                 <a
