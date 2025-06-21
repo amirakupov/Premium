@@ -25,7 +25,7 @@ export default function Header() {
       {/* LEFT: LOGO */}
       <Link 
         href="/" 
-        className={styles.logo} 
+        className={styles.logo}
         aria-label="Homepage"
         onClick={closeMenu} 
       >

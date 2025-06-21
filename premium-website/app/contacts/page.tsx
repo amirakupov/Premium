@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './page.module.css';
+import emailjs from 'emailjs-com';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -18,11 +19,38 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    // TODO: send formData to your API
-    alert('Спасибо! Мы свяжемся с вами в ближайшее время.');
-    setFormData({ name: '', email: '', phone: '', message: '' });
+
+    // 1. Отправляем письмо пользователю
+    const sendToUser = emailjs.send(
+      'service_d5ejdz9',
+      'template_v2ofuzf', // твой шаблон подтверждения для пользователя
+      formData,
+      'rg3ZXe_2vm2ejlIWW'
+    );
+
+    // 2. Отправляем письмо админу (указываем email админа и нужный шаблон)
+    const sendToAdmin = emailjs.send(
+      'service_d5ejdz9',
+      'template_2tlppgm', // создаёшь отдельный шаблон для администратора
+      {
+        ...formData,
+        to_email: 'premium.ufa02@gmail.com', // ключ должен совпадать с переменной to_email в шаблоне EmailJS
+      },
+      'rg3ZXe_2vm2ejlIWW'
+    );
+
+    // Ждём оба письма:
+    Promise.all([sendToUser, sendToAdmin])
+      .then(() => {
+        alert("Спасибо! Сообщение отправлено.");
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      })
+      .catch((error) => {
+        alert("Ошибка при отправке. Попробуйте еще раз.");
+        console.error(error);
+      });
   };
 
   return (

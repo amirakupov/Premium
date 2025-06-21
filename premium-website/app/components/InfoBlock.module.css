@@ -3,7 +3,7 @@
     width: 100%;
     max-width: 1200px;  /* optional maximum width */
     margin: 0 auto;     /* center container horizontally */
-    background-color: #ffffff;
+    background-color: #fdfdfd;
     padding: 1rem 0;
     overflow: hidden;
   }
@@ -31,7 +31,7 @@
     text-align: center;
     border-radius: 40px; 
     overflow: hidden; 
-    background-color: #ffffff; /* matching background or white? */
+    background-color: #fdfdfd; /* matching background or white? */
   }
   
   /* If the <img> itself needs rounding. 

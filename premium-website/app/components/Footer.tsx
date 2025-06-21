@@ -35,10 +35,11 @@ export default function Footer() {
                 Респ. Башкортостан, 450018
               </p>
               <p className={styles.text}>
-                Пн–Сб: 9:00–19:00
+                Пн–Пт: 9:00–20:00<br/>
+                Сб–Вс: 9:00–18:00
               </p>
               <p className={styles.text}>
-                <a href="tel:+7(987)369-55-09" className={styles.link}>+7(987)369-55-09</a>
+                <a href="tel:+7(917)369-55-09" className={styles.link}>+7(917)369-55-09</a>
               </p>
               <p className={styles.text}>
                 <a
