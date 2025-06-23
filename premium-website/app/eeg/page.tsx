@@ -148,7 +148,7 @@ export default function EegPage() {
         </div>
       </section>
       
-        <a href="tel:+7(987)369-55-09" className={styles.ctaButton}>
+        <a href="tel:+7(917)369-55-09" className={styles.ctaButton}>
           Записаться на ЭЭГ
         </a>
     </main>
