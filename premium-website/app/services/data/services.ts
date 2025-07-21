@@ -36,7 +36,7 @@ export interface Service {
       slug: 'botolinoterapiya',
       imageSrc: '/services/bottocs.png',
       serviceName: 'Ботулинотерапия',
-      price: '150₽',
+      price: '7990₽',
       description: 'Не просто «уколы красоты» – а лечение с гарантией попадания в мышцу!',
       longDescription: `Ботулинотерапия — это современное эффективное лечение спастики, хронической боли и неврологических нарушений с помощью ботулотоксина типа А (ботокс, диспорт, ксеомин). Препарат вводится в мышцы под контролем врача — при необходимости с помощью ультразвука для точности. \n\n
       Показания:\n
@@ -67,7 +67,7 @@ export interface Service {
       slug: 'ozonoterapia',
       imageSrc: '/services/ozon.png',
       serviceName: 'Озонотерапия',
-      price: '100₽',
+      price: '800₽',
       description: 'Кислородный детокс для клеток!',
       longDescription: `Насыщаем организм медицинским озоном — природным антисептиком и «энерджайзером»:  
 - Заживляет ткани в 2 раза быстрее,  
@@ -80,7 +80,7 @@ export interface Service {
       slug: 'codirovanie',
       imageSrc: '/services/coding.png',
       serviceName: 'Кодировка',
-      price: '250₽',
+      price: '2000₽',
       description: 'Свобода от зависимости — за 1 сеанс!',
       longDescription: `Комбинация гипноза и препаратов создает «щит» против тяги:  
 - Без стресса и ломки,  
@@ -93,7 +93,7 @@ export interface Service {
       slug: 'capelnicy',
       imageSrc: '/services/capelnic.png',
       serviceName: 'Капельницы',
-      price: '250₽',
+      price: '500₽',
       description: 'Витаминный коктейль для ваших сосудов!',
       longDescription: `Личный состав капельницы подбирает врач:  
 - Для энергии — магний + витамины группы B,  
@@ -106,7 +106,7 @@ export interface Service {
       slug: 'blocade',
       imageSrc: '/services/blocade.png',
       serviceName: 'Блокады',
-      price: '250₽',
+      price: '200₽',
       description: 'Боль уходит за 5 минут!',
       longDescription: `Точечный укол анестетика + противовоспалительного:  
 - Мгновенно снимает острую боль (спина, суставы),  
@@ -119,7 +119,7 @@ export interface Service {
       slug: 'elektroforez',
       imageSrc: '/services/elektro.png',
       serviceName: 'Электрофорез',
-      price: '250₽',
+      price: '600₽',
       description: 'Лекарство — точно в цель, минуя желудок!',
       longDescription: `Через кожу с помощью тока доставляем препараты:  
 - В 5 раз эффективнее таблеток,  
@@ -132,7 +132,7 @@ export interface Service {
       slug: 'analiz',
       imageSrc: '/services/anal.png',
       serviceName: 'Анализы',
-      price: '250₽',
+      price: '300₽',
       description: 'Узнайте о здоровье всё за 2 часа!',
       longDescription: `Сдаем кровь, мочу, гормоны, генетику — даже малышам без слез. Срочные анализы** за 60 минут (для справок, перед отпуском). Без боли и стресса: иглы-бабочки, мультики для детей `,
       analysesList: analysesData,
@@ -142,7 +142,7 @@ export interface Service {
       slug: 'kabinet',
       imageSrc: '/services/proc.jpg',
       serviceName: 'Кабинет Процедур',
-      price: '250₽',
+      price: '200₽',
       description: 'Лечение без страха',
       longDescription: `Капельницы для иммунитета, энергии, детокса. Перевязки после операций/травм (аккуратно и без боли). Уколы (в/м, в/в) — мастерство «попасть в вену с первого раза`,
       procedureList: proceduresData,
@@ -152,7 +152,7 @@ export interface Service {
       slug: 'massage',
       imageSrc: '/services/massage.png',
       serviceName: 'Лечебный массаж',
-      price: '250₽',
+      price: '500₽',
       description: 'Спина скажет вам "спасибо" уже после первого сеанса',
       longDescription: `Снимаем зажимы в шее, пояснице. Восстанавливаем после травм. Детский массаж при кривошее, гипертонусе  `,
     },
@@ -161,7 +161,7 @@ export interface Service {
       slug: 'spravki',
       imageSrc: '/services/spravki.png',
       serviceName: 'Справки в 1 клик!',
-      price: '250₽',
+      price: '800₽',
       description: 'В бассейн, на работу, в школу — пока вы пьете кофе',
       longDescription: `- в Санаторий/ бассейн 
         - 086/у — для вузов/работы  
@@ -174,7 +174,7 @@ export interface Service {
       slug: 'plazmoterapiya',
       imageSrc: '/services/plazma.png',
       serviceName: 'Плазмотерапия(PRP)',
-      price: '250₽',
+      price: '5000₽',
       description: 'Запускаем регенерацию там, где обычные методы бессильны!',
       longDescription: `Куда и зачем колем: 
 - Шея/позвоночник/суставы:
@@ -196,7 +196,7 @@ export interface Service {
       slug: 'uzi-beremennost',
       imageSrc: '/services/uzi.png',
       serviceName: 'УЗИ при беременности',
-      price: '250₽',
+      price: '1500₽',
       description: 'Увидим сердцебиение, когда другие ещё не видят ничего',
       longDescription: `Ранние сроки :
   — Подтверждение беременности (с 3-4 недель).  
@@ -211,7 +211,7 @@ export interface Service {
       slug: 'uzi',
       imageSrc: '/services/uzi2.png',
       serviceName: 'УЗИ-диагностика',
-      price: '250₽',
+      price: '1000₽',
       description: 'Точность 99% — никаких скрытых угроз',
       longDescription: `- Живот, почки, щитовидка — проверим за 15 минут  
 - Сердце и сосуды — найдем причину головокружений  
