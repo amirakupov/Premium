@@ -1,0 +1,11 @@
+{
+  "name": "repo-root-shim",
+  "private": true,
+  "scripts": {
+    "preinstall": "echo Running install in premium-website/",
+    "install": "npm ci --prefix premium-website",
+    "build": "npm run build --prefix premium-website",
+    "start": "npx -y serve -s premium-website/out -l 3000"
+  }
+}
+
