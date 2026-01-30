@@ -8,12 +8,10 @@ export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export default async function ServiceDetailPage({
-    params,
-  }: {
-    params: Promise<{ slug: string }>;
-  }) {
-    const { slug } = await params;
+export default async function ServiceDetailPage({params,}: { params: Promise<{ slug: string }>; })
+{
+
+  const { slug } = await params;
 
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
@@ -21,7 +19,6 @@ export default async function ServiceDetailPage({
   return (
     <main className={styles.container}>
       <div className={styles.detailWrapper}>
-        {/* PHOTO on the left */}
         <div className={styles.imageWrapper}>
           <Image
             src={service.imageSrc}

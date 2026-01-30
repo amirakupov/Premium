@@ -1,12 +1,11 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import ServiceCard from '../components/ServiceCard';
 import styles from './page.module.css';
-import { services } from './data/services'; // Импортируем данные услуг
+import {listAllServices} from "@/app/api/listAllServices";
 
 export default function ServicesPage() {
+  const services = await listAllServices();
   return (
     <main className={styles.container}>
       {/* Desktop frame */}
@@ -43,7 +42,7 @@ export default function ServicesPage() {
             imageSrc={s.imageSrc}
             serviceName={s.serviceName}
             price={s.price}
-            description={s.description} 
+            description={s.description}
             // формируем URL на основе поля slug:
             serviceUrl={`/services/${s.slug}`}
           />
