@@ -27,7 +27,6 @@ export default function HomePage() {
   return (
     <>
       {!preloaderDone && <Preloader onComplete={() => setPreloaderDone(true)} />}
-      {/* основной контент всегда в DOM! */}
       {isMobile ? <MobileLanding /> : (
         <>
           <InfoBlock />

@@ -1,4 +1,4 @@
-export interface ServiceInterface {
+export interface ServiceInterfaceReq {
     id: number,
     slug: string,
     imageSrc: string,

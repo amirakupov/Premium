@@ -1,10 +1,10 @@
-import {ServiceInterface} from "@/app/interaface/ServiceInterface";
+import {ServiceInterfaceRes} from "@/app/interaface/ServiceInterfaceRes";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
-export const listOneServices = async (serviceId: number): Promise<ServiceInterface | null>=>
+export const listOneServices = async (serviceId: number): Promise<ServiceInterfaceRes | null>=>
 {
-    const url = new URL(`${BACKEND_URL}/api/cms/services`);
+    const url = new URL(`${BACKEND_URL}/api/cms/service`);
     url.searchParams.set("id", String(serviceId));
     const response = await fetch(url.toString(),
         {
@@ -19,5 +19,5 @@ export const listOneServices = async (serviceId: number): Promise<ServiceInterfa
         console.log("Failed get request for services", response.status, json);
         return null;
     }
-    return json?.data;
+    return json as ServiceInterfaceRes;
 }

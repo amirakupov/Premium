@@ -1,8 +1,8 @@
-import {ServiceInterface} from "@/app/interaface/ServiceInterface";
+import {ServiceInterfaceRes} from "@/app/interaface/ServiceInterfaceRes";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
-export const listAllServices = async ():Promise<ServiceInterface[]>=>
+export const listAllServices = async ():Promise<ServiceInterfaceRes[]>=>
 {
     const url = `${BACKEND_URL}/api/cms/services`;
     const response = await fetch(url,
@@ -14,5 +14,6 @@ export const listAllServices = async ():Promise<ServiceInterface[]>=>
             cache: "no-store",
         });
     const json = await response.json().catch((error) => {console.log("Failed get request for services", error);});
-    return json?.data;
+    if (Array.isArray(json)) return json as ServiceInterfaceRes[];
+    return [];
 }
