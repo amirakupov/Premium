@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import DoctorCard from '../components/DoctorCard';
+import DoctorCard from '@/app/(site)/components/DoctorCard';
 import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 

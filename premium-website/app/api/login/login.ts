@@ -1,4 +1,4 @@
-import {LoginRequest} from "@/app/interaface/LoginRequest";
+import {LoginRequest} from "@/app/api/interaface/LoginRequest";
 
 export const login = async (payload: LoginRequest) => {
 

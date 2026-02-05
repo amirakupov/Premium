@@ -1,8 +1,7 @@
-import {ServiceInterfaceReq} from "@/app/interaface/ServiceInterfaceReq";
+import {ServiceInterfaceReq} from "@/app/api/interaface/ServiceInterfaceReq";
 
-const BACKEND_URL = process.env.BACKEND_URL;
 export const createService = async (serviceRequest: ServiceInterfaceReq)=> {
-    const url = new URL(`${BACKEND_URL}/api/cms/service`);
+    const url = `/api/service`;
     const body = JSON.stringify(serviceRequest);
     const response = await fetch(url,
         {

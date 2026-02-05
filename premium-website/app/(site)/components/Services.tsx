@@ -5,7 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import styles from './Services.module.css';
 import ServiceCard from './ServiceCard';
-import { services } from '../services/data/services';
+import { services } from '@/app/(site)/services/data/services';
 
 const Services: React.FC = () => {
   return (

@@ -24,7 +24,7 @@ export default function Header() {
     <header className={styles.header}>
       {/* LEFT: LOGO */}
       <Link 
-        href="/" 
+        href="/premium-website/public"
         className={styles.logo}
         aria-label="Homepage"
         onClick={closeMenu} 
@@ -37,7 +37,7 @@ export default function Header() {
         <Link href="/services">Услуги</Link>
         <Link href="/doctors">Врачи</Link>
         <Link href="/contacts">Контакты</Link>
-        <Link href="/#address">Адрес</Link>
+        <Link href="/premium-website/public#address">Адрес</Link>
         <Link href="/eeg">ЭЭГ</Link>
         <Link href="/emergency" className={styles.emergencyLink}>
           Экстренная помощь
@@ -81,7 +81,7 @@ export default function Header() {
           <Link href="/contacts" onClick={() => setMenuOpen(false)}>
             Записаться
           </Link>
-          <Link href="/#address" onClick={() => setMenuOpen(false)}>
+          <Link href="/premium-website/public#address" onClick={() => setMenuOpen(false)}>
             Адрес
           </Link>
           <Link

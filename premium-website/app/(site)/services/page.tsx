@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import ServiceCard from '../components/ServiceCard';
+import ServiceCard from '@/app/(site)/components/ServiceCard';
 import styles from './page.module.css';
-import {listAllServices} from "@/app/cms/api/listAllServices";
+import {listAllServices} from "@/app/api/listAllServices";
 
 export default async function ServicesPage() {
   const services = await listAllServices();

@@ -1,4 +1,4 @@
-import {ServiceInterfaceRes} from "@/app/interaface/ServiceInterfaceRes";
+import {ServiceInterfaceRes} from "@/app/api/interaface/ServiceInterfaceRes";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 

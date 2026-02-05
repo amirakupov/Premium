@@ -1,16 +1,14 @@
 'use client';
-import useIsMobile from './hooks/useIsMobile'; 
-import MobileLanding from './components/MobileLanding';
-import InfoBlock from './components/InfoBlock';
-import Quote from './components/Quote';
+import useIsMobile from '@/app/(site)/hooks/useIsMobile';
+import MobileLanding from '@/app/(site)/components/MobileLanding';
+import InfoBlock from '@/app/(site)/components/InfoBlock';
+import Quote from '@/app/(site)/components/Quote';
 
-import DoctorsPreview from './components/Doctors';
-import Achievements from './components/Achievements';
-import ClinicPhotos from './components/ClinicFotos';
-import Reviews from './components/Reviews';
-import Services from './components/Services';
-import CookieBanner from './components/CookieBanner';
-import Preloader from './components/Preloader';
+import DoctorsPreview from '@/app/(site)/components/Doctors';
+import ClinicPhotos from '@/app/(site)/components/ClinicFotos';
+import Services from '@/app/(site)/components/Services';
+import CookieBanner from '@/app/(site)/components/CookieBanner';
+import Preloader from '@/app/(site)/components/Preloader';
 import { useEffect, useState } from 'react';
 
 export default function HomePage() {
@@ -34,8 +32,6 @@ export default function HomePage() {
           <Services />
           <ClinicPhotos />
           <DoctorsPreview />
-          <Achievements />
-          <Reviews />
           <CookieBanner />
         </>
       )}

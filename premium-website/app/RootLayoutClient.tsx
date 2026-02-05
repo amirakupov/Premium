@@ -1,8 +1,8 @@
 'use client';
 
 import './globals.css'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Header from '@/app/(site)/components/Header'
+import Footer from '@/app/(site)/components/Footer'
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -16,19 +16,16 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps){
 
   useEffect(() => {
     if (pathname === '/') {
-      // По умолчанию — футер скрыт
       setHideFooter(true);
 
-      // Слушаем кастомное событие от HomePage/Preloader
       const handler = () => setHideFooter(false);
       window.addEventListener('preloaderFinished', handler);
 
-      // Если уже был preloader — не скрываем футер
       if (window.localStorage.getItem('preloaderPassed')) setHideFooter(false);
 
       return () => window.removeEventListener('preloaderFinished', handler);
     } else {
-      setHideFooter(false); // На других страницах футер всегда виден
+      setHideFooter(false);
     }
   }, [pathname]);
   return (
