@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import type { ServiceInterfaceReq } from "@/app/api/interaface/ServiceInterfaceReq";
 import type { ServiceInterfaceRes } from "@/app/api/interaface/ServiceInterfaceRes";
 import {actionCreateService, actionListAll, actionListOne} from "./actions";
+import {
+    actionCreateDoctor,
+    actionPatchDoctor,
+    actionListAllDoctors,
+    actionGetDoctor,
+} from "./actions";
+import {DoctorInterfaceRes} from "@/app/api/interaface/DoctorInterfaceRes";
+import {black} from "next/dist/lib/picocolors";
 
 export default function AdminPage() {
     const [services, setServices] = useState<ServiceInterfaceRes[]>([]);
@@ -22,6 +30,76 @@ export default function AdminPage() {
     const [oneId, setOneId] = useState<number>(0);
     const [one, setOne] = useState<ServiceInterfaceRes | null>(null);
 
+    const [doctors, setDoctors] = useState<DoctorInterfaceRes[]>([]);
+
+    // create doctor form
+    const [dImgSrc, setDImgSrc] = useState("");
+    const [dName, setDName] = useState("");
+    const [dSpecialty, setDSpecialty] = useState("");
+    const [dBio, setDBio] = useState("");
+
+    // patch
+    const [patchId, setPatchId] = useState<number>(0);
+
+    // get one doctor
+    const [docOneId, setDocOneId] = useState<number>(0);
+    const [docOne, setDocOne] = useState<DoctorInterfaceRes | null>(null);
+
+    const [editingDoctorId, setEditingDoctorId] = useState<number | null>(null);
+
+    const [editImgSrc, setEditImgSrc] = useState("");
+    const [editName, setEditName] = useState("");
+    const [editSpecialty, setEditSpecialty] = useState("");
+    const [editBio, setEditBio] = useState("");
+
+    function startEdit(d: DoctorInterfaceRes) {
+        setEditingDoctorId(d.id);
+        setEditImgSrc(d.imgSrc ?? "");
+        setEditName(d.name ?? "");
+        setEditSpecialty(d.specialty ?? "");
+        setEditBio(d.bio ?? "");
+    }
+
+    function cancelEdit() {
+        setEditingDoctorId(null);
+        setEditImgSrc("");
+        setEditName("");
+        setEditSpecialty("");
+        setEditBio("");
+    }
+
+    async function saveEditDoctor(e: React.FormEvent) {
+        e.preventDefault();
+        if (!editingDoctorId) return;
+
+        setErr("");
+        setLoading(true);
+        try {
+            const payload = {
+                imgSrc: editImgSrc,
+                name: editName,
+                specialty: editSpecialty,
+                bio: editBio,
+            };
+
+            const updated = await actionPatchDoctor(editingDoctorId, payload as any);
+            if (!updated) {
+                setErr("Update doctor failed");
+                return;
+            }
+
+            await refreshDoctors();
+            cancelEdit();
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function refreshDoctors() {
+        const list = await actionListAllDoctors();
+        setDoctors(list);
+    }
+
     async function refresh() {
         setErr("");
         setLoading(true);
@@ -39,6 +117,31 @@ export default function AdminPage() {
     useEffect(() => {
         refresh();
     }, []);
+
+    async function onCreateDoctor(e: React.FormEvent) {
+        e.preventDefault();
+        setErr("");
+        setLoading(true);
+
+        const payload = {
+            imgSrc: dImgSrc,
+            name: dName,
+            specialty: dSpecialty,
+            bio: dBio,
+        };
+
+        try {
+            const created = await actionCreateDoctor(payload as any);
+            if (!created) {
+                setErr("Create doctor failed");
+                return;
+            }
+            setDImgSrc(""); setDName(""); setDSpecialty(""); setDBio("");
+            await refreshDoctors();
+        } finally {
+            setLoading(false);
+        }
+    }
 
     async function onCreate(e: React.FormEvent) {
         e.preventDefault();
@@ -75,7 +178,40 @@ export default function AdminPage() {
             setLoading(false);
         }
     }
+    async function onPatchDoctor(e: React.FormEvent) {
+        e.preventDefault();
+        setErr("");
+        setLoading(true);
 
+        const patchPayload: any = {};
+        if (dImgSrc) patchPayload.imgSrc = dImgSrc;
+        if (dName) patchPayload.name = dName;
+        if (dSpecialty) patchPayload.specialty = dSpecialty;
+        if (dBio) patchPayload.bio = dBio;
+
+        try {
+            const updated = await actionPatchDoctor(patchId, patchPayload);
+            if (!updated) {
+                setErr("Patch doctor failed");
+                return;
+            }
+            await refreshDoctors();
+        } finally {
+            setLoading(false);
+        }
+    }
+    async function onGetDoctor(e: React.FormEvent) {
+        e.preventDefault();
+        setLoading(true);
+        setDocOne(null);
+        try {
+            const res = await actionGetDoctor(docOneId);
+            setDocOne(res);
+            if (!res) setErr("Doctor not found");
+        } finally {
+            setLoading(false);
+        }
+    }
     async function onGetOne(e: React.FormEvent) {
         e.preventDefault();
         setErr("");
@@ -93,91 +229,196 @@ export default function AdminPage() {
             setLoading(false);
         }
     }
+    async function onLogout() {
+        setLoading(true);
+        setErr("");
+        try {
+            const r = await fetch("/api/logout", {
+                method: "POST",
+                credentials: "include",
+                cache: "no-store",
+            });
+
+            if (!r.ok) {
+                const t = await r.text().catch(() => "");
+                setErr("Logout failed: " + r.status + " " + t);
+                return;
+            }
+
+            window.location.href = "/login";
+        } finally {
+            setLoading(false);
+        }
+    }
+    const S = {
+        page: { padding: 24, maxWidth: 1200, margin: "0 auto" },
+        header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
+        title: { fontSize: 28, fontWeight: 800, margin: 0, color: "#111827"},
+        grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" },
+        card: { border: "1px solid #e5e7eb", borderRadius: 14, padding: 16, background: "white" },
+        cardTitle: { fontSize: 16, fontWeight: 800, margin: "0 0 12px 0", color: "#111827"  },
+        subTitle: { fontSize: 13, fontWeight: 700, margin: "12px 0 8px 0", color: "#111827" },
+        form: { display: "grid", gap: 10 },
+        row: { display: "grid", gridTemplateColumns: "140px 1fr", gap: 10, alignItems: "center" as const },
+        input: {
+            padding: "10px 12px",
+            border: "1px solid #e5e7eb",
+            borderRadius: 10,
+            outline: "none",
+            background: "white",
+            color: "#111827",
+            caretColor: "#111827",
+        },
+        textarea: {
+            padding: "10px 12px",
+            border: "1px solid #e5e7eb",
+            borderRadius: 10,
+            outline: "none",
+            resize: "vertical",
+            background: "white",
+            color: "#111827",
+            caretColor: "#111827",
+        },
+        button: { padding: "10px 12px", borderRadius: 10, border: "1px solid #e5e7eb", background: "#111827", color: "white", cursor: "pointer" },
+        buttonGhost: { padding: "10px 12px", borderRadius: 10, border: "1px solid #e5e7eb", background: "black", cursor: "pointer" },
+        error: { marginBottom: 12, padding: 10, border: "1px solid #fca5a5", background: "#fff1f2", borderRadius: 12 },
+        list: { display: "grid", gap: 10, marginTop: 12 },
+        item: { padding: 12, border: "1px solid #e5e7eb", borderRadius: 12, background: "#fafafa" },
+        muted: { color: "#6b7280", fontSize: 12 },
+        pre: { whiteSpace: "pre-wrap" as const, background: "#f9fafb", padding: 12, borderRadius: 12, border: "1px solid #e5e7eb" },
+    };
 
     return (
-        <main style={{ padding: 24, maxWidth: 1100, margin: "0 auto" }}>
-            <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 16 }}>CMS Admin</h1>
+        <main style={S.page}>
+            <div style={S.header}>
+                <h1 style={S.title}>CMS Admin</h1>
+                <button onClick={onLogout} disabled={loading} style={S.button}>
+                    {loading ? "..." : "Logout"}
+                </button>
+            </div>
 
-            {err ? (
-                <div style={{ marginBottom: 12, padding: 10, border: "1px solid #fca5a5", background: "#fff1f2" }}>
-                    {err}
-                </div>
-            ) : null}
+            {err ? <div style={S.error}>{err}</div> : null}
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
-                <section style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 16 }}>
-                    <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Create service</h2>
+            <div style={S.grid}>
+                <section style={S.card}>
+                    <h2 style={S.cardTitle}>Сервисы</h2>
 
-                    <form onSubmit={onCreate} style={{ display: "grid", gap: 10 }}>
-                        <input placeholder="serviceName" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required />
-                        <input placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required />
-                        <input
-                            placeholder="price"
-                            type="number"
-                            value={Number.isFinite(price) ? price : 0}
-                            onChange={(e) => setPrice(Number(e.target.value))}
-                            required
-                        />
-                        <input placeholder="imageSrc" value={imageSrc} onChange={(e) => setImageSrc(e.target.value)} />
-                        <input placeholder="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                        <textarea
-                            placeholder="longDescription"
-                            value={longDescription}
-                            onChange={(e) => setLongDescription(e.target.value)}
-                            rows={5}
-                        />
-                        <button type="submit" disabled={loading} style={{ padding: "10px 12px" }}>
+                    <div style={S.subTitle}>Создать новый сервис</div>
+                    <form onSubmit={onCreate} style={S.form}>
+                        <input style={S.input} placeholder="serviceName" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required />
+                        <input style={S.input} placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required />
+                        <input style={S.input} placeholder="price" type="number" value={Number.isFinite(price) ? price : 0} onChange={(e) => setPrice(Number(e.target.value))} required />
+                        <input style={S.input} placeholder="imageSrc" value={imageSrc} onChange={(e) => setImageSrc(e.target.value)} />
+                        <input style={S.input} placeholder="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                        <textarea style={S.textarea} placeholder="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} rows={5} />
+                        <button type="submit" disabled={loading} style={S.button}>
                             {loading ? "..." : "Create"}
                         </button>
                     </form>
-                </section>
 
-                {/* GET ONE */}
-                <section style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 16 }}>
-                    <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Get one service</h2>
-
-                    <form onSubmit={onGetOne} style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-                        <input
-                            placeholder="id"
-                            type="number"
-                            value={oneId}
-                            onChange={(e) => setOneId(Number(e.target.value))}
-                            style={{ width: 120 }}
-                        />
-                        <button type="submit" disabled={loading} style={{ padding: "10px 12px" }}>
+                    <div style={S.subTitle}>Get one service</div>
+                    <form onSubmit={onGetOne} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10 }}>
+                        <input style={S.input} placeholder="id" type="number" value={oneId} onChange={(e) => setOneId(Number(e.target.value))} />
+                        <button type="submit" disabled={loading} style={S.buttonGhost}>
                             {loading ? "..." : "Get"}
                         </button>
                     </form>
 
-                    {one ? (
-                        <pre style={{ whiteSpace: "pre-wrap", background: "#f9fafb", padding: 12, borderRadius: 10 }}>
-              {JSON.stringify(one, null, 2)}
-            </pre>
+                    {one ? <pre style={{ ...S.pre, marginTop: 12 }}>{JSON.stringify(one, null, 2)}</pre> : null}
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
+                        <div style={S.subTitle}>All services</div>
+                        <button onClick={refresh} disabled={loading} style={S.buttonGhost}>
+                            {loading ? "..." : "Refresh"}
+                        </button>
+                    </div>
+
+                    <div style={S.list}>
+                        {services.map((s: any) => (
+                            <div key={String(s.id ?? s.slug ?? Math.random())} style={S.item}>
+                                <div style={{ fontWeight: 800 }}>{s.serviceName ?? s.service_name ?? s.name}</div>
+                                <div style={S.muted}>{s.slug}</div>
+                                <div style={{ marginTop: 6 }}>{s.price}</div>
+                            </div>
+                        ))}
+                        {services.length === 0 ? <div style={S.muted}>Empty</div> : null}
+                    </div>
+                </section>
+                <section style={S.card}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <h2 style={S.cardTitle}>Doctors</h2>
+                        <button onClick={refreshDoctors} disabled={loading} style={S.buttonGhost}>
+                            {loading ? "..." : "Refresh"}
+                        </button>
+                    </div>
+
+                    {/* CREATE */}
+                    <div style={S.subTitle}>Create doctor</div>
+                    <form onSubmit={onCreateDoctor} style={S.form}>
+                        <input style={S.input} placeholder="Image URL (imgSrc)" value={dImgSrc} onChange={(e) => setDImgSrc(e.target.value)} />
+                        <input style={S.input} placeholder="Full name" value={dName} onChange={(e) => setDName(e.target.value)} required />
+                        <input style={S.input} placeholder="Specialty (e.g. Neurologist)" value={dSpecialty} onChange={(e) => setDSpecialty(e.target.value)} required />
+                        <textarea style={S.textarea} placeholder="Bio" value={dBio} onChange={(e) => setDBio(e.target.value)} rows={4} />
+                        <button type="submit" disabled={loading} style={S.button}>
+                            {loading ? "..." : "Create"}
+                        </button>
+                    </form>
+
+                    {/* EDIT */}
+                    <div style={S.subTitle}>Update doctor</div>
+                    {editingDoctorId ? (
+                        <form onSubmit={saveEditDoctor} style={S.form}>
+                            <div style={{ ...S.muted, marginTop: -6 }}>
+                                Editing doctor ID: <b>{editingDoctorId}</b>
+                            </div>
+
+                            <input style={S.input} placeholder="Image URL (imgSrc)" value={editImgSrc} onChange={(e) => setEditImgSrc(e.target.value)} />
+                            <input style={S.input} placeholder="Full name" value={editName} onChange={(e) => setEditName(e.target.value)} required />
+                            <input style={S.input} placeholder="Specialty" value={editSpecialty} onChange={(e) => setEditSpecialty(e.target.value)} required />
+                            <textarea style={S.textarea} placeholder="Bio" value={editBio} onChange={(e) => setEditBio(e.target.value)} rows={4} />
+
+                            <div style={{ display: "flex", gap: 10 }}>
+                                <button type="submit" disabled={loading} style={S.button}>
+                                    {loading ? "..." : "Save"}
+                                </button>
+                                <button type="button" onClick={cancelEdit} disabled={loading} style={S.buttonGhost}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     ) : (
-                        <div style={{ color: "#6b7280" }}>No item loaded</div>
+                        <div style={S.muted}>Click “Edit” on a doctor below to update.</div>
                     )}
+
+                    {/* LIST */}
+                    <div style={S.subTitle}>All doctors</div>
+                    <div style={S.list}>
+                        {doctors.map((d: any) => (
+                            <div key={String(d.id)} style={S.item}>
+                                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+                                    <div>
+                                        <div style={{ fontWeight: 800 }}>{d.name}</div>
+                                        <div style={S.muted}>{d.specialty}</div>
+                                        {d.imgSrc ? <div style={S.muted}>{d.imgSrc}</div> : null}
+                                    </div>
+
+                                    <button
+                                        onClick={() => startEdit(d)}
+                                        disabled={loading}
+                                        style={S.buttonGhost}
+                                        title="Load doctor into the update form"
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
+
+                                {d.bio ? <div style={{ marginTop: 8, fontSize: 13, color: "#111827" }}>{d.bio}</div> : null}
+                            </div>
+                        ))}
+
+                        {doctors.length === 0 ? <div style={S.muted}>Empty</div> : null}
+                    </div>
                 </section>
             </div>
-
-            <section style={{ marginTop: 16, border: "1px solid #e5e7eb", borderRadius: 12, padding: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <h2 style={{ fontSize: 18, fontWeight: 700 }}>All services</h2>
-                    <button onClick={refresh} disabled={loading} style={{ padding: "10px 12px" }}>
-                        {loading ? "..." : "Refresh"}
-                    </button>
-                </div>
-
-                <div style={{ display: "grid", gap: 10 }}>
-                    {services.map((s: any) => (
-                        <div key={String(s.id ?? s.slug ?? Math.random())} style={{ padding: 12, border: "1px solid #e5e7eb", borderRadius: 10 }}>
-                            <div style={{ fontWeight: 700 }}>{s.serviceName ?? s.service_name ?? s.name}</div>
-                            <div style={{ color: "#6b7280" }}>{s.slug}</div>
-                            <div>{s.price}</div>
-                        </div>
-                    ))}
-                    {services.length === 0 ? <div style={{ color: "#6b7280" }}>Empty</div> : null}
-                </div>
-            </section>
         </main>
     );
-}
