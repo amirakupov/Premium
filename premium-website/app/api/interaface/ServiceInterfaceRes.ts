@@ -1,4 +1,5 @@
 export interface ServiceInterfaceRes {
+    analysesList?: boolean;
     id: number,
     slug: string,
     imageSrc: string,

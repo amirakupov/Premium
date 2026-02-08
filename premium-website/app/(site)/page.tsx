@@ -7,6 +7,8 @@ import MobileLanding from '@/app/(site)/components/MobileLanding';
 
 import HomeClientShell from '@/app/(site)/components/HomeClientShell';
 import ServicesSection from "@/app/(site)/components/ServiceSection";
+import DoctorsSection from "@/app/(site)/components/DoctorsSection";
+import MobileLandingSection from "@/app/(site)/components/MobileLandingSection";
 
 export default function HomePage() {
   return (
@@ -17,11 +19,11 @@ export default function HomePage() {
               <Quote />
               <ServicesSection />
               <ClinicPhotos />
-              <Doctors doctors={[]}/>
+              <DoctorsSection />
               <CookieBanner />
             </>
           }
-          mobile={<MobileLanding />}
+          mobile={<MobileLandingSection />}
       />
   );
 }

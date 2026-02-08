@@ -1,10 +1,10 @@
 import React from 'react';
 import DoctorCard from '@/app/(site)/components/DoctorCard';
 import styles from './page.module.css';
-import {listAllServices} from "@/app/api/listAllDoctors";
+import {listAllDoctors} from "@/app/api/listAllDoctors";
 
 export default async function DoctorsPage() {
-  const doctors = await listAllServices();
+  const doctors = await listAllDoctors();
   return (
     <main className={styles.container}>
       <h1 className={styles.heading}>Наши специалисты</h1>

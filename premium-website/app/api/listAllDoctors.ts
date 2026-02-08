@@ -2,7 +2,7 @@ import {DoctorInterfaceRes} from "@/app/api/interaface/DoctorInterfaceRes";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
-export const listAllServices = async ():Promise<DoctorInterfaceRes[]>=>
+export const listAllDoctors = async ():Promise<DoctorInterfaceRes[]>=>
 {
     const url = `${BACKEND_URL}/api/cms/doctors`;
     const response = await fetch(url,
