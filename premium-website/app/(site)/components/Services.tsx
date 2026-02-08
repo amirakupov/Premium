@@ -1,13 +1,20 @@
-// app/components/Services.tsx
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import styles from './Services.module.css';
 import ServiceCard from './ServiceCard';
-import { services } from '@/app/(site)/services/data/services';
 
-const Services: React.FC = () => {
+type Service = {
+    id: number | string;
+    imageSrc: string;
+    serviceName: string;
+    price: string | number;
+    description: string;
+    slug: string;
+};
+
+const Services: React.FC<{ services: Service[] }> = ({ services }) => {
   return (
     <div className={styles.servicesSection}>
       {/* Header container: column layout */}

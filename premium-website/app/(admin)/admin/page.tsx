@@ -251,7 +251,7 @@ export default function AdminPage() {
         }
     }
     const S = {
-        page: { padding: 24, maxWidth: 1200, margin: "0 auto" },
+        page: { padding: 24, maxWidth: 1200, margin: "0 auto", color: "pink", backgroundColor: "pink"},
         header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
         title: { fontSize: 28, fontWeight: 800, margin: 0, color: "#111827"},
         grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" },
@@ -291,9 +291,9 @@ export default function AdminPage() {
     return (
         <main style={S.page}>
             <div style={S.header}>
-                <h1 style={S.title}>CMS Admin</h1>
+                <h1 style={S.title}>пикми админка</h1>
                 <button onClick={onLogout} disabled={loading} style={S.button}>
-                    {loading ? "..." : "Logout"}
+                    {loading ? "..." : "логаут"}
                 </button>
             </div>
 
@@ -301,35 +301,35 @@ export default function AdminPage() {
 
             <div style={S.grid}>
                 <section style={S.card}>
-                    <h2 style={S.cardTitle}>Сервисы</h2>
+                    <h2 style={S.cardTitle}>сервисы</h2>
 
-                    <div style={S.subTitle}>Создать новый сервис</div>
+                    <div style={S.subTitle}>создать новый сервис</div>
                     <form onSubmit={onCreate} style={S.form}>
-                        <input style={S.input} placeholder="serviceName" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required />
-                        <input style={S.input} placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required />
-                        <input style={S.input} placeholder="price" type="number" value={Number.isFinite(price) ? price : 0} onChange={(e) => setPrice(Number(e.target.value))} required />
-                        <input style={S.input} placeholder="imageSrc" value={imageSrc} onChange={(e) => setImageSrc(e.target.value)} />
-                        <input style={S.input} placeholder="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                        <textarea style={S.textarea} placeholder="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} rows={5} />
+                        <input style={S.input} placeholder="имя сервиса" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required />
+                        <input style={S.input} placeholder="слаг" value={slug} onChange={(e) => setSlug(e.target.value)} required />
+                        <input style={S.input} placeholder="цена" type="number" value={Number.isFinite(price) ? price : 0} onChange={(e) => setPrice(Number(e.target.value))} required />
+                        <input style={S.input} placeholder="адрес до картиночки" value={imageSrc} onChange={(e) => setImageSrc(e.target.value)} />
+                        <input style={S.input} placeholder="описание" value={description} onChange={(e) => setDescription(e.target.value)} />
+                        <textarea style={S.textarea} placeholder="большое описание" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} rows={5} />
                         <button type="submit" disabled={loading} style={S.button}>
-                            {loading ? "..." : "Create"}
+                            {loading ? "..." : "создать"}
                         </button>
                     </form>
 
-                    <div style={S.subTitle}>Get one service</div>
-                    <form onSubmit={onGetOne} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10 }}>
-                        <input style={S.input} placeholder="id" type="number" value={oneId} onChange={(e) => setOneId(Number(e.target.value))} />
-                        <button type="submit" disabled={loading} style={S.buttonGhost}>
-                            {loading ? "..." : "Get"}
-                        </button>
-                    </form>
+                    {/*<div style={S.subTitle}>Найти сервис</div>*/}
+                        {/*<form onSubmit={onGetOne} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10 }}>*/}
+                        {/*    <input style={S.input} placeholder="id" type="number" value={oneId} onChange={(e) => setOneId(Number(e.target.value))} />*/}
+                        {/*    <button type="submit" disabled={loading} style={S.buttonGhost}>*/}
+                        {/*        {loading ? "..." : "Get"}*/}
+                        {/*    </button>*/}
+                        {/*</form></>*/}
 
                     {one ? <pre style={{ ...S.pre, marginTop: 12 }}>{JSON.stringify(one, null, 2)}</pre> : null}
 
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-                        <div style={S.subTitle}>All services</div>
+                        <div style={S.subTitle}>все сервисы</div>
                         <button onClick={refresh} disabled={loading} style={S.buttonGhost}>
-                            {loading ? "..." : "Refresh"}
+                            {loading ? "..." : "обновить"}
                         </button>
                     </div>
 
@@ -341,57 +341,57 @@ export default function AdminPage() {
                                 <div style={{ marginTop: 6 }}>{s.price}</div>
                             </div>
                         ))}
-                        {services.length === 0 ? <div style={S.muted}>Empty</div> : null}
+                        {services.length === 0 ? <div style={S.muted}>пусто</div> : null}
                     </div>
                 </section>
                 <section style={S.card}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h2 style={S.cardTitle}>Doctors</h2>
+                        <h2 style={S.cardTitle}>врачи</h2>
                         <button onClick={refreshDoctors} disabled={loading} style={S.buttonGhost}>
-                            {loading ? "..." : "Refresh"}
+                            {loading ? "..." : "обновить"}
                         </button>
                     </div>
 
                     {/* CREATE */}
-                    <div style={S.subTitle}>Create doctor</div>
+                    <div style={S.subTitle}>создать врача</div>
                     <form onSubmit={onCreateDoctor} style={S.form}>
-                        <input style={S.input} placeholder="Image URL (imgSrc)" value={dImgSrc} onChange={(e) => setDImgSrc(e.target.value)} />
-                        <input style={S.input} placeholder="Full name" value={dName} onChange={(e) => setDName(e.target.value)} required />
-                        <input style={S.input} placeholder="Specialty (e.g. Neurologist)" value={dSpecialty} onChange={(e) => setDSpecialty(e.target.value)} required />
-                        <textarea style={S.textarea} placeholder="Bio" value={dBio} onChange={(e) => setDBio(e.target.value)} rows={4} />
+                        <input style={S.input} placeholder="адрес до картиночки" value={dImgSrc} onChange={(e) => setDImgSrc(e.target.value)} />
+                        <input style={S.input} placeholder="полное имя" value={dName} onChange={(e) => setDName(e.target.value)} required />
+                        <input style={S.input} placeholder="специализация" value={dSpecialty} onChange={(e) => setDSpecialty(e.target.value)} required />
+                        <textarea style={S.textarea} placeholder="биография" value={dBio} onChange={(e) => setDBio(e.target.value)} rows={4} />
                         <button type="submit" disabled={loading} style={S.button}>
-                            {loading ? "..." : "Create"}
+                            {loading ? "..." : "создать"}
                         </button>
                     </form>
 
                     {/* EDIT */}
-                    <div style={S.subTitle}>Update doctor</div>
+                    <div style={S.subTitle}>обновить доктора</div>
                     {editingDoctorId ? (
                         <form onSubmit={saveEditDoctor} style={S.form}>
                             <div style={{ ...S.muted, marginTop: -6 }}>
                                 Editing doctor ID: <b>{editingDoctorId}</b>
                             </div>
 
-                            <input style={S.input} placeholder="Image URL (imgSrc)" value={editImgSrc} onChange={(e) => setEditImgSrc(e.target.value)} />
-                            <input style={S.input} placeholder="Full name" value={editName} onChange={(e) => setEditName(e.target.value)} required />
-                            <input style={S.input} placeholder="Specialty" value={editSpecialty} onChange={(e) => setEditSpecialty(e.target.value)} required />
-                            <textarea style={S.textarea} placeholder="Bio" value={editBio} onChange={(e) => setEditBio(e.target.value)} rows={4} />
+                            <input style={S.input} placeholder="адрес до картиночки" value={editImgSrc} onChange={(e) => setEditImgSrc(e.target.value)} />
+                            <input style={S.input} placeholder="полное имя" value={editName} onChange={(e) => setEditName(e.target.value)} required />
+                            <input style={S.input} placeholder="специальность" value={editSpecialty} onChange={(e) => setEditSpecialty(e.target.value)} required />
+                            <textarea style={S.textarea} placeholder="биография" value={editBio} onChange={(e) => setEditBio(e.target.value)} rows={4} />
 
                             <div style={{ display: "flex", gap: 10 }}>
                                 <button type="submit" disabled={loading} style={S.button}>
-                                    {loading ? "..." : "Save"}
+                                    {loading ? "..." : "сохранить"}
                                 </button>
                                 <button type="button" onClick={cancelEdit} disabled={loading} style={S.buttonGhost}>
-                                    Cancel
+                                    отменить
                                 </button>
                             </div>
                         </form>
                     ) : (
-                        <div style={S.muted}>Click “Edit” on a doctor below to update.</div>
+                        <div style={S.muted}>нажми на "изменить" на кнопочке снизу</div>
                     )}
 
                     {/* LIST */}
-                    <div style={S.subTitle}>All doctors</div>
+                    <div style={S.subTitle}>все врачи</div>
                     <div style={S.list}>
                         {doctors.map((d: any) => (
                             <div key={String(d.id)} style={S.item}>
@@ -416,7 +416,7 @@ export default function AdminPage() {
                             </div>
                         ))}
 
-                        {doctors.length === 0 ? <div style={S.muted}>Empty</div> : null}
+                        {doctors.length === 0 ? <div style={S.muted}>пусто</div> : null}
                     </div>
                 </section>
             </div>
