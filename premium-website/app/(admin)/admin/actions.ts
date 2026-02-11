@@ -128,6 +128,54 @@ export async function actionPatchDoctor(
     return (await r.json().catch(() => null)) as DoctorInterfaceRes | null;
 }
 
+export async function actionUploadMedia(formData: FormData): Promise<string | null> {
+    const cookieStore = await cookies();
+    const cookieHeader = buildCookieHeader(cookieStore);
+
+    const r = await fetch(`${BACKEND_URL}/api/cms/media/upload`, {
+        method: "POST",
+        headers: {
+            cookie: cookieHeader,
+        },
+        body: formData,
+        cache: "no-store",
+    });
+
+    if (!r.ok) {
+        const txt = await r.text().catch(() => "");
+        console.error("Upload failed", r.status, txt);
+        return null;
+    }
+
+    const json = (await r.json().catch(() => null)) as any;
+    return json?.url ?? null;
+}
+
+export async function actionPatchService(
+    id: number,
+    payload: Partial<ServiceInterfaceReq>
+): Promise<ServiceInterfaceRes | null> {
+    const cookieStore = await cookies();
+    const cookieHeader = buildCookieHeader(cookieStore);
+
+    const r = await fetch(`${BACKEND_URL}/api/cms/service/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+            cookie: cookieHeader,
+        },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+    });
+
+    if (!r.ok) {
+        const txt = await r.text().catch(() => "");
+        console.error("Patch doctor failed", r.status, txt);
+        return null;
+    }
+    return (await r.json().catch(() => null)) as ServiceInterfaceRes | null;
+}
 export async function actionListAll(): Promise<ServiceInterfaceRes[]> {
     return await listAllServices();
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { ServiceInterfaceReq } from "@/app/api/interaface/ServiceInterfaceReq";
 import type { ServiceInterfaceRes } from "@/app/api/interaface/ServiceInterfaceRes";
-import {actionCreateService, actionListAll, actionListOne} from "./actions";
+import {actionCreateService, actionListAll, actionListOne, actionPatchService, actionUploadMedia} from "./actions";
 import {
     actionCreateDoctor,
     actionPatchDoctor,
@@ -51,6 +51,66 @@ export default function AdminPage() {
     const [editName, setEditName] = useState("");
     const [editSpecialty, setEditSpecialty] = useState("");
     const [editBio, setEditBio] = useState("");
+
+    const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
+
+    const [editServiceName, setEditServiceName] = useState("");
+    const [editSlug, setEditSlug] = useState("");
+    const [editPrice, setEditPrice] = useState<number>(0);
+    const [editImageSrc, setEditImageSrc] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [editLongDescription, setEditLongDescription] = useState("");
+
+
+    function startEditService(s: ServiceInterfaceRes) {
+        setEditingServiceId(s.id);
+
+        setEditServiceName((s as any).serviceName ?? (s as any).service_name ?? "");
+        setEditSlug((s as any).slug ?? "");
+        setEditPrice(Number((s as any).price ?? 0));
+        setEditImageSrc((s as any).imageSrc ?? (s as any).image_src ?? "");
+        setEditDescription((s as any).description ?? "");
+        setEditLongDescription((s as any).longDescription ?? (s as any).long_description ?? "");
+    }
+
+    function cancelEditService() {
+        setEditingServiceId(null);
+        setEditServiceName("");
+        setEditSlug("");
+        setEditPrice(0);
+        setEditImageSrc("");
+        setEditDescription("");
+        setEditLongDescription("");
+    }
+
+    async function saveEditService(e: React.FormEvent) {
+        e.preventDefault();
+        if (!editingServiceId) return;
+
+        setErr("");
+        setLoading(true);
+        try {
+            const patch: Partial<ServiceInterfaceReq> = {
+                serviceName: editServiceName,
+                slug: editSlug,
+                price: editPrice,
+                imageSrc: editImageSrc,
+                description: editDescription,
+                longDescription: editLongDescription,
+            };
+
+            const updated = await actionPatchService(editingServiceId, patch);
+            if (!updated) {
+                setErr("Update service failed");
+                return;
+            }
+
+            await refresh();
+            cancelEditService();
+        } finally {
+            setLoading(false);
+        }
+    }
 
     function startEdit(d: DoctorInterfaceRes) {
         setEditingDoctorId(d.id);
@@ -250,6 +310,29 @@ export default function AdminPage() {
             setLoading(false);
         }
     }
+
+    async function uploadImageAndSet(
+        file: File,
+        setValue: (url: string) => void
+    ) {
+        setErr("");
+        setLoading(true);
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+
+            const url = await actionUploadMedia(fd);
+            if (!url) {
+                setErr("Upload failed");
+                return;
+            }
+
+            setValue(url); // ✅ сюда запишется путь
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const S = {
         page: { padding: 24, maxWidth: 1200, margin: "0 auto", color: "pink", backgroundColor: "pink"},
         header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
@@ -308,7 +391,15 @@ export default function AdminPage() {
                         <input style={S.input} placeholder="имя сервиса" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required />
                         <input style={S.input} placeholder="слаг" value={slug} onChange={(e) => setSlug(e.target.value)} required />
                         <input style={S.input} placeholder="цена" type="number" value={Number.isFinite(price) ? price : 0} onChange={(e) => setPrice(Number(e.target.value))} required />
-                        <input style={S.input} placeholder="адрес до картиночки" value={imageSrc} onChange={(e) => setImageSrc(e.target.value)} />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            disabled={loading}
+                            onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) uploadImageAndSet(f, setImageSrc);
+                            }}
+                        />
                         <input style={S.input} placeholder="описание" value={description} onChange={(e) => setDescription(e.target.value)} />
                         <textarea style={S.textarea} placeholder="большое описание" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} rows={5} />
                         <button type="submit" disabled={loading} style={S.button}>
@@ -316,15 +407,51 @@ export default function AdminPage() {
                         </button>
                     </form>
 
-                    {/*<div style={S.subTitle}>Найти сервис</div>*/}
-                        {/*<form onSubmit={onGetOne} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10 }}>*/}
-                        {/*    <input style={S.input} placeholder="id" type="number" value={oneId} onChange={(e) => setOneId(Number(e.target.value))} />*/}
-                        {/*    <button type="submit" disabled={loading} style={S.buttonGhost}>*/}
-                        {/*        {loading ? "..." : "Get"}*/}
-                        {/*    </button>*/}
-                        {/*</form></>*/}
+                    <div style={S.subTitle}>обновить сервис</div>
+                    {editingServiceId ? (
+                        <form onSubmit={saveEditService} style={S.form}>
+                            <div style={{ ...S.muted, marginTop: -6 }}>
+                                Editing service ID: <b>{editingServiceId}</b>
+                            </div>
 
-                    {one ? <pre style={{ ...S.pre, marginTop: 12 }}>{JSON.stringify(one, null, 2)}</pre> : null}
+                            <input style={S.input} placeholder="имя сервиса" value={editServiceName}
+                                   onChange={(e) => setEditServiceName(e.target.value)} required />
+
+                            <input style={S.input} placeholder="слаг" value={editSlug}
+                                   onChange={(e) => setEditSlug(e.target.value)} required />
+
+                            <input style={S.input} placeholder="цена" type="number"
+                                   value={Number.isFinite(editPrice) ? editPrice : 0}
+                                   onChange={(e) => setEditPrice(Number(e.target.value))} required />
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                disabled={loading}
+                                onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) uploadImageAndSet(f, setEditImageSrc);
+                                }}
+                            />
+
+                            <input style={S.input} placeholder="описание" value={editDescription}
+                                   onChange={(e) => setEditDescription(e.target.value)} />
+
+                            <textarea style={S.textarea} placeholder="большое описание" value={editLongDescription}
+                                      onChange={(e) => setEditLongDescription(e.target.value)} rows={5} />
+
+                            <div style={{ display: "flex", gap: 10 }}>
+                                <button type="submit" disabled={loading} style={S.button}>
+                                    {loading ? "..." : "сохранить"}
+                                </button>
+                                <button type="button" onClick={cancelEditService} disabled={loading} style={S.buttonGhost}>
+                                    отменить
+                                </button>
+                            </div>
+                        </form>
+                    ) : (
+                        <div style={S.muted}>нажми на Edit у сервиса ниже</div>
+                    )}
 
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
                         <div style={S.subTitle}>все сервисы</div>
@@ -335,15 +462,28 @@ export default function AdminPage() {
 
                     <div style={S.list}>
                         {services.map((s: any) => (
-                            <div key={String(s.id ?? s.slug ?? Math.random())} style={S.item}>
-                                <div style={{ fontWeight: 800 }}>{s.serviceName ?? s.service_name ?? s.name}</div>
-                                <div style={S.muted}>{s.slug}</div>
-                                <div style={{ marginTop: 6 }}>{s.price}</div>
+                            <div key={String(s.id ?? s.slug)} style={S.item}>
+                                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+                                    <div>
+                                        <div style={{ fontWeight: 800 }}>{s.serviceName ?? s.service_name ?? s.name}</div>
+                                        <div style={S.muted}>{s.slug}</div>
+                                        <div style={{ marginTop: 6 }}>{s.price}</div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => startEditService(s)}
+                                        disabled={loading}
+                                        style={S.buttonGhost}
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
                         ))}
                         {services.length === 0 ? <div style={S.muted}>пусто</div> : null}
                     </div>
                 </section>
+
                 <section style={S.card}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <h2 style={S.cardTitle}>врачи</h2>
@@ -355,7 +495,15 @@ export default function AdminPage() {
                     {/* CREATE */}
                     <div style={S.subTitle}>создать врача</div>
                     <form onSubmit={onCreateDoctor} style={S.form}>
-                        <input style={S.input} placeholder="адрес до картиночки" value={dImgSrc} onChange={(e) => setDImgSrc(e.target.value)} />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            disabled={loading}
+                            onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) uploadImageAndSet(f, setDImgSrc);
+                            }}
+                        />
                         <input style={S.input} placeholder="полное имя" value={dName} onChange={(e) => setDName(e.target.value)} required />
                         <input style={S.input} placeholder="специализация" value={dSpecialty} onChange={(e) => setDSpecialty(e.target.value)} required />
                         <textarea style={S.textarea} placeholder="биография" value={dBio} onChange={(e) => setDBio(e.target.value)} rows={4} />
@@ -372,7 +520,15 @@ export default function AdminPage() {
                                 Editing doctor ID: <b>{editingDoctorId}</b>
                             </div>
 
-                            <input style={S.input} placeholder="адрес до картиночки" value={editImgSrc} onChange={(e) => setEditImgSrc(e.target.value)} />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                disabled={loading}
+                                onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) uploadImageAndSet(f, setEditImgSrc);
+                                }}
+                            />
                             <input style={S.input} placeholder="полное имя" value={editName} onChange={(e) => setEditName(e.target.value)} required />
                             <input style={S.input} placeholder="специальность" value={editSpecialty} onChange={(e) => setEditSpecialty(e.target.value)} required />
                             <textarea style={S.textarea} placeholder="биография" value={editBio} onChange={(e) => setEditBio(e.target.value)} rows={4} />

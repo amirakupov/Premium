@@ -4,7 +4,7 @@ export interface ServiceInterfaceRes {
     slug: string,
     imageSrc: string,
     serviceName: string,
-    price: bigint,
+    price: number,
     description: string,
     longDescription: string
 }
