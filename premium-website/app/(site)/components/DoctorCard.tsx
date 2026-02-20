@@ -9,6 +9,7 @@ interface DoctorCardProps {
   name: string;
   specialty: string;
   bio?: string;
+  onBook?: () => void;
 }
 
 export default function DoctorCard({
@@ -16,6 +17,7 @@ export default function DoctorCard({
                                      name,
                                      specialty,
                                      bio,
+                                     onBook,
                                    }: DoctorCardProps) {
   const [flipped, setFlipped] = useState(false);
   const router = useRouter();
@@ -23,8 +25,9 @@ export default function DoctorCard({
   const handleFlip = () => setFlipped((f) => !f);
 
   const handleButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // чтобы не флипалось
-    router.push('/contacts'); // переадресация
+    e.stopPropagation();
+    if (onBook) return onBook();
+    router.push('/contacts');
   };
 
   return (

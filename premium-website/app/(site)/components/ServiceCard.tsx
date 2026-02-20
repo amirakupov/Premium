@@ -8,7 +8,7 @@ import styles from './ServiceCard.module.css';
 interface ServiceCardProps {
   imageSrc: string;
   serviceName: string;
-  price: bigint;
+  price: string;
   description: string;
   serviceUrl: string;
 }

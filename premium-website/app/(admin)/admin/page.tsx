@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import type { ServiceInterfaceReq } from "@/app/api/interaface/ServiceInterfaceReq";
 import type { ServiceInterfaceRes } from "@/app/api/interaface/ServiceInterfaceRes";
 import {actionCreateService, actionListAll, actionListOne, actionPatchService, actionUploadMedia} from "./actions";
@@ -327,22 +327,22 @@ export default function AdminPage() {
                 return;
             }
 
-            setValue(url); // ✅ сюда запишется путь
+            setValue(url);
         } finally {
             setLoading(false);
         }
     }
 
-    const S = {
-        page: { padding: 24, maxWidth: 1200, margin: "0 auto", color: "pink", backgroundColor: "pink"},
+    const S: Record<string, CSSProperties> = {
+        page: { padding: 24, maxWidth: 1200, margin: "0 auto", color: "pink", backgroundColor: "pink" },
         header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
-        title: { fontSize: 28, fontWeight: 800, margin: 0, color: "#111827"},
+        title: { fontSize: 28, fontWeight: 800, margin: 0, color: "#111827" },
         grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" },
         card: { border: "1px solid #e5e7eb", borderRadius: 14, padding: 16, background: "white" },
-        cardTitle: { fontSize: 16, fontWeight: 800, margin: "0 0 12px 0", color: "#111827"  },
+        cardTitle: { fontSize: 16, fontWeight: 800, margin: "0 0 12px 0", color: "#111827" },
         subTitle: { fontSize: 13, fontWeight: 700, margin: "12px 0 8px 0", color: "#111827" },
         form: { display: "grid", gap: 10 },
-        row: { display: "grid", gridTemplateColumns: "140px 1fr", gap: 10, alignItems: "center" as const },
+        row: { display: "grid", gridTemplateColumns: "140px 1fr", gap: 10, alignItems: "center" },
         input: {
             padding: "10px 12px",
             border: "1px solid #e5e7eb",
@@ -368,7 +368,7 @@ export default function AdminPage() {
         list: { display: "grid", gap: 10, marginTop: 12 },
         item: { padding: 12, border: "1px solid #e5e7eb", borderRadius: 12, background: "#fafafa" },
         muted: { color: "#6b7280", fontSize: 12 },
-        pre: { whiteSpace: "pre-wrap" as const, background: "#f9fafb", padding: 12, borderRadius: 12, border: "1px solid #e5e7eb" },
+        pre: { whiteSpace: "pre-wrap", background: "#f9fafb", padding: 12, borderRadius: 12, border: "1px solid #e5e7eb" },
     };
 
     return (
@@ -578,3 +578,4 @@ export default function AdminPage() {
             </div>
         </main>
     );
+}
