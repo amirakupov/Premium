@@ -41,7 +41,7 @@ export default async function ServicesPage() {
             key={s.id}
             imageSrc={s.imageSrc}
             serviceName={s.serviceName}
-            price={s.price}
+            price={String(s.price)}
             description={s.description}
             // формируем URL на основе поля slug:
             serviceUrl={`/services/${s.slug}`}
