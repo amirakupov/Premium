@@ -9,7 +9,7 @@ type Service = {
     id: number | string;
     imageSrc: string;
     serviceName: string;
-    price: string | number;
+    price: string;
     description: string;
     slug: string;
 };

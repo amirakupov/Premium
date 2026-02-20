@@ -7,9 +7,13 @@ export default async function MobileLandingSection() {
         listAllServices(),
         listAllDoctors(),
         ]);
+    const uiServices = services.slice(0, 6).map((s: any) => ({
+        ...s,
+        price: String(s.price),
+    }));
     return (
         <MobileLanding
-            services={services.slice(0, 6)}
+            services={uiServices}
             doctors={doctors.slice(0, 4)}
         />
     );

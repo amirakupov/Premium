@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { services } from '../data/services';
 import styles from './page.module.css';
 import {listAllServices} from "@/app/api/listAllServices";
 
