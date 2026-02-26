@@ -1,4 +1,3 @@
-// app/eeg/page.tsx
 'use client';
 
 import React from 'react';
@@ -8,7 +7,6 @@ import styles from './page.module.css';
 export default function EegPage() {
   return (
     <main className={styles.container}>
-      {/* Hero */}
       <section className={styles.hero}>
         <h1 className={styles.heroTitle}>
           <span className={styles.accent}>ЭЭГ-мониторинг</span> в клинике Premium

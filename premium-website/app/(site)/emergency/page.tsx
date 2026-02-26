@@ -58,22 +58,22 @@ export default function TransportPage() {
           <tbody>
             <tr>
               <td>Доставка из больницы домой</td>
-              <td>2200</td>
+              <td>3000</td>
               <td></td>
             </tr>
             <tr>
               <td>Перевозка на обследование</td>
               <td>3000</td>
-              <td>час</td>
+              <td></td>
             </tr>
             <tr>
               <td>Перевозка по Уфе в одном направлении</td>
-              <td>2200</td>
+              <td>3000</td>
               <td></td>
             </tr>
             <tr>
               <td>Трансфер в аэропорт Уфы</td>
-              <td>2800</td>
+              <td>4500</td>
               <td></td>
             </tr>
             <tr>
@@ -108,7 +108,7 @@ export default function TransportPage() {
             </tr>
             <tr>
               <td>Трансфер в ж/д вокзал</td>
-              <td>2800</td>
+              <td>3500</td>
               <td></td>
             </tr>
             <tr>

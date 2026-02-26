@@ -14,20 +14,17 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             setHideFooter(true);
             const handler = () => setHideFooter(false);
             window.addEventListener("preloaderFinished", handler);
-
             if (window.localStorage.getItem("preloaderPassed")) setHideFooter(false);
-
             return () => window.removeEventListener("preloaderFinished", handler);
-        } else {
-            setHideFooter(false);
         }
+        setHideFooter(false);
     }, [pathname]);
 
     return (
-        <>
+        <div className="site">
             <Header />
-            <main>{children}</main>
+            <main className="site-main">{children}</main>
             {!hideFooter && <Footer />}
-        </>
+        </div>
     );
 }

@@ -22,10 +22,9 @@ export default function ContactPage() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
-    // 1. Отправляем письмо пользователю
     const sendToUser = emailjs.send(
       'service_d5ejdz9',
-      'template_v2ofuzf', // твой шаблон подтверждения для пользователя
+      'template_v2ofuzf',
       formData,
       'rg3ZXe_2vm2ejlIWW'
     );

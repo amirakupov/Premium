@@ -54,8 +54,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        {/* Нижний центрированный блок */}
         <div className={styles.bottom}>
           <p className={styles.text}>© {new Date().getFullYear()} Клиника «Премиум»</p>
         </div>

@@ -2,12 +2,74 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+  --muted: #6b7280;
+  --border: rgba(17, 24, 39, 0.12);
+
+  /* ВАЖНО: высота хедера. Подгони под свой Header */
+  --header-h: 88px;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
-  padding-top: 0;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: "Montserrat", sans-serif;
+}
+
+.site {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.site-main {
+  padding-top: var(--header-h); /* <-- вот это уберёт подрезание */
+}
+
+/* аккуратный “каркас” для страниц */
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+/* простая “карточка” */
+.card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+}
+
+.link-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.link-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.link-item a {
+  color: var(--foreground);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.link-item a:hover {
+  text-decoration: underline;
 }
