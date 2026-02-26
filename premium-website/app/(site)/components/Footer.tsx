@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
+import A11yToggle from "@/app/(site)/components/A11yToggle";
 
 export default function Footer() {
   return (
@@ -56,6 +57,7 @@ export default function Footer() {
         </div>
         <div className={styles.bottom}>
           <p className={styles.text}>© {new Date().getFullYear()} Клиника «Премиум»</p>
+          <A11yToggle className={styles.a11yBtn} />
         </div>
       </div>
     </footer>

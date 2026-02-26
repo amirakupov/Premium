@@ -4,11 +4,9 @@ export const metadata = {
   title: 'Клиника Неврологии Премиум в Уфе',
   description: 'Медицинский центр в Уфе, предлагающий широкий спектр услуг в области неврологии, физиотерапии и реабилитации. Мы помогаем восстановить здоровье и улучшить качество жизни наших пациентов.',
 };
-
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-      <html lang="en">
+      <html lang="ru">
       <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

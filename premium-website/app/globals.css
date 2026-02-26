@@ -5,13 +5,52 @@
   --foreground: #111827;
   --muted: #6b7280;
   --border: rgba(17, 24, 39, 0.12);
-
-  /* ВАЖНО: высота хедера. Подгони под свой Header */
   --header-h: 88px;
+  --font-scale: 1;
+  --line: 1.4;
+  --letter: 0;
+  --focus: 3px;
+}
+
+html[data-a11y="1"] {
+  --font-scale: 1.25;
+  --line: 1.7;
+  --letter: 0.02em;
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #111827;
+  --border: rgba(0, 0, 0, 0.25);
+  --focus: 5px;
+}
+html[data-a11y="1"] body {
+  font-size: 20px;
+}
+
+:focus-visible {
+  outline: var(--focus) solid currentColor;
+  outline-offset: 3px;
+}
+a {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* уважение prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
 }
 
 html, body {
   height: 100%;
+}
+
+html {
+  font-size: calc(16px * var(--font-scale));
+}
+
+body {
+  line-height: var(--line);
+  letter-spacing: var(--letter);
 }
 
 body {
