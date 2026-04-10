@@ -81,6 +81,24 @@
 .bottom .text {
   margin: 0.25rem 0;
 }
+.a11yBtn {
+  border: 1px solid rgba(255,255,255,0.35);
+  background: transparent;
+  color: inherit;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.a11yBtn:hover {
+  text-decoration: underline;
+}
+
+.a11yBtn:focus-visible {
+  outline: 4px solid currentColor;
+  outline-offset: 3px;
+}
 
 /* Адаптив */
 @media (max-width: 768px) {

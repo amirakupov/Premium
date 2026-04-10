@@ -4,9 +4,9 @@ import React from "react";
 
 export default function LegalPage() {
     const items = [
-        { title: "Выписка из реестра лицензий", href: "/docs/license.pdf" },
-        { title: "Свидетельство ИНН/КПП", href: "/docs/inn.pdf" },
-        { title: "Прайс-лист", href: "/docs/price.xlsx" }, // лучше потом /docs/price.pdf
+        { title: "Выписка из реестра лицензий", href: "/docs/reestr.pdf" },
+        { title: "Свидетельство ИНН/КПП", href: "/docs/nalog.pdf" },
+        { title: "Прайс-лист", href: "/docs/price.pdf" },
         { title: "Договор (типовой)", href: "/docs/contract.pdf" },
     ];
 
