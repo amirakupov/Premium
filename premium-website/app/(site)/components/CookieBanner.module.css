@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 .banner {
   position: fixed;
@@ -15,8 +14,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  font-family: 'Poppins', sans-serif;
-  z-index: 10000;
+  font-family: var(--font-sans);
+  z-index: var(--z-banner);
 }
 
 .message {

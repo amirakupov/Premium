@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -23,49 +23,55 @@ export default function ClinicFotos() {
   const slidesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const slides = slidesRef.current?.querySelectorAll(`.${styles.slide}`);
-    if (!slides) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    slides.forEach((slide) => {
-      gsap.fromTo(
-        slide,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          scrollTrigger: {
-            trigger: slide,
-            start: 'top 70%',
-            end: 'bottom 50%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    });
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      const slides = slidesRef.current?.querySelectorAll(`.${styles.slide}`);
+      slides?.forEach((slide) => {
+        gsap.fromTo(
+          slide,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: slide,
+              start: 'top 70%',
+              end: 'bottom 50%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
+    }, slidesRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <div className={styles.carousel}>
-      {/* Header & description */}
+    <section className={styles.carousel}>
       <h2 className={styles.heading}>НАША ГАЛЕРЕЯ</h2>
-      <p className={styles.subheading}>Мы используем самое современное и качественное оборудование в связке с приятным интерьером для вашего комфорта</p>
+      <p className={styles.subheading}>
+        Мы используем самое современное и качественное оборудование в связке с
+        приятным интерьером для вашего комфорта
+      </p>
 
-      {/* Image slider */}
       <div className={styles.slides} ref={slidesRef}>
         {photos.map((src, index) => (
-          <div className={styles.slide} key={index}>
+          <div className={styles.slide} key={src}>
             <Image
               src={src}
-              alt={`Clinic photo ${index + 1}`}
+              alt={`Интерьер и оборудование клиники — фото ${index + 1}`}
               fill
-              objectFit="cover"
+              sizes="(max-width: 768px) 90vw, 45vw"
+              style={{ objectFit: 'cover' }}
               className={styles.image}
             />
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

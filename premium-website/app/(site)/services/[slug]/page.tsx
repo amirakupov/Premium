@@ -1,15 +1,31 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
-import {listAllServices} from "@/app/api/listAllServices";
+import { listAllServices } from '@/lib/cms';
+import { analysesData } from '../data/analysesData';
 
-export default async function ServiceDetailPage({params,}: { params: Promise<{ slug: string }>; })
-{
-  const { slug } = await params;
+type Params = { params: Promise<{ slug: string }> };
 
+async function getServiceBySlug(slug: string) {
   const services = await listAllServices();
-  const service = services.find((s) => s.slug === slug);
+  return services.find((s) => s.slug === slug) ?? null;
+}
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
+  if (!service) return { title: 'Услуга не найдена' };
+  return {
+    title: service.serviceName,
+    description: service.description,
+  };
+}
+
+export default async function ServiceDetailPage({ params }: Params) {
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
   return (
@@ -20,6 +36,7 @@ export default async function ServiceDetailPage({params,}: { params: Promise<{ s
             src={service.imageSrc}
             alt={service.serviceName}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             style={{ objectFit: 'cover' }}
             className={styles.image}
           />
@@ -37,19 +54,32 @@ export default async function ServiceDetailPage({params,}: { params: Promise<{ s
           </Link>
         </div>
       </div>
-      {slug === 'analiz' && service.analysesList && (
-      <section className={styles.analysisSection}>
-        <h2>СПИСОК АНАЛИЗОВ</h2>
-        <table className={styles.analysisTable}>
-          <thead>
-            <tr>
-              <th>Код</th>
-              <th>Название</th>
-              <th>Цена</th>
-            </tr>
-          </thead>
-        </table>
-      </section>
+
+      {slug === 'analiz' && (
+        <section className={styles.analysisSection}>
+          <h2>Список анализов</h2>
+          <div className={styles.tableWrapper}>
+            <table className={styles.analysisTable}>
+              <thead>
+                <tr>
+                  <th scope="col">Код</th>
+                  <th scope="col">Название</th>
+                  <th scope="col">Цена, ₽</th>
+                </tr>
+              </thead>
+              <tbody>
+                {analysesData.map((row) => (
+                  <tr key={row.code}>
+                    <td>{row.code}</td>
+                    <td>{row.name}</td>
+                    <td>{row.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
     </main>
-  )}
+  );
+}

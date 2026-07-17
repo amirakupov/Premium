@@ -4,6 +4,10 @@ import type { NextRequest } from "next/server";
 const COOKIE_NAME = "access_token";
 const PROTECTED = ["/admin"];
 
+// ВНИМАНИЕ: middleware проверяет только наличие куки, не её подпись —
+// это UX-редирект, а не защита. Авторизацию каждого CMS-запроса
+// (включая GET) обязан проверять бэкенд.
+
 export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
 

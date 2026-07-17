@@ -57,7 +57,7 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-sans);
     text-decoration: none;
   }
   

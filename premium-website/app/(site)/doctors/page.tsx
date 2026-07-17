@@ -1,7 +1,13 @@
-import React from 'react';
+import type { Metadata } from 'next';
 import DoctorCard from '@/app/(site)/components/DoctorCard';
 import styles from './page.module.css';
-import {listAllDoctors} from "@/app/api/listAllDoctors";
+import { listAllDoctors } from '@/lib/cms';
+
+export const metadata: Metadata = {
+  title: 'Наши врачи',
+  description:
+    'Врачи клиники неврологии «Премиум» в Уфе: неврологи, эпилептологи, специалисты по реабилитации. Команда с учёными степенями и европейскими стандартами лечения.',
+};
 
 export default async function DoctorsPage() {
   const doctors = await listAllDoctors();
@@ -25,24 +31,24 @@ export default async function DoctorsPage() {
         </div>
       </section>
       <div className={styles.specialSection}>
-          <div className={styles.subsection}>
-            <h3>Специализация:</h3>
-            <ul>
-              <li>Лечение мигреней, болей в спине/суставах, головокружений, звона в ушах</li>
-              <li>Реабилитация после инсультов и травм</li>
-              <li>Лечение депрессий и тревожных расстройств</li>
-              <li>Детская неврология (СДВГ, задержки развития)</li>
-            </ul>
-          </div>
-
-          <div className={styles.subsection}>
-            <h3>Уникальные методики:</h3>
-            <ul>
-              <li>Ботулинотерапия под УЗИ-контролем</li>
-              <li>PRP-терапия позвоночника и суставов</li>
-            </ul>
-          </div>
+        <div className={styles.subsection}>
+          <h2>Специализация:</h2>
+          <ul>
+            <li>Лечение мигреней, болей в спине/суставах, головокружений, звона в ушах</li>
+            <li>Реабилитация после инсультов и травм</li>
+            <li>Лечение депрессий и тревожных расстройств</li>
+            <li>Детская неврология (СДВГ, задержки развития)</li>
+          </ul>
         </div>
+
+        <div className={styles.subsection}>
+          <h2>Уникальные методики:</h2>
+          <ul>
+            <li>Ботулинотерапия под УЗИ-контролем</li>
+            <li>PRP-терапия позвоночника и суставов</li>
+          </ul>
+        </div>
+      </div>
       <div className={styles.grid}>
         {doctors.map((doc) => (
           <DoctorCard

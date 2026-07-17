@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 export default function AdminHeader() {
@@ -11,11 +9,10 @@ export default function AdminHeader() {
                 left: 0,
                 right: 0,
                 height: 70,
-                zIndex: 10000,
-                background: "pink",
-                color: "white",
-                borderBottom: "1px solid rgba(255,255,255,0.35)",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.12)",
+                zIndex: 100,
+                background: "#111827",
+                color: "#fff",
+                borderBottom: "1px solid rgba(255,255,255,0.15)",
             }}
         >
             <div
@@ -29,15 +26,13 @@ export default function AdminHeader() {
                     justifyContent: "space-between",
                 }}
             >
-                <Link href="/admin" style={{ color: "black", textDecoration: "none", fontWeight: 900 }}>
-                    Контент Менеджмент Алины Габдрахмановой
+                <Link href="/admin" style={{ color: "#fff", textDecoration: "none", fontWeight: 800 }}>
+                    Админ-панель клиники «Премиум»
                 </Link>
 
-                <div style={{ display: "flex", gap: 10 }}>
-                    <Link href="/" style={{ color: "black", textDecoration: "none", fontWeight: 800, opacity: 0.9 }}>
-                        На сайт клиники
-                    </Link>
-                </div>
+                <Link href="/" style={{ color: "#fff", textDecoration: "none", fontWeight: 600, opacity: 0.85 }}>
+                    На сайт клиники
+                </Link>
             </div>
         </header>
     );

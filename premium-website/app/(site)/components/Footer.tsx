@@ -1,25 +1,29 @@
-import React from 'react';
-import Link from 'next/link';
-import styles from './Footer.module.css';
+import Link from "next/link";
+import styles from "./Footer.module.css";
 import A11yToggle from "@/app/(site)/components/A11yToggle";
+import { CLINIC } from "@/lib/constants";
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} id="address">
       <div className={styles.container}>
 
-        {/* Верхний блок: карта + колонки */}
         <div className={styles.topArea}>
-
           <div className={styles.mapWrapper}>
-<iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad327fce798422fcd5d920a9ccc441768bc8681acc45894d3adc940841067f112&amp;source=constructor" width="500" height="400" frameBorder="0"></iframe>
-
+            <iframe
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad327fce798422fcd5d920a9ccc441768bc8681acc45894d3adc940841067f112&amp;source=constructor"
+              width="500"
+              height="400"
+              frameBorder="0"
+              loading="lazy"
+              title="Клиника «Премиум» на карте"
+            ></iframe>
           </div>
 
           <div className={styles.columns}>
             <div className={styles.column}>
               <h4 className={styles.title}>Клиника</h4>
-              <Link href="/premium-website/public" className={styles.link}>Главная</Link>
+              <Link href="/" className={styles.link}>Главная</Link>
               <Link href="/contacts" className={styles.link}>Контакты</Link>
             </div>
 
@@ -32,21 +36,21 @@ export default function Footer() {
             <div className={styles.column}>
               <h4 className={styles.title}>Адрес</h4>
               <p className={styles.text}>
-                г. Уфа, ул. Даяна Мурзина, 7/1<br/>
+                {CLINIC.address}<br />
                 Респ. Башкортостан, 450018
               </p>
               <p className={styles.text}>
-                Пн–Пт: 9:00–20:00<br/>
-                Сб–Вс: 9:00–18:00
+                {CLINIC.hoursWeekdays}<br />
+                {CLINIC.hoursWeekend}
               </p>
               <p className={styles.text}>
-                <a href="tel:+7(917)369-55-09" className={styles.link}>+7(917)369-55-09</a>
+                <a href={CLINIC.phoneHref} className={styles.link}>{CLINIC.phone}</a>
               </p>
               <p className={styles.text}>
                 <a
-                  href="https://www.instagram.com/premium_ufa102/"
+                  href={CLINIC.instagram}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   className={styles.link}
                 >
                   Instagram
@@ -55,12 +59,12 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
         <div className={styles.bottom}>
-          <p className={styles.text}>© {new Date().getFullYear()} Клиника «Премиум»</p>
+          <p className={styles.text}>© {new Date().getFullYear()} {CLINIC.name}</p>
           <A11yToggle className={styles.a11yBtn} />
         </div>
       </div>
     </footer>
   );
 }
-

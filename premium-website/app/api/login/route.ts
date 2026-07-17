@@ -33,8 +33,10 @@ export const POST = async (req: NextRequest) => {
         }
 
         const res = NextResponse.json(data, { status: r.status });
-        const setCookie = r.headers.get("set-cookie");
-        if (setCookie) res.headers.append("set-cookie", setCookie);
+        // getSetCookie: несколько Set-Cookie нельзя склеивать в одну строку
+        for (const cookie of r.headers.getSetCookie()) {
+            res.headers.append("set-cookie", cookie);
+        }
         return res;
     } catch (err: any) {
         const msg =

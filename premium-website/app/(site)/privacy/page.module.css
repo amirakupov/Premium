@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
   background: #ffffff;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   color: #333333;
   line-height: 1.6;
 }

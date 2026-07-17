@@ -1,49 +1,84 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { LoginRequest } from "@/app/api/interaface/LoginRequest";
-import {login} from "@/app/api/login/login";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import type { LoginRequest } from "@/lib/types";
 
-export default function LoginPage() {
+async function login(payload: LoginRequest): Promise<boolean> {
+    const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+        cache: "no-store",
+    });
+    return response.ok;
+}
+
+function LoginForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [err, setErr] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
-    const onSubmit = async (e: React.FormEvent) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (submitting) return;
         setErr("");
-        const payload: LoginRequest = { username, password };
-        const ok = await login(payload);
-        if (!ok) {
-            setErr("Login failed");
-            return;
+        setSubmitting(true);
+        try {
+            const ok = await login({ username, password });
+            if (!ok) {
+                setErr("Неверный логин или пароль");
+                return;
+            }
+            // middleware кладёт исходный адрес в ?next=
+            const next = searchParams.get("next");
+            router.push(next && next.startsWith("/") ? next : "/admin");
+            router.refresh();
+        } finally {
+            setSubmitting(false);
         }
-        router.push("/admin");
-        router.refresh();
     };
 
     return (
         <main style={{ padding: 24 }}>
             <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, maxWidth: 280 }}>
+                <label htmlFor="username">Логин</label>
                 <input
-                    placeholder="username"
+                    id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     autoComplete="username"
                     required
                 />
+                <label htmlFor="password">Пароль</label>
                 <input
-                    placeholder="password"
+                    id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="current-password"
                     required
                 />
-                <button type="submit">login</button>
-                {err ? <div>{err}</div> : null}
+                <button type="submit" disabled={submitting}>
+                    {submitting ? "..." : "Войти"}
+                </button>
+                {err ? <div role="alert">{err}</div> : null}
             </form>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense>
+            <LoginForm />
+        </Suspense>
     );
 }

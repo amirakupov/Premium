@@ -1,189 +1,78 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { ServiceInterfaceReq } from "@/app/api/interaface/ServiceInterfaceReq";
-import {listAllServices} from "@/app/api/listAllServices";
-import {ServiceInterfaceRes} from "@/app/api/interaface/ServiceInterfaceRes";
-import {listOneServices} from "@/app/api/listOneService";
-import {createService} from "@/app/api/service/createService";
-import {DoctorInterfaceRes} from "@/app/api/interaface/DoctorInterfaceRes";
-import {DoctorInterfaceReq} from "@/app/api/interaface/DoctorInterfaceReq";
+import type { Doctor, DoctorPayload, Service, ServicePayload } from "@/lib/types";
 
 const BACKEND_URL = process.env.BACKEND_URL!;
 
-function buildCookieHeader(cookieStore: Awaited<ReturnType<typeof cookies>>) {
-    const all = cookieStore.getAll();
-    return all.map(c => `${c.name}=${c.value}`).join("; ");
+async function cookieHeader() {
+    const store = await cookies();
+    return store.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 }
 
-export async function actionCreateService(payload: ServiceInterfaceReq) {
-
-
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
-    const r = await fetch(`${BACKEND_URL}/api/cms/service`, {
-        method: "POST",
+async function cmsRequest<T>(
+    path: string,
+    init: { method?: string; body?: unknown } = {}
+): Promise<T | null> {
+    const r = await fetch(`${BACKEND_URL}${path}`, {
+        method: init.method ?? "GET",
         headers: {
-            "Content-Type": "application/json",
             accept: "application/json",
-            cookie: cookieHeader,
+            cookie: await cookieHeader(),
+            ...(init.body !== undefined ? { "Content-Type": "application/json" } : {}),
         },
-        body: JSON.stringify(payload),
+        body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
         cache: "no-store",
     });
 
     if (!r.ok) {
         const txt = await r.text().catch(() => "");
-        console.error("Create failed", r.status, txt);
+        console.error(`CMS ${init.method ?? "GET"} ${path} → ${r.status}`, txt);
         return null;
     }
-
-    return await r.json().catch(() => null);
+    return (await r.json().catch(() => null)) as T | null;
 }
 
-export async function actionListAllDoctors(): Promise<DoctorInterfaceRes[]> {
-
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
-    const r = await fetch(`${BACKEND_URL}/api/cms/doctors`, {
-        method: "GET",
-        headers: {
-            accept: "application/json",
-            cookie: cookieHeader,
-        },
-        cache: "no-store",
-    });
-
-    if (!r.ok) return [];
-    return (await r.json().catch(() => [])) as DoctorInterfaceRes[];
+export async function actionListAllServices(): Promise<Service[]> {
+    const list = await cmsRequest<Service[]>("/api/cms/services");
+    return Array.isArray(list) ? list : [];
 }
 
-export async function actionGetDoctor(id: number): Promise<DoctorInterfaceRes | null> {
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
-    const r = await fetch(`${BACKEND_URL}/api/cms/doctor/${id}`, {
-        method: "GET",
-        headers: {
-            accept: "application/json",
-            cookie: cookieHeader,
-        },
-        cache: "no-store",
-    });
-
-    if (!r.ok) return null;
-    return (await r.json().catch(() => null)) as DoctorInterfaceRes | null;
+export async function actionCreateService(payload: ServicePayload) {
+    return cmsRequest<Service>("/api/cms/service", { method: "POST", body: payload });
 }
 
-export async function actionCreateDoctor(payload: DoctorInterfaceReq): Promise<DoctorInterfaceRes | null> {
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
-    const r = await fetch(`${BACKEND_URL}/api/cms/doctor`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            accept: "application/json",
-            cookie: cookieHeader,
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-    });
-
-    if (!r.ok) {
-        const txt = await r.text().catch(() => "");
-        console.error("Create doctor failed", r.status, txt);
-        return null;
-    }
-
-    return (await r.json().catch(() => null)) as DoctorInterfaceRes | null;
+export async function actionPatchService(id: number, payload: Partial<ServicePayload>) {
+    return cmsRequest<Service>(`/api/cms/service/${id}`, { method: "PATCH", body: payload });
 }
 
-export async function actionPatchDoctor(
-    id: number,
-    payload: Partial<DoctorInterfaceReq>
-): Promise<DoctorInterfaceRes | null> {
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
+export async function actionListAllDoctors(): Promise<Doctor[]> {
+    const list = await cmsRequest<Doctor[]>("/api/cms/doctors");
+    return Array.isArray(list) ? list : [];
+}
 
-    const r = await fetch(`${BACKEND_URL}/api/cms/doctors/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            accept: "application/json",
-            cookie: cookieHeader,
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-    });
+export async function actionCreateDoctor(payload: DoctorPayload) {
+    return cmsRequest<Doctor>("/api/cms/doctor", { method: "POST", body: payload });
+}
 
-    if (!r.ok) {
-        const txt = await r.text().catch(() => "");
-        console.error("Patch doctor failed", r.status, txt);
-        return null;
-    }
-
-    return (await r.json().catch(() => null)) as DoctorInterfaceRes | null;
+export async function actionPatchDoctor(id: number, payload: Partial<DoctorPayload>) {
+    return cmsRequest<Doctor>(`/api/cms/doctors/${id}`, { method: "PATCH", body: payload });
 }
 
 export async function actionUploadMedia(formData: FormData): Promise<string | null> {
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
     const r = await fetch(`${BACKEND_URL}/api/cms/media/upload`, {
         method: "POST",
-        headers: {
-            cookie: cookieHeader,
-        },
+        headers: { cookie: await cookieHeader() },
         body: formData,
         cache: "no-store",
     });
 
     if (!r.ok) {
         const txt = await r.text().catch(() => "");
-        console.error("Upload failed", r.status, txt);
+        console.error("CMS upload failed", r.status, txt);
         return null;
     }
 
-    const json = (await r.json().catch(() => null)) as any;
+    const json = (await r.json().catch(() => null)) as { url?: string } | null;
     return json?.url ?? null;
-}
-
-export async function actionPatchService(
-    id: number,
-    payload: Partial<ServiceInterfaceReq>
-): Promise<ServiceInterfaceRes | null> {
-    const cookieStore = await cookies();
-    const cookieHeader = buildCookieHeader(cookieStore);
-
-    const r = await fetch(`${BACKEND_URL}/api/cms/service/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            accept: "application/json",
-            cookie: cookieHeader,
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-    });
-
-    if (!r.ok) {
-        const txt = await r.text().catch(() => "");
-        console.error("Patch doctor failed", r.status, txt);
-        return null;
-    }
-    return (await r.json().catch(() => null)) as ServiceInterfaceRes | null;
-}
-export async function actionListAll(): Promise<ServiceInterfaceRes[]> {
-    return await listAllServices();
-}
-
-export async function actionListOne(id: number): Promise<ServiceInterfaceRes | null> {
-    return await listOneServices(id);
-}
-
-export async function actionCreate(payload: ServiceInterfaceReq) {
-    return await createService(payload);
 }

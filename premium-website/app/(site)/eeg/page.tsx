@@ -1,8 +1,13 @@
-'use client';
-
-import React from 'react';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import styles from './page.module.css';
+import { CLINIC } from '@/lib/constants';
+
+export const metadata: Metadata = {
+  title: 'ЭЭГ-мониторинг в Уфе',
+  description:
+    'ЭЭГ-мониторинг в клинике «Премиум» в Уфе: дневной, ночной и суточный форматы. Точная диагностика эпилепсии и неврологических расстройств, заключение эпилептолога.',
+};
 
 export default function EegPage() {
   return (
@@ -146,7 +151,7 @@ export default function EegPage() {
         </div>
       </section>
       
-        <a href="tel:+7(917)369-55-09" className={styles.ctaButton}>
+        <a href={CLINIC.phoneHref} className={styles.ctaButton}>
           Записаться на ЭЭГ
         </a>
     </main>

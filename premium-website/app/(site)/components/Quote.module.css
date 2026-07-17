@@ -1,7 +1,6 @@
 /* ──────────────────────────────────────────────────────────────────── */
 /*     Импорт шрифта Inter (минималистично, «чисто»)                  */
 /* ──────────────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 /* ──────────────────────────────────────────────────────────────────── */
 /* 1) Обёртка для всего блока «цитата + подпись»                        */
@@ -24,7 +23,7 @@
 /* 2) Заголовок цитаты: Inter, 700, uppercase                           */
 /* ──────────────────────────────────────────────────────────────────── */
 .heading {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 1.4rem;
   margin-bottom: 1rem;
@@ -36,7 +35,7 @@
 /* 3) Сам текст цитаты: Inter 400, регулярный                           */
 /* ──────────────────────────────────────────────────────────────────── */
 .quoteText {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.5;
@@ -85,7 +84,7 @@
 /* 4.2.1) Имя доктора: Inter 600                                         */
 /* ──────────────────────────────────────────────────────────────────── */
 .doctorName {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
@@ -96,7 +95,7 @@
 /* 4.2.2) Должность: Inter 400                                           */
 /* ──────────────────────────────────────────────────────────────────── */
 .doctorTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 400;
   margin: 0;

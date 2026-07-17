@@ -1,34 +1,58 @@
-'use client';
+import type { Metadata } from "next";
+import styles from "./page.module.css";
+import { CLINIC } from "@/lib/constants";
+import {
+  homeUltrasoundPrices,
+  homeVisitPrices,
+  transportPrices,
+  type EmergencyPrice,
+} from "./pricesData";
 
-import React from 'react';
-import Image from 'next/image';
-import styles from './page.module.css';
+export const metadata: Metadata = {
+  title: "Санитарный транспорт и выезд врача на дом",
+  description:
+    "Санитарный транспорт в Уфе и по Башкортостану 24/7: перевозка лежачих и маломобильных пациентов, выезд врача, анализы и УЗИ на дому. Цены на все услуги.",
+};
 
-export default function TransportPage() {
+function PriceTable({ caption, rows }: { caption: string; rows: EmergencyPrice[] }) {
+  return (
+    <div className={styles.tableWrapper}>
+      <table className={styles.servicesTable}>
+        <caption className={styles.tableCaption}>{caption}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Услуга</th>
+            <th scope="col">Цена</th>
+            <th scope="col">Тарификация</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.name}>
+              <td>{row.name}</td>
+              <td>{row.price}</td>
+              <td>{row.unit ?? ""}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default function EmergencyPage() {
   return (
     <main className={styles.container}>
-      {/* Desktop frame */}
-      <div className={styles.frameDesktop}>
-        <Image
-          src="/infoblock/Emergency-3.svg"
-          alt="Transport Frame"
-          fill
-          style={{ objectFit: 'contain' }}
-        />
-      </div>
-
-      {/* Mobile frame */}
-      <div className={styles.frameMobile}>
-        <Image
-          src="/mobile/emergency2.svg"
-          alt="Transport Frame Mobile"
-          fill
-          style={{ objectFit: 'contain' }}
-        />
-      </div>
-      <p className={styles.subtitle}>
-        Безопасная перевозка пациентов в Уфе по Республики Башкортостан
-      </p>
+      <section className={styles.hero}>
+        <h1 className={styles.heroTitle}>Санитарный транспорт</h1>
+        <p className={styles.heroSubtitle}>
+          Профессиональная помощь 24/7 — безопасно, быстро, с медицинским
+          сопровождением. Перевозка пациентов по Уфе и Республике Башкортостан.
+        </p>
+        <a href={CLINIC.phoneHref} className={styles.heroPhone}>
+          {CLINIC.phone}
+        </a>
+      </section>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Почему выбирают нас?</h2>
@@ -37,7 +61,7 @@ export default function TransportPage() {
             <strong>Профессиональная команда</strong>: водители с медицинским образованием, санитары с опытом от 5 лет
           </li>
           <li>
-            <strong>Полная оснащенность</strong>: автомобили с реанимационным оборудованием, носилки, кресла-каталки, аптечка
+            <strong>Полная оснащённость</strong>: автомобили с реанимационным оборудованием, носилки, кресла-каталки, аптечка
           </li>
           <li>
             <strong>Круглосуточная работа</strong>: доставка в любое время суток, включая праздники
@@ -47,209 +71,9 @@ export default function TransportPage() {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Наши услуги и цены</h2>
-        <table className={styles.servicesTable}>
-          <thead>
-            <tr>
-              <th>Услуга</th>
-              <th>Цена, ₽</th>
-              <th>Тарификация</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Доставка из больницы домой</td>
-              <td>3000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Перевозка на обследование</td>
-              <td>3000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Перевозка по Уфе в одном направлении</td>
-              <td>3000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Трансфер в аэропорт Уфы</td>
-              <td>4500</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>По Республике Башкортостан</td>
-              <td>55р</td>
-              <td>км</td>
-            </tr>
-            <tr>
-              <td>Спуск/подъём (до 90 кг)</td>
-              <td>200</td>
-              <td>этаж</td>
-            </tr>
-            <tr>
-              <td>Спуск/подъём (более 90 кг)</td>
-              <td>350</td>
-              <td>этаж</td>
-            </tr>
-            <tr>
-              <td>Доп. ожидание (30 мин)</td>
-              <td>от 400</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд санитаров (спуск/подъём)</td>
-              <td>1800</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Аренда санитарного автомобиля</td>
-              <td>3300</td>
-              <td>час</td>
-            </tr>
-            <tr>
-              <td>Трансфер в ж/д вокзал</td>
-              <td>3500</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Анализы на дому</td>
-              <td>500р</td>
-              <td>км</td>
-            </tr>
-            <tr>
-              <td>ЭКГ на дому</td>
-              <td>500р</td>
-              <td>км</td>
-            </tr>
-            <tr>
-              <td>Сопровождение мероприятий</td>
-              <td>2000</td>
-              <td>час</td>
-            </tr>
-            <tr>
-              <td>Сопровождение выездных мероприятий</td>
-              <td>2000</td>
-              <td>час</td>
-            </tr>
-            <tr>
-              <td>Выезд медсестры на дом</td>
-              <td>500р</td>
-              <td>км</td>
-            </tr>
-            <tr>
-              <td>Транспортировка лежачих больных</td>
-              <td>3500</td>
-              <td>час</td>
-            </tr>
-            <tr>
-              <td>Транспортировка маломобильных больных</td>
-              <td>3000</td>
-              <td>час</td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 5 км</td>
-              <td>4000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 10 км</td>
-              <td>6000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 15 км</td>
-              <td>7000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 20 км</td>
-              <td>8000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 25 км</td>
-              <td>9000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 30 км</td>
-              <td>10000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 35 км</td>
-              <td>11000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 40 км</td>
-              <td>12000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача невролога до 45 км</td>
-              <td>13000</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Выезд и прием врача терапевта до 50 км</td>
-              <td>13000</td>
-              <td></td>
-            </tr>
-
-            <tr>
-              <td>Выезд и прием врача невролога до 5 км</td>
-              <td>4000</td>
-              <td></td>
-            </tr>
-            <tr>
-            <td>Ультразвуковое исследование органов брюшной полости (ОБП: печень, желчный пузырь, поджелудочная железа, селезёнка), Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование органов брюшной полости и мочевыделительной системы (почки, мочевой пузырь), Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование мочевыделительной системы (почки, надпочечники, мочевой пузырь), Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование мочевого пузыря, Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование поверхностных структур (мягкие ткани, лимфатические узлы, одна анатомическая область), Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование щитовидной железы с региональными лимфоузлами, Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование молочных желез с региональными лимфоузлами, Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Ультразвуковое исследование суставов (отдельно каждый, второй сустав сравнивается только с проблемной зоной), Выезд</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-          <tr>
-            <td>Вызов медсестры на дом</td>
-            <td>500</td>
-            <td>1 км</td>
-          </tr>
-
-          </tbody>
-        </table>
+        <PriceTable caption="Санитарный транспорт" rows={transportPrices} />
+        <PriceTable caption="Выезд врача и процедуры на дому" rows={homeVisitPrices} />
+        <PriceTable caption="УЗИ на дому" rows={homeUltrasoundPrices} />
       </section>
 
       <section className={styles.section}>
@@ -270,11 +94,10 @@ export default function TransportPage() {
           <li>Лежачие больные — специально оборудованные машины</li>
         </ul>
       </section>
-      <a href="tel:+7(917)369-55-09" className={styles.callButton}>
-        Вызвать Санитарный Транспорт
+
+      <a href={CLINIC.phoneHref} className={styles.callButton}>
+        Вызвать санитарный транспорт
       </a>
     </main>
   );
 }
-
-

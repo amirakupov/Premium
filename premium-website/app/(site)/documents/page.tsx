@@ -1,15 +1,19 @@
-"use client";
+import type { Metadata } from "next";
 
-import React from "react";
+export const metadata: Metadata = {
+    title: "Документы",
+    description:
+        "Официальные документы клиники «Премиум»: лицензии, свидетельства, прайс-лист и типовой договор.",
+};
 
-export default function LegalPage() {
-    const items = [
-        { title: "Выписка из реестра лицензий", href: "/docs/reestr.pdf" },
-        { title: "Свидетельство ИНН/КПП", href: "/docs/nalog.pdf" },
-        { title: "Прайс-лист", href: "/docs/price.pdf" },
-        { title: "Договор (типовой)", href: "/docs/contract.pdf" },
-    ];
+const items = [
+    { title: "Выписка из реестра лицензий", href: "/docs/reestr.pdf" },
+    { title: "Свидетельство ИНН/КПП", href: "/docs/nalog.pdf" },
+    { title: "Прайс-лист", href: "/docs/price.pdf" },
+    { title: "Договор (типовой)", href: "/docs/contract.pdf" },
+];
 
+export default function DocumentsPage() {
     return (
         <div className="page">
             <h1 style={{ margin: 0, fontSize: 28 }}>Документы</h1>

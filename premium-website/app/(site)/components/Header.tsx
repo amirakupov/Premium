@@ -1,5 +1,3 @@
-// app/components/Header.tsx
-
 'use client';
 
 import Link from 'next/link';
@@ -7,92 +5,71 @@ import { useState } from 'react';
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import SearchBar from './Searchbar';
 import styles from './Header.module.css';
+import { EMERGENCY_LINK, NAV_LINKS } from '@/lib/constants';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  // If you want to close by tapping the blurred background:
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className={styles.header}>
-      {/* LEFT: LOGO */}
-      <Link 
+      <Link
         href="/"
         className={styles.logo}
-        aria-label="Homepage"
-        onClick={closeMenu} 
+        aria-label="На главную"
+        onClick={closeMenu}
       >
         PREMIUM
       </Link>
 
-      {/* DESKTOP NAV */}
-      <nav className={styles.nav}>
-        <Link href="/services">Услуги</Link>
-        <Link href="/doctors">Врачи</Link>
-        <Link href="/contacts">Контакты</Link>
-        <Link href="/#address">Адрес</Link>
-        <Link href="/eeg">ЭЭГ</Link>
-        <Link href="/emergency" className={styles.emergencyLink}>
-          Экстренная помощь
+      <nav className={styles.nav} aria-label="Основная навигация">
+        {NAV_LINKS.map((link) => (
+          <Link key={link.href} href={link.href}>
+            {link.label}
+          </Link>
+        ))}
+        <Link href={EMERGENCY_LINK.href} className={styles.emergencyLink}>
+          {EMERGENCY_LINK.label}
         </Link>
       </nav>
 
-      {/* DESKTOP SEARCH */}
       <div className={styles.desktopSearch}>
         <SearchBar />
       </div>
 
-      {/* BURGER or CLOSE (MOBILE ONLY) */}
       <button
         className={`${styles.burger} ${menuOpen ? styles.rotateIcon : ''}`}
-        onClick={toggleMenu}
-        aria-label="Mobile Menu"
+        onClick={() => setMenuOpen((open) => !open)}
+        aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-nav"
       >
         {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
       </button>
 
-      {/* FULLSCREEN OVERLAY (MOBILE) */}
       <div
-        className={`${styles.mobileNav} ${
-          menuOpen ? styles.mobileNavOpen : ''
-        }`}
-        onClick={closeMenu} /* if you want to close by tapping the blur */
+        id="mobile-nav"
+        className={`${styles.mobileNav} ${menuOpen ? styles.mobileNavOpen : ''}`}
+        onClick={closeMenu}
       >
         <div
           className={styles.mobileNavContent}
-          onClick={(e) => e.stopPropagation()} /* prevent close when tapping menu */
+          onClick={(e) => e.stopPropagation()}
         >
-          <Link href="/services" onClick={() => setMenuOpen(false)}>
-            Услуги
-          </Link>
-          <Link href="/doctors" onClick={() => setMenuOpen(false)}>
-            Врачи
-          </Link>
-          <Link href="/eeg" onClick={() => setMenuOpen(false)}>
-            ЭЭГ
-          </Link>
-          <Link href="/contacts" onClick={() => setMenuOpen(false)}>
-            Записаться
-          </Link>
-          <Link href="/#address" onClick={() => setMenuOpen(false)}>
-            Адрес
-          </Link>
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} onClick={closeMenu}>
+              {link.label}
+            </Link>
+          ))}
           <Link
-            href="/emergency"
-            onClick={() => setMenuOpen(false)}
+            href={EMERGENCY_LINK.href}
+            onClick={closeMenu}
             className={styles.emergencyLink}
           >
-            Санитарная помощь
+            {EMERGENCY_LINK.label}
           </Link>
 
-          {/* Mobile Search (optional) */}
           <SearchBar />
         </div>
       </div>

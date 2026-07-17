@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 .container {
   max-width: 1200px;
@@ -7,35 +6,35 @@
   border-radius: 30px;
 }
 
-.frameDesktop {
-  position: relative;
-  width: 100%;
-  height: 605px;
-  margin-bottom: 2rem;
-}
-.frameMobile {
-  display: none;
-  width: 100%;
-  height: 400px;
-}
-
-.title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 3rem;
-  font-weight: 400;
+.hero {
+  max-width: 960px;
+  margin: 0 auto 2.5rem;
   text-align: center;
-  margin-bottom: 1rem;
-  color: #1d1d1d;
-  padding: 1rem;
+  background: linear-gradient(160deg, #fdf3d8 0%, #fbe9c6 100%);
+  border-radius: 24px;
+  padding: 3rem 2rem;
 }
 
-.subtitle {
-  font-family: 'Poppins', sans-serif;
+.heroTitle {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: var(--color-text);
+}
+
+.heroSubtitle {
   font-size: 1.125rem;
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #555;
+  margin: 0 auto 1.5rem;
+  max-width: 60ch;
+  color: var(--color-text-soft);
+}
+
+.heroPhone {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
 }
 
 .section {
@@ -44,7 +43,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   font-size: 1.5rem;
   font-weight: 500;
   color: #1d1d1d;
@@ -56,7 +55,7 @@
 .workList {
   padding-left: 1.25rem;
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   font-size: 1rem;
   color: #333;
 }
@@ -72,6 +71,20 @@
 }
 
 /* таблица услуг */
+.tableWrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.tableCaption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  padding-bottom: 0.75rem;
+}
+
 .servicesTable {
   width: 100%;
   border-collapse: collapse;
@@ -80,7 +93,7 @@
 .servicesTable td {
   border: 1px solid #ddd;
   padding: 0.75rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   color: #333;
 }
@@ -104,7 +117,7 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   text-decoration: none;
 }
 .callButton:hover {
@@ -118,23 +131,8 @@
   .container {
     padding: 2rem 1rem;
   }
-  .frameDesktop {
-    display: none;
-  }
-  .frameMobile {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 600px;
-    margin-bottom: 1.5rem;
-  }
-  .title {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  .subtitle {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+  .hero {
+    padding: 2rem 1.25rem;
   }
   .sectionTitle {
     font-size: 1.25rem;

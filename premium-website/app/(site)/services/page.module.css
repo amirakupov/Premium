@@ -1,77 +1,51 @@
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  color: #1d1d1d;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--color-text-soft);
+}
+
+.servicesContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 2rem 1rem;
   }
-  
-  /* Default: show desktop frame, hide mobile */
-  .frameDesktop {
-    position: relative;
-    width: 100%;
-    height: 605px;
-    margin-bottom: 2rem;
-  }
-  
-  .frameMobile {
-    display: none;
-    width: 100%;
-    height: 400px;
-  }
+
   .title {
-    font-size: 3rem;
-    font-weight: 400;
-    text-align: center;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    color: #1d1d1d;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
-  
-  /* Subtitle also in Poppins but lighter */
+
   .subtitle {
-    font-size: 1.125rem;
-    font-weight: 300;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #555;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
   }
-  
+
   .servicesContainer {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 960px;
-    margin: 0 auto;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
-  
-  @media (max-width: 767px) {
-    .container {
-        padding: 2rem 1rem;
-      }
-    
-      /* Swap frames */
-      .frameDesktop {
-        display: none;
-      }
-      .frameMobile {
-        display: block;
-        position: relative;
-        width: 100%;
-        height: 600px;
-        margin-bottom: 1.5rem;
-      }
-    .title {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-      .subtitle {
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-      }
-    /* Collapse to 1‑column */
-    .servicesContainer {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-  }
-  
-  
+}

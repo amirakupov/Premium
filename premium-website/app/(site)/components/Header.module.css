@@ -12,9 +12,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    height: 70px;
+    height: var(--header-h);
     border-bottom: 1px solid #fdfdfd;
-    z-index: 10000; 
+    z-index: var(--z-header);
   }
   .logo {
     font-weight: 600;
@@ -37,8 +37,8 @@
     transition: border-bottom 0.01s ease;
   }
   .nav a:hover {
-    color: #7c7c7d;
-    border-bottom: 2px solid #9bc7fa;
+    color: var(--color-brand-dark);
+    border-bottom: 2px solid var(--color-brand);
   }
   
   /* Desktop Search Bar */
@@ -47,9 +47,8 @@
   }
   
   .emergencyLink {
-    /* You can pick any accent color you like here */
-    color: #2196f3;             /* text color */
-    border: 2px solid #181515;  /* same color for border */
+    color: var(--color-brand-dark);
+    border: 2px solid #181515;
     padding: 0.35rem 0.75rem;
     border-radius: 9999px;      /* pill shape */
     font-weight: 500;
@@ -58,11 +57,11 @@
     display: inline-block;       /* ensures padding & border are visible */
   }
   
-  /* Hover: fill the button with accent color, switch text to white */
+  /* Hover: заливка акцентным цветом; контраст с белым текстом ≥ AA */
   .emergencyLink:hover {
-    background-color: #9bc7fa;
+    background-color: var(--color-brand-dark);
     color: #fff;
-    border-color: #2196f3;       /* keep border matching background */
+    border-color: var(--color-brand-dark);
   }
   /*=============== BURGER/CLOSE ICON =============== */
   
@@ -74,7 +73,7 @@
     cursor: pointer;
     transition: transform 0.3s ease;
     color: #181515;
-    z-index: 10001; 
+    z-index: calc(var(--z-header) + 1);
   }
   
   .rotateIcon {
@@ -98,7 +97,7 @@
     /* slide from top: -100% -> 0 */
     transform: translateY(-100%);
     transition: transform 0.5s ease;
-    z-index: 9999;
+    z-index: var(--z-header-overlay);
   }
   
   /* The blurred background using a pseudo-element */

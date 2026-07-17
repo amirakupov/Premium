@@ -1,29 +1,24 @@
-import InfoBlock from '@/app/(site)/components/InfoBlock';
+import Hero from '@/app/(site)/components/Hero';
 import Quote from '@/app/(site)/components/Quote';
+import Services from '@/app/(site)/components/Services';
+import ClinicFotos from '@/app/(site)/components/ClinicFotos';
 import Doctors from '@/app/(site)/components/Doctors';
-import ClinicPhotos from '@/app/(site)/components/ClinicFotos';
-import CookieBanner from '@/app/(site)/components/CookieBanner';
-import MobileLanding from '@/app/(site)/components/MobileLanding';
+import HomeShell from '@/app/(site)/components/HomeShell';
+import { listAllDoctors, listAllServices } from '@/lib/cms';
 
-import HomeClientShell from '@/app/(site)/components/HomeClientShell';
-import ServicesSection from "@/app/(site)/components/ServiceSection";
-import DoctorsSection from "@/app/(site)/components/DoctorsSection";
-import MobileLandingSection from "@/app/(site)/components/MobileLandingSection";
+export default async function HomePage() {
+    const [services, doctors] = await Promise.all([
+        listAllServices(),
+        listAllDoctors(),
+    ]);
 
-export default function HomePage() {
-  return (
-      <HomeClientShell
-          desktop={
-            <>
-              <InfoBlock />
-              <Quote />
-              <ServicesSection />
-              <ClinicPhotos />
-              <DoctorsSection />
-              <CookieBanner />
-            </>
-          }
-          mobile={<MobileLandingSection />}
-      />
-  );
+    return (
+        <HomeShell>
+            <Hero />
+            <Quote />
+            <Services services={services.slice(0, 9)} />
+            <ClinicFotos />
+            <Doctors doctors={doctors.slice(0, 4)} />
+        </HomeShell>
+    );
 }

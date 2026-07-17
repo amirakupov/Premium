@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
 .preloader {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   background: #fff;
-  z-index: 9999;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +20,7 @@
 }
 
 .word {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 3.5rem;
   letter-spacing: 0.24em;
@@ -32,9 +30,13 @@
   gap: 0.1em;
 }
 
+.letter {
+  display: inline-block;
+}
+
 .subtitle {
   margin-top: 1.2rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 400;
   font-size: 1.1rem;
   color: #191919;
@@ -50,5 +52,3 @@
     font-size: 0.95rem;
   }
 }
-
-

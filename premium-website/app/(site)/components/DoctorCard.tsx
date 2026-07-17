@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import styles from './DoctorCard.module.css';
 
 interface DoctorCardProps {
@@ -9,56 +10,60 @@ interface DoctorCardProps {
   name: string;
   specialty: string;
   bio?: string;
-  onBook?: () => void;
 }
 
-export default function DoctorCard({
-                                     imgSrc,
-                                     name,
-                                     specialty,
-                                     bio,
-                                     onBook,
-                                   }: DoctorCardProps) {
+export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardProps) {
   const [flipped, setFlipped] = useState(false);
-  const router = useRouter();
 
   const handleFlip = () => setFlipped((f) => !f);
 
-  const handleButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onBook) return onBook();
-    router.push('/contacts');
-  };
-
   return (
-      <div
-          className={styles.cardContainer}
-          onClick={handleFlip}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => (e.key === 'Enter' ? handleFlip() : null)}
-      >
-        <div className={`${styles.cardInner} ${flipped ? styles.flipped : ''}`}>
-          <div className={styles.cardFace}>
-            <img src={imgSrc} alt={name} className={styles.image} />
-            <div className={styles.overlay}>
-              <div className={styles.info}>
-                <h3 className={styles.name}>{name}</h3>
-                <p className={styles.specialty}>{specialty}</p>
-                <button onClick={handleButtonClick} className={styles.button}>
-                  Записаться
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.cardFace}>
-            <div className={styles.backContent}>
+    <div
+      className={styles.cardContainer}
+      onClick={handleFlip}
+      role="button"
+      tabIndex={0}
+      aria-pressed={flipped}
+      aria-label={`${name} — показать биографию`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleFlip();
+        }
+      }}
+    >
+      <div className={`${styles.cardInner} ${flipped ? styles.flipped : ''}`}>
+        <div className={styles.cardFace}>
+          <Image
+            src={imgSrc}
+            alt={name}
+            fill
+            sizes="285px"
+            style={{ objectFit: 'cover' }}
+            className={styles.image}
+          />
+          <div className={styles.overlay}>
+            <div className={styles.info}>
               <h3 className={styles.name}>{name}</h3>
-              <p className={styles.bio}>{bio}</p>
+              <p className={styles.specialty}>{specialty}</p>
+              <Link
+                href="/contacts"
+                className={styles.button}
+                onClick={(e) => e.stopPropagation()}
+              >
+                Записаться
+              </Link>
             </div>
           </div>
         </div>
+
+        <div className={styles.cardFace}>
+          <div className={styles.backContent}>
+            <h3 className={styles.name}>{name}</h3>
+            <p className={styles.bio}>{bio}</p>
+          </div>
+        </div>
       </div>
+    </div>
   );
 }

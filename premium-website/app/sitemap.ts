@@ -1,0 +1,29 @@
+import type { MetadataRoute } from "next";
+import { listAllServices } from "@/lib/cms";
+import { SITE_URL } from "@/lib/constants";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+    const staticPages: MetadataRoute.Sitemap = [
+        "",
+        "/services",
+        "/doctors",
+        "/eeg",
+        "/emergency",
+        "/contacts",
+        "/documents",
+        "/privacy",
+    ].map((path) => ({
+        url: `${SITE_URL}${path}`,
+        changeFrequency: "monthly",
+        priority: path === "" ? 1 : 0.7,
+    }));
+
+    const services = await listAllServices();
+    const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
+        url: `${SITE_URL}/services/${s.slug}`,
+        changeFrequency: "monthly",
+        priority: 0.6,
+    }));
+
+    return [...staticPages, ...servicePages];
+}

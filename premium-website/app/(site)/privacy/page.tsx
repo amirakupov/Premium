@@ -1,7 +1,12 @@
-'use client';
-
-import React from 'react';
+import type { Metadata } from 'next';
 import styles from './page.module.css';
+import { CLINIC } from '@/lib/constants';
+
+export const metadata: Metadata = {
+  title: 'Политика конфиденциальности',
+  description:
+    'Политика обработки персональных данных клиники «Премиум»: какие данные мы собираем, как используем и защищаем.',
+};
 
 export default function PrivacyPolicyPage() {
   return (
@@ -88,9 +93,9 @@ export default function PrivacyPolicyPage() {
           Если у вас есть вопросы по обработке данных, свяжитесь с нами:
         </p>
         <p className={styles.text}>
-          Электронная почта: <a href="mailto:privacy@premiumclinic.ru" className={styles.link}>privacy@premiumclinic.ru</a><br/>
-          Телефон: <a href="tel:+79173695509" className={styles.link}>+7(987)369-55-09</a><br/>
-          Адрес: г. Уфа, ул. Даяна Мурзина, 7/1
+          Электронная почта: <a href={`mailto:${CLINIC.email}`} className={styles.link}>{CLINIC.email}</a><br/>
+          Телефон: <a href={CLINIC.phoneHref} className={styles.link}>{CLINIC.phone}</a><br/>
+          Адрес: {CLINIC.address}
         </p>
       </section>
     </main>
