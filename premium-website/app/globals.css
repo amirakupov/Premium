@@ -1,25 +1,106 @@
-:root {
-  /* Палитра */
-  --color-brand: #2976c7;
-  --color-brand-dark: #1c5fa8;
-  --color-brand-light: #d5edf6;
-  --color-text: #181515;
-  --color-text-soft: #555;
-  --background: #ffffff;
-  --foreground: #111827;
-  --muted: #6b7280;
-  --border: rgba(17, 24, 39, 0.12);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-  /* Шкала z-index */
+:root {
+  /* ── Палитра: белый, синий, голубой, серый, чёрный ─────────────── */
+  --paper: #f4f8fd;            /* воздушный сине-белый фон страницы */
+  --surface: #ffffff;          /* карточки и приподнятые поверхности */
+  --ink: #0f1f38;              /* основной текст, глубокий сине-чёрный */
+  --ink-soft: #42546d;         /* вторичный текст на светлом (≥4.5:1 и на голубых пятнах фона) */
+
+  --brand: #2563eb;            /* дружелюбный синий — цвет бренда и CTA */
+  --brand-deep: #12294d;       /* тёмно-синий грунт крупных тёмных регионов */
+  --brand-line: #24406e;       /* линии и границы внутри тёмных регионов */
+  --brand-tint: #e6f0fd;       /* голубая подложка на светлом */
+
+  --on-dark: #eaf1fb;          /* основной текст на тёмном */
+  --on-dark-soft: #a7bcda;     /* вторичный текст на тёмном, тонирован от синего */
+
+  /* вторичный акцент — сохраняем имена *brass* как псевдонимы синей семьи,
+     чтобы существующие ссылки продолжали работать */
+  --brass: #1d4ed8;            /* насыщенный синий для мелкого акцента на светлом */
+  --brass-fill: #2563eb;       /* синяя заливка CTA, текст на ней — белый */
+  --brass-bright: #6aa8f5;     /* светло-голубой акцент на тёмном грунте */
+
+  --scrim: 18, 41, 77;         /* тёмно-синий для оверлеев (rgb-тройка) */
+
+  --border: rgba(15, 31, 56, 0.12);
+  --shadow-soft: 0 14px 34px -14px rgba(18, 42, 77, 0.20);
+  --shadow-lift: 0 24px 54px -20px rgba(18, 42, 77, 0.28);
+
+  /* ── Liquid glass: единый стеклянный материал ──────────────────── */
+  /* brightness подсвечивает линзу изнутри, saturate вытягивает цвет
+     обоев сквозь стекло — без них фрост выглядит серой плёнкой */
+  --glass-blur: blur(22px) saturate(190%) brightness(1.1);
+  /* заливка почти прозрачна: цвет карточке даёт то, что за ней.
+     Белила выше ~0.3 убивают преломление и дают матовую плашку, ниже 0.18 —
+     вторичный текст на синих пятнах обоев проваливается ниже 4.5:1 */
+  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-bg-strong: rgba(255, 255, 255, 0.34); /* плотнее — шапка, поля */
+  /* рамка почти невидима: кромку стекла рисуют блики в --glass-sheen */
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-tint: rgba(214, 232, 255, 0.28);      /* голубоватое стекло */
+  --glass-dark-bg: rgba(18, 41, 77, 0.46);      /* стекло на тёмном */
+  --glass-dark-border: rgba(255, 255, 255, 0.14);
+  /* Кромка линзы. Свет входит сверху-слева и выходит снизу-справа,
+     по всему контуру идёт тонкая «толщина» стекла, а внутрь от кромки
+     уходит мягкая тень — так читается объём, а не плоская рамка. */
+  --glass-sheen:
+    inset 1.5px 2px 1.5px -1.5px rgba(255, 255, 255, 1),
+    inset -1.5px -2px 1.5px -1.5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1.5px 14px -7px rgba(18, 42, 77, 0.3),
+    inset 0 -10px 22px -20px rgba(18, 42, 77, 0.45);
+  /* блик на поверхности: яркий угол вверху-слева, отсвет внизу-справа */
+  --glass-gloss: linear-gradient(
+    148deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.14) 22%,
+    rgba(255, 255, 255, 0) 46%,
+    rgba(255, 255, 255, 0) 74%,
+    rgba(255, 255, 255, 0.1) 88%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  --glass-shadow:
+    0 26px 56px -24px rgba(18, 42, 77, 0.45),
+    0 4px 14px -6px rgba(18, 42, 77, 0.18);
+  /* первичная кнопка: почти непрозрачный синий со стеклянным бликом */
+  --glass-primary: linear-gradient(180deg, rgba(86, 137, 247, 0.92), rgba(29, 78, 216, 0.94));
+  /* пружинная кривая «жидких» движений */
+  --spring: cubic-bezier(0.34, 1.35, 0.64, 1);
+
+  /* ── Наследие: старые имена токенов остаются рабочими ──────────── */
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-deep);
+  --color-brand-light: var(--brand-tint);
+  --color-text: var(--ink);
+  --color-text-soft: var(--ink-soft);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --muted: var(--ink-soft);
+
+  /* ── Типографика ────────────────────────────────────────────────── */
+  --font-body: var(--font-sans), "Golos Text", system-ui, sans-serif;
+  --font-head: var(--font-display), "Prata", serif;
+
+  /* ── Шкала z-index ──────────────────────────────────────────────── */
   --z-header: 100;
   --z-header-overlay: 90;
   --z-banner: 110;
   --z-overlay: 200;
 
-  /* Габариты и типографика */
-  --header-h: 70px;
+  /* ── Габариты и ритм ────────────────────────────────────────────── */
+  --header-h: 76px;
+  --container: 1200px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --section-y: clamp(56px, 9vw, 104px);
+  --radius: 22px;
+  --radius-lg: 30px;
   --font-scale: 1;
-  --line: 1.4;
+  --line: 1.55;
   --letter: 0;
   --focus: 3px;
 }
@@ -28,11 +109,50 @@ html[data-a11y="1"] {
   --font-scale: 1.25;
   --line: 1.7;
   --letter: 0.02em;
-  --background: #ffffff;
-  --foreground: #000000;
-  --muted: #111827;
-  --border: rgba(0, 0, 0, 0.25);
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --ink: #000000;
+  --ink-soft: #1f2937;
+  --brand: #0b3fb0;
+  --brand-deep: #08183a;
+  --brand-line: #08183a;
+  --brand-tint: #ffffff;
+  --on-dark: #ffffff;
+  --on-dark-soft: #e8f0fb;
+  --brass: #0b3fb0;
+  --brass-fill: #0b3fb0;
+  --brass-bright: #9cc4ff;
+  --scrim: 8, 24, 58;
+  --border: rgba(0, 0, 0, 0.35);
   --focus: 5px;
+
+  /* доступность: убираем прозрачность и размытие — только сплошные поверхности */
+  --glass-blur: none;
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #ffffff;
+  --glass-border: rgba(0, 0, 0, 0.35);
+  --glass-tint: #ffffff;
+  --glass-dark-bg: #08183a;
+  --glass-dark-border: rgba(255, 255, 255, 0.5);
+  --glass-sheen: none;
+  --glass-gloss: none;
+  --glass-shadow: none;
+  --glass-primary: #0b3fb0;
+}
+
+/* Уважаем системную настройку «меньше прозрачности» — сплошные поверхности. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-blur: none;
+    --glass-bg: #ffffff;
+    --glass-bg-strong: #ffffff;
+    --glass-border: rgba(15, 31, 56, 0.16);
+    --glass-tint: #eef4fd;
+    --glass-dark-bg: #12294d;
+    --glass-sheen: none;
+    --glass-gloss: none;
+    --glass-primary: linear-gradient(180deg, #3b76f0, #1d4ed8);
+  }
 }
 html[data-a11y="1"] body {
   font-size: 20px;
@@ -58,47 +178,227 @@ html, body {
 
 html {
   font-size: calc(16px * var(--font-scale));
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   line-height: var(--line);
   letter-spacing: var(--letter);
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), "Montserrat", sans-serif;
+  background: #eaf1ff;
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+/* «Обои» под стеклом. Стекло видно только тогда, когда за ним есть что
+   размывать, поэтому слой держит две частоты сразу:
+   — мелкое точечное зерно: под blur оно исчезает полностью, и на кромке
+     островка видна граница «чётко снаружи / гладко внутри»;
+   — цветные пятна с внятным краем: сквозь стекло они растекаются и
+     подкрашивают карточку — это и читается как преломление.
+   Слой прибит к вьюпорту: при прокрутке островки едут по обоям, и
+   картинка внутри стекла живёт. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, rgba(15, 31, 56, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
+    radial-gradient(circle 520px at 10% 4%, rgba(37, 99, 235, 0.36) 0%, rgba(37, 99, 235, 0.22) 48%, rgba(37, 99, 235, 0) 74%),
+    radial-gradient(circle 460px at 92% 10%, rgba(56, 189, 248, 0.38) 0%, rgba(56, 189, 248, 0.2) 46%, rgba(56, 189, 248, 0) 73%),
+    radial-gradient(circle 400px at 74% 44%, rgba(29, 78, 216, 0.26) 0%, rgba(29, 78, 216, 0.14) 44%, rgba(29, 78, 216, 0) 72%),
+    radial-gradient(circle 480px at 6% 62%, rgba(106, 168, 245, 0.38) 0%, rgba(106, 168, 245, 0.2) 46%, rgba(106, 168, 245, 0) 73%),
+    radial-gradient(circle 540px at 56% 96%, rgba(37, 99, 235, 0.3) 0%, rgba(37, 99, 235, 0.18) 46%, rgba(37, 99, 235, 0) 72%),
+    linear-gradient(165deg, #e6eeff 0%, #f4f8ff 46%, #e4edff 100%);
+}
+
+html[data-a11y="1"] body {
+  background: var(--paper);
+}
+
+html[data-a11y="1"] body::before {
+  display: none;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  font-weight: 400;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--brand-tint);
+  color: var(--ink);
+}
+
+/* фон прозрачный: сквозь секции читаются голубые «блобы» body,
+   и у стекла есть что преломлять */
 .site {
   min-height: 100vh;
-  background: var(--background);
+  background: transparent;
 }
 
 .site-main {
-  padding-top: var(--header-h);
+  /* капсула шапки парит с отступом 12px — плюс воздух под ней */
+  padding-top: calc(var(--header-h) + 24px);
 }
 
 .a11y-row {
-  max-width: 980px;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 12px 16px 0;
+  padding: 12px var(--gutter) 0;
   display: flex;
   justify-content: flex-end;
 }
 
-/* аккуратный “каркас” для страниц */
+/* ── Liquid glass: базовый стеклянный материал ─────────────────────── */
+.glass {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+/* Блик на поверхности линзы. Отдельным слоем поверх содержимого —
+   так он ложится на всё, включая фото внутри карточки. */
+.glass::after,
+.card::after,
+.link-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
+}
+
+/* ── Кнопки: единый примитив, все на стекле ────────────────────────── */
+.btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  transition: background 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease, box-shadow 0.3s ease, transform 0.45s var(--spring);
+}
+
+/* бегущий блик по стеклу при наведении */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(105deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.32) 45%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.32) 55%,
+    transparent 68%);
+  transform: translateX(-160%);
+  pointer-events: none;
+}
+.btn:hover::before {
+  transform: translateX(160%);
+  transition: transform 0.85s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+.btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* Первичная — синее стекло, белый текст, стеклянный блик. */
+.btn--brass {
+  background: var(--glass-primary);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--glass-sheen), 0 14px 30px -12px rgba(37, 99, 235, 0.6);
+}
+.btn--brass:hover {
+  background: linear-gradient(180deg, rgba(96, 145, 250, 0.94), rgba(37, 99, 235, 0.96));
+  box-shadow: var(--glass-sheen), 0 20px 40px -12px rgba(37, 99, 235, 0.7);
+}
+
+/* Тёмная вторичная — стекло на глубоком синем. */
+.btn--emerald {
+  background: var(--glass-dark-bg);
+  color: var(--on-dark);
+  border-color: var(--glass-dark-border);
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
+}
+.btn--emerald:hover {
+  background: rgba(18, 41, 77, 0.7);
+}
+
+/* Контурная вторичная — чистое стекло, синий текст; кромку рисует блик. */
+.btn--ghost {
+  background: var(--glass-bg);
+  color: var(--brand);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-sheen), 0 10px 26px -16px rgba(18, 42, 77, 0.35);
+}
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+.btn--ghost-light {
+  background: rgba(234, 241, 251, 0.1);
+  color: var(--on-dark);
+  border-color: var(--glass-dark-border);
+  box-shadow: var(--glass-sheen);
+}
+.btn--ghost-light:hover {
+  background: rgba(234, 241, 251, 0.2);
+}
+
+/* ── Каркас страниц ────────────────────────────────────────────────── */
 .page {
   max-width: 980px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
 }
 
-/* простая “карточка” */
+.page > h1:first-child {
+  margin: 0 0 0.6em;
+  font-size: clamp(2rem, 4.4vw, 3rem);
+}
+
+/* простая карточка — стекло */
 .card {
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: #fff;
-  padding: 16px;
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+  padding: 20px;
 }
 
 .link-list {
@@ -106,26 +406,43 @@ body {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .link-item {
+  position: relative;
+  isolation: isolate;
   display: flex;
   justify-content: space-between;
   gap: 12px;
   align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  background: #fff;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen);
+  transition: background 0.25s ease, box-shadow 0.3s ease, transform 0.4s var(--spring);
+}
+.link-item:hover {
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+  transform: translateY(-2px) scale(1.005);
 }
 
 .link-item a {
-  color: var(--foreground);
+  color: var(--ink);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .link-item a:hover {
+  color: var(--brand);
   text-decoration: underline;
+}
+
+.link-item span {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
 }

@@ -1,63 +1,73 @@
 .container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 24px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.08);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.7em;
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  color: var(--ink);
+  margin: 0 0 0.5em;
 }
 
 .subtitle {
-  color: var(--color-text-soft);
-  margin-bottom: 2em;
+  color: var(--ink-soft);
+  margin: 0 0 2em;
 }
 
 .resultsList {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: grid;
+  gap: 12px;
 }
 
 .resultCard {
   display: flex;
   flex-direction: column;
-  padding: 18px 22px;
-  background: #eaf6fc;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(110, 170, 220, 0.07);
-  transition: background 0.18s, transform 0.12s;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen);
+  border-radius: var(--radius);
   text-decoration: none;
-  color: var(--color-text);
-  border: 1.5px solid #c3e5f7;
+  color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .resultCard:hover {
-  background: #d3eafc;
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 8px 24px rgba(80, 160, 220, 0.1);
-  border-color: #97daf8;
+  border-color: var(--brand);
+  box-shadow: var(--shadow-soft);
 }
 
 .resultName {
-  font-size: 1.16rem;
-  font-weight: 500;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.resultCard:hover .resultName {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-color: var(--brass-fill);
 }
 
 .resultDesc {
-  margin-top: 3px;
-  font-size: 0.98rem;
-  color: var(--color-text-soft);
+  font-size: 0.97rem;
+  color: var(--ink-soft);
 }
 
 .notFound {
-  color: #b44;
+  color: var(--ink-soft);
   text-align: center;
   margin: 30px 0;
-  font-size: 1.15rem;
+  padding: 24px;
+  font-size: 1.1rem;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen);
+  border-radius: var(--radius);
 }

@@ -16,18 +16,18 @@ const items = [
 export default function DocumentsPage() {
     return (
         <div className="page">
-            <h1 style={{ margin: 0, fontSize: 28 }}>Документы</h1>
-            <p style={{ marginTop: 8, color: "var(--muted)" }}>
+            <h1>Документы</h1>
+            <p>
                 Официальные документы клиники (открываются в новом окне/скачивании).
             </p>
 
-            <ul className="link-list" style={{ marginTop: 16 }}>
+            <ul className="link-list">
                 {items.map((x) => (
                     <li key={x.title} className="link-item">
                         <a href={x.href} target="_blank" rel="noreferrer">
                             {x.title}
                         </a>
-                        <span style={{ color: "var(--muted)" }}>Открыть</span>
+                        <span>Открыть</span>
                     </li>
                 ))}
             </ul>

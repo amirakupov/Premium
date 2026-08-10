@@ -1,143 +1,117 @@
-/* ──────────────────────────────────────────────────────────────────── */
-/*     Импорт шрифта Inter (минималистично, «чисто»)                  */
-/* ──────────────────────────────────────────────────────────────────── */
-
-/* ──────────────────────────────────────────────────────────────────── */
-/* 1) Обёртка для всего блока «цитата + подпись»                        */
-/* ──────────────────────────────────────────────────────────────────── */
+/* Слово основателя: редакционная цитата на фарфоре. */
 .container {
-  position: relative;       /* если захочется абсолютного позиционирования подписи */
-  width: 100%;
-  max-width: 1000px;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 1rem;
-  box-sizing: border-box;
-
-  background-color: #fdfdfd; /* светлый фон */
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: left;
+  padding: var(--section-y) var(--gutter) 0;
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 2) Заголовок цитаты: Inter, 700, uppercase                           */
-/* ──────────────────────────────────────────────────────────────────── */
+/* Слово основателя — отдельный стеклянный островок, а не текст на фоне. */
+.quote {
+  position: relative;
+  isolation: isolate;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 52px);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+.quote::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
+}
+
+/* синяя засечка цитаты — внутри стекла, у левого поля */
+.quote::before {
+  content: "";
+  position: absolute;
+  left: clamp(10px, 1.6vw, 20px);
+  top: clamp(28px, 4vw, 48px);
+  bottom: clamp(28px, 4vw, 48px);
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--brass-fill), rgba(37, 99, 235, 0));
+}
+
 .heading {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  color: #2f2f2f;
-  text-transform: uppercase;
+  margin: 0 0 1.1em;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  color: var(--ink);
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 3) Сам текст цитаты: Inter 400, регулярный                           */
-/* ──────────────────────────────────────────────────────────────────── */
 .quoteText {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #333;
-  margin-bottom: 1rem;
+  margin: 0 0 1em;
+  font-size: clamp(1rem, 1.4vw, 1.13rem);
+  line-height: 1.65;
+  max-width: 66ch;
+  color: var(--ink-soft);
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 4) Контейнер «подписи» (портрет + текст), спозиционирован под текст  */
-/* и прижат вправо                                                       */
-/* ──────────────────────────────────────────────────────────────────── */
 .signatureContainer {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* прижать вправо */
-  margin-top: 1.5rem;        /* отступ сверху, чтобы было под всеми <p> */
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 4.1) Обёртка для круглой фотографии                                  */
-/* ──────────────────────────────────────────────────────────────────── */
 .doctorImageWrapper {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   overflow: hidden;
-  flex-shrink: 0;     /* запрещаем ужиматься */
-  margin-right: 1rem; /* расстояние между фото и текстом */
-}
-.doctorImageWrapper img,
-.doctorImage {
-  border-radius: 50%; /* если используете класс непосредственно на Image */
-  object-fit: cover;  /* чтобы фотография не «растягивалась» */
+  flex-shrink: 0;
+  border: 1px solid var(--glass-border);
+  padding: 3px;
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen);
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 4.2) Блок текста (имя + должность), компоновка по колонке            */
-/* ──────────────────────────────────────────────────────────────────── */
+.doctorImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+}
+
 .doctorText {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 4.2.1) Имя доктора: Inter 600                                         */
-/* ──────────────────────────────────────────────────────────────────── */
 .doctorName {
-  font-family: var(--font-sans);
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
   margin: 0;
-  color: #2f2f2f;
+  color: var(--ink);
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 4.2.2) Должность: Inter 400                                           */
-/* ──────────────────────────────────────────────────────────────────── */
 .doctorTitle {
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  font-weight: 400;
-  margin: 0;
-  color: #555;
+  font-size: 0.92rem;
+  margin: 2px 0 0;
+  color: var(--ink-soft);
 }
 
-/* ──────────────────────────────────────────────────────────────────── */
-/* 5) Мобильная «брейкпоинт-настройка» (max-width: 768px)                */
-/*    Центрируем quoteText + подпись                                      */
-/* ──────────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .container {
-    max-width: 100%;
-    padding: 1rem;
+  .quote {
+    padding: 26px 22px 26px 26px;
   }
 
-  .heading {
-    font-size: 1.2rem;
-    text-align: center;
-  }
-
-  .quoteText {
-    font-size: 0.95rem;
-    text-align: center;
-  }
-
-  .signatureContainer {
-    justify-content: center; /* подпись по центру на мобайле */
-    margin-top: 1.5rem;
-  }
-
-  .doctorImageWrapper {
-    width: 64px;
-    height: 64px;
-    margin-right: 0.75rem;
-  }
-
-  .doctorName {
-    font-size: 1.1rem;
-  }
-
-  .doctorTitle {
-    font-size: 0.9rem;
+  .quote::before {
+    left: 12px;
+    top: 26px;
+    bottom: 26px;
   }
 }

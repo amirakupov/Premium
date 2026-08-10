@@ -1,8 +1,8 @@
 .cardContainer {
   perspective: 1000px;
-  width: 235px;
+  width: 100%;
+  max-width: 285px;
   height: 400px;
-  margin: auto;
   cursor: pointer;
 }
 
@@ -11,109 +11,128 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.6s;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .flipped {
   transform: rotateY(180deg);
 }
 
-/* Both faces share this */
+/* Обе стороны — островки: кромка линзы и поверхностный блик лежат
+   и на фото, и на обороте, поэтому карточка при перевороте остаётся
+   одним и тем же стеклом. */
 .cardFace {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   backface-visibility: hidden;
-  border-radius: 1rem;
+  border-radius: var(--radius);
   overflow: hidden;
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
 }
 
-/* Front styling */
-.cardFace:nth-child(1) {
-  /* No extra transform */
+.cardFace::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
 }
 
-/* Back styling (rotated) */
+/* Оборот. Внутри preserve-3d backdrop-filter не видит страницу — браузер
+   обрывает backdrop root на 3D-контексте, — поэтому здесь стекло не
+   размывающее, а плотное: иначе био легло бы прямо на «обои». */
 .cardFace:nth-child(2) {
   transform: rotateY(180deg);
-  background: #D5EDF6;
+  background: linear-gradient(160deg,
+    rgba(255, 255, 255, 0.92),
+    rgba(233, 242, 255, 0.88));
+  border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-  color: #0e0e0e;
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
 }
 
 .image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.35s ease;
 }
 
 .cardContainer:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  background: linear-gradient(to top, rgba(var(--scrim), 0.88) 0%, rgba(var(--scrim), 0.25) 45%, transparent 70%);
   display: flex;
   align-items: flex-end;
 }
 
 .info {
-  padding: 1rem;
+  padding: 1.1rem;
   width: 100%;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  margin: 0 0 0.3rem;
+  color: var(--on-dark);
 }
 
 .specialty {
-  font-size: 0.95rem;
-  color: #ddd;
+  font-size: 0.92rem;
+  margin: 0;
+  color: var(--on-dark-soft);
 }
 
+/* синее стекло поверх фото — как первичные кнопки сайта */
 .button {
-  margin-top: 1rem;
-  padding: 0.5rem 1.25rem;
-  width: 150px;
-  height: 40px;
-  background-color: #D5EDF6;
-  border-radius: 20px;
-  border: 1px solid #181515;
-  color: black;
-  font-weight: 500;
-  transition: background 0.3s;
+  display: inline-block;
+  margin-top: 0.9rem;
+  padding: 0.5rem 1.3rem;
+  background: var(--glass-primary);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-radius: 999px;
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  box-shadow: var(--glass-sheen), 0 10px 24px -10px rgba(18, 42, 77, 0.55);
+  transition: background 0.25s ease, box-shadow 0.3s ease, transform 0.4s var(--spring);
 }
 
 .button:hover {
-  background: #f3f3f3;
+  background: linear-gradient(180deg, rgba(96, 145, 250, 0.94), rgba(37, 99, 235, 0.96));
+  transform: translateY(-1px) scale(1.03);
 }
 
-/* Back‐side content */
+.button:active {
+  transform: scale(0.95);
+}
+
 .backContent {
-  padding: 1rem;
+  padding: 1.4rem;
   text-align: center;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.backName {
+  font-size: 1.15rem;
+  margin: 0 0 0.6rem;
+  color: var(--ink);
 }
 
 .bio {
   font-size: 0.95rem;
-  color: #333;
-}
-@media (max-width: 767px) {
-  .cardContainer {
-    perspective: 1000px;
-    width: 285px;
-    padding: 10px;
-    height: 400px;
-    margin: auto;
-    cursor: pointer;
-  }
+  margin: 0;
+  color: var(--ink-soft);
+  text-align: left;
 }

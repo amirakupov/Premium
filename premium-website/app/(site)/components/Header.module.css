@@ -1,155 +1,223 @@
-/* app/components/Header.module.css */
-
-/* =============== HEADER LAYOUT =============== */
-
+/* Парящая стеклянная капсула — островок над «обоями», как панели iOS */
 .header {
-    position: fixed;
-    top: 0;              /* pin to very top */
-    left: 0;             /* span full width */
-    width: 100%;
-    background-color: #fdfdfd; 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: var(--header-h);
-    border-bottom: 1px solid #fdfdfd;
-    z-index: var(--z-header);
-  }
-  .logo {
-    font-weight: 600;
-    font-size: 1.7rem;
-    color: #181515;
-  }
-  
-  /* Desktop Nav (horizontal) */
-  .nav {
-    display: flex;
-    gap: 2rem;
-    margin: 0 2rem;
-    align-items: center;
-    color: #181515;
-  }
-  .nav a {
-    text-decoration: none;
-    color: #181515;
-    padding: 0.25rem 0;  
-    transition: border-bottom 0.01s ease;
-  }
-  .nav a:hover {
-    color: var(--color-brand-dark);
-    border-bottom: 2px solid var(--color-brand);
-  }
-  
-  /* Desktop Search Bar */
-  .desktopSearch {
-    margin-left: 2rem;
-  }
-  
-  .emergencyLink {
-    color: var(--color-brand-dark);
-    border: 2px solid #181515;
-    padding: 0.35rem 0.75rem;
-    border-radius: 9999px;      /* pill shape */
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    display: inline-block;       /* ensures padding & border are visible */
-  }
-  
-  /* Hover: заливка акцентным цветом; контраст с белым текстом ≥ AA */
-  .emergencyLink:hover {
-    background-color: var(--color-brand-dark);
-    color: #fff;
-    border-color: var(--color-brand-dark);
-  }
-  /*=============== BURGER/CLOSE ICON =============== */
-  
-  .burger {
-    display: none; 
-    background: none;
-    border: none;
-    font-size: 2.5rem;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    color: #181515;
-    z-index: calc(var(--z-header) + 1);
-  }
-  
-  .rotateIcon {
-    transform: rotate(180deg);
-  }
-  
-  /* =============== FULLSCREEN OVERLAY (MOBILE) =============== */
-  
-  .mobileNav {
-    /* hidden on desktop */
-    display: none;       
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  
-    /* place content above the pseudo-element */
-    pointer-events: none;
-    
-    /* slide from top: -100% -> 0 */
-    transform: translateY(-100%);
-    transition: transform 0.5s ease;
-    z-index: var(--z-header-overlay);
-  }
-  
-  /* The blurred background using a pseudo-element */
+  position: fixed;
+  top: 12px;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: min(var(--container), calc(100% - 24px));
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(16px, 2.5vw, 26px);
+  height: var(--header-h);
+  /* кромку стекла рисует блик --glass-sheen, не серая линия */
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  z-index: var(--z-header);
+}
+
+/* блик на капсуле — под мобильным меню (z 90), над содержимым шапки */
+.header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-decoration: none;
+  line-height: 1.1;
+}
+
+.logoName {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  color: var(--brand);
+  letter-spacing: 0.02em;
+}
+
+.logoNote {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* Desktop-навигация */
+.nav {
+  display: flex;
+  gap: clamp(16px, 2.2vw, 32px);
+  margin: 0 auto 0 1.5rem;
+  align-items: center;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 500;
+  padding: 0.3rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav a:hover {
+  color: var(--brand);
+  border-bottom-color: var(--brass-fill);
+}
+
+.desktopSearch {
+  margin-left: 1rem;
+}
+
+/* Телефон в шапке — путь к звонку с любого экрана. */
+.headerPhone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.headerPhone svg {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.headerPhone:hover {
+  color: var(--brand-deep);
+}
+
+.mobilePhone {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--brass-bright);
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Бургер */
+.burger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  color: var(--ink);
+  z-index: calc(var(--z-header) + 1);
+}
+
+.rotateIcon {
+  transform: rotate(180deg);
+}
+
+/* Мобильное меню: изумрудный полноэкранный слой */
+.mobileNav {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateY(-100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.45s;
+  z-index: var(--z-header-overlay);
+}
+
+/* тёмное стекло во весь экран: контент страницы просвечивает сквозь размытие */
+.mobileNav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--scrim), 0.78);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  pointer-events: auto;
+}
+
+/* без размытия (a11y-режим, reduced transparency) — плотный слой */
+:global(html[data-a11y="1"]) .mobileNav::before {
+  background: rgba(var(--scrim), 0.98);
+}
+
+@media (prefers-reduced-transparency: reduce) {
   .mobileNav::before {
-    content: "";
-    position: absolute;
-    top: 0; 
-    left: 0;
-    right: 0;
-    bottom: 0;
-  
-    /* translucent dark background + blur */
-    background-color: rgba(0, 0, 0, 0.3);
-    -webkit-backdrop-filter: blur(8px); /* Safari prefix */
-    backdrop-filter: blur(8px);
-  
-    pointer-events: auto;
+    background: rgba(var(--scrim), 0.98);
   }
-  
-  /* The actual menu content, stacked in center */
-  .mobileNavContent {
-    position: relative; /* to appear above ::before */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 2rem;
-  
-    pointer-events: auto; /* crucial so the links and close button are clickable */
+}
+
+.mobileNavContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1.75rem;
+  pointer-events: auto;
+}
+
+.mobileNavContent a {
+  color: var(--on-dark);
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+
+.mobileNavContent a:hover {
+  color: var(--brass-bright);
+}
+
+.mobileNavOpen {
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Адаптив */
+@media (max-width: 900px) {
+  .nav,
+  .desktopSearch {
+    display: none;
   }
-  
-  .mobileNavOpen {
-    transform: translateY(0);
+
+  .headerPhone {
+    margin-left: auto;
+    margin-right: 1rem;
   }
-  
-  /* =============== RESPONSIVENESS =============== */
-  
-  @media (max-width: 768px) {
-    .nav,
-    .desktopSearch {
-      display: none;
-    }
-  
-    .burger {
-      display: block;
-    }
-  
-    .mobileNav {
-      display: block; /* now we can see + animate the transform for mobile */
-    }
+
+  /* в узкой шапке оставляем только иконку телефона */
+  .headerPhoneNumber {
+    display: none;
   }
-  
-  
-  
+
+  .headerPhone svg {
+    font-size: 1.4rem;
+  }
+
+  .burger {
+    display: block;
+  }
+
+  .mobileNav {
+    display: block;
+  }
+}

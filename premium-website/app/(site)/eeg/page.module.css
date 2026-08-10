@@ -1,232 +1,231 @@
 /* app/eeg/page.module.css */
 .container {
-  max-width: 900px;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: var(--font-sans);
-  color: #222;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
+  color: var(--ink);
 }
 
 /* Hero */
 .hero {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
 }
 .heroTitle {
-  font-size: 2.25rem;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: clamp(2rem, 4.4vw, 3rem);
   margin: 0;
 }
 .accent {
-  color: rgb(100, 205, 244);
+  color: var(--brand);
 }
 .heroSubtitle {
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: #555;
-  margin-top: 0.5rem;
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  margin: 0.75rem auto 0;
+  max-width: 60ch;
 }
 
 /* Apparatus Image */
 .imageSection {
-  margin-bottom: 3rem;
+  margin-bottom: var(--section-y);
 }
 .imageWrapper {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
   aspect-ratio: 16 / 9;
   margin: 0 auto;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+}
+.image {
+  object-fit: cover;
 }
 
-/* Pricing */
-.pricing {
-  margin-bottom: 3rem;
+/* Sections rhythm */
+.pricing,
+.process,
+.preparation,
+.experts,
+.faq {
+  max-width: 960px;
+  margin: 0 auto var(--section-y);
 }
+
 .sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  margin: 0 0 1.25rem;
+}
+
+/* Pricing table */
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 1rem;
 }
 .table {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 0.5rem;
+  min-width: 640px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
+  border-radius: var(--radius);
 }
 .table th,
 .table td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #ddd;
+  padding: 14px 16px;
   font-size: 0.95rem;
+  text-align: left;
+  color: var(--ink);
 }
 .table th {
-  text-align: left;
+  background: var(--brand-tint);
   font-weight: 600;
 }
+.table thead th:first-child {
+  border-top-left-radius: calc(var(--radius) - 1px);
+}
+.table thead th:last-child {
+  border-top-right-radius: calc(var(--radius) - 1px);
+}
+.table td {
+  border-top: 1px solid var(--border);
+}
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  text-align: right;
+  white-space: nowrap;
+}
+.table td:nth-child(3) {
+  font-family: var(--font-body);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 700;
+  color: var(--brand);
+}
 .note {
-  font-size: 0.875rem;
-  color: #555;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
 }
 
 /* Process */
-.process {
-  margin-bottom: 3rem;
-}
 .processList {
   list-style: decimal;
   padding-left: 1.5rem;
+  margin: 0;
 }
 .processList li {
   margin-bottom: 0.75rem;
-  line-height: 1.5;
 }
 
 /* Preparation */
-.preparation {
-  margin-bottom: 3rem;
-}
 .prepContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
 }
+.subhead {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+}
 .prepList {
   list-style: disc;
   padding-left: 1.25rem;
-  line-height: 1.6;
-  color: #555;
+  margin: 0;
+  color: var(--ink-soft);
+}
+.prepList li {
+  margin-bottom: 0.4rem;
 }
 
 /* Experts */
-.experts {
-  margin-bottom: 3rem;
-}
 .expertCard {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   align-items: flex-start;
-}
-.expertAvatar {
-  width: 100px;
-  height: 100px;
-  background: #e0e0e0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
-  font-size: 0.875rem;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
+  border-radius: var(--radius);
+  padding: 20px;
 }
 .expertName {
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.3rem;
   margin: 0;
 }
 .expertRole {
   font-size: 1rem;
-  color: #555;
+  color: var(--ink-soft);
   margin: 0.25rem 0;
 }
 .expertQuote {
+  position: relative;
+  font-family: var(--font-head);
   font-style: italic;
-  color: rgb(100, 205, 244);
-  margin: 0.5rem 0;
-  padding-left: 1rem;
-  border-left: 2px solid rgb(100, 205, 244);
+  color: var(--brand);
+  margin: 1rem 0;
+  padding-top: 1.75rem;
+}
+
+.expertQuote::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.3rem;
+  left: -0.1rem;
+  font-family: var(--font-head);
+  font-style: normal;
+  font-size: 2.8rem;
+  line-height: 1;
+  color: var(--brass-fill);
 }
 .featureList {
   list-style: disc;
   padding-left: 1.25rem;
-  color: #555;
-  line-height: 1.5;
+  margin: 0;
+  color: var(--ink-soft);
+}
+.featureList li {
+  margin-bottom: 0.35rem;
 }
 
 /* FAQ */
-.faq {
-  margin-bottom: 3rem;
-}
 .question {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 .questionTitle {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.15rem;
   margin: 0;
 }
 .questionAnswer {
   font-size: 0.95rem;
-  color: #555;
-  margin-top: 0.25rem;
+  color: var(--ink-soft);
+  margin: 0.35rem 0 0;
 }
 
 /* CTA */
-.cta {
+.ctaRow {
   text-align: center;
-  padding: 2rem 1rem;
-  background: #f9f9f9;
-  border-radius: 16px;
-}
-.ctaButton {
-    width: 190px;
-    height: 40px;
-    background-color: #D5EDF6;
-    border-radius: 20px;
-    border: 1px solid #181515;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2a2929;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    font-family: var(--font-sans);
-    text-decoration: none;
-}
-.ctaButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
-    background-color: #9bc7fa;
-}
-.ctaText {
-  font-size: 0.875rem;
-  color: #222;
-  line-height: 1.4;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
   .heroTitle {
-    font-size: 1.75rem;
+    font-size: 1.85rem;
   }
   .expertCard {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
-  .tableWrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1rem; /* чтобы не прилипала к следующему элементу */
+  .table th,
+  .table td {
+    padding: 12px;
+    font-size: 0.875rem;
+  }
 }
-
-/* сама таблица делаем минимум по ширине, чтобы скроллилась */
-.table {
-  min-width: 600px; /* или ширина таблицы в пикселях */
-  width: auto;
-}
-
-.table th,
-.table td {
-  padding: 0.5rem;      /* меньше паддингов */
-  font-size: 0.85rem;   /* чуть меньше шрифт */
-  white-space: nowrap;  /* чтобы ячейки не переносились */
-}
-}
-

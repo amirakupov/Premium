@@ -1,72 +1,35 @@
-
 .container {
-  max-width: 1200px;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
 }
 
 .detailWrapper {
   display: flex;
-  gap: 2rem;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
   align-items: flex-start;
 }
 
 .imageWrapper {
-  flex: 0 0 70%;
+  flex: 0 0 58%;
   position: relative;
-  padding-bottom: 40%;
   height: 500px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
 }
-.tableWrapper {
-  overflow-x: auto;
-}
-
-.analysisTable {
-  width: 100%;
-  border-collapse: collapse;
-  color: #1d1d1d;
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  margin-top: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.analysisTable th,
-.analysisTable td {
-  border: 1px solid #ddd;
-  padding: 12px 16px;
-  text-align: left;
-}
-
-.analysisTable th {
-  background-color: #f9f9f9;
-  font-weight: 600;
-  color: #222;
-}
-
-.analysisTable tr:nth-child(even) {
-  background-color: #f6f6f6;
-}
-
-.analysisTable tr:hover {
-  background-color: #eef7ff;
-  transition: background-color 0.2s ease-in-out;
-}
-
 
 .image {
   transition: transform 0.3s ease;
 }
 
 .imageWrapper:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .textWrapper {
-  flex: 0 0 35%;
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -74,108 +37,138 @@
 
 /* Titles and text */
 .title {
-  font-family: var(--font-sans);
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1d1d1d;
-  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  color: var(--ink);
+  margin: 0 0 0.35em;
 }
 
 .subtitle {
-  font-family: var(--font-sans);
   font-size: 1.125rem;
-  font-weight: 400;
-  color: #555;
-  margin-bottom: 1.5rem;
+  color: var(--ink-soft);
+  margin: 0 0 1.5rem;
 }
 
 .sectionHeader {
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1d1d1d;
-  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
 }
 
 .longDescription {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: #333;
-  margin-bottom: 2rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin: 0 0 2rem;
 }
 
-/* Записаться button */
 .bookButton {
-    width: 190px;
-    height: 40px;
-    background-color: #D5EDF6;
-    border-radius: 20px;
-    border: 1px solid #181515;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2a2929;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    font-family: var(--font-sans);
-    text-decoration: none;
+  align-self: flex-start;
 }
 
-.bookButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
-    background-color: #9bc7fa;
+/* ── Таблица анализов ─────────────────────────────────────────────── */
+.analysisSection {
+  margin-top: var(--section-y);
+}
+
+.analysisSection h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  color: var(--ink);
+  margin: 0 0 1.25rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
+  border-radius: var(--radius);
+}
+
+.analysisTable {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.analysisTable th,
+.analysisTable td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.analysisTable th {
+  background: var(--brand-tint);
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.analysisTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.analysisTable tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--brand) 4%, transparent);
+}
+
+.analysisTable tbody tr:hover {
+  background: var(--brand-tint);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.analysisTable th:first-child,
+.analysisTable td:first-child {
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.analysisTable th:last-child,
+.analysisTable td:last-child {
+  text-align: right;
+  font-family: var(--font-head);
+  color: var(--brand);
+  white-space: nowrap;
+}
+
+.analysisTable th:last-child {
+  font-family: var(--font-body);
+  color: var(--ink);
 }
 
 /* MOBILE: stack with image above text */
 @media (max-width: 767px) {
-  .container {
-    padding: 2rem 1rem;
-  }
   .detailWrapper {
     flex-direction: column;
     gap: 1.5rem;
   }
+
   .imageWrapper {
-    
-    flex: none;          
-    
-    width: 100%;         
-   
-    height: 300px;       
-    
-    padding-bottom: 0;   
+    flex: none;
+    width: 100%;
+    height: 300px;
   }
-  .title {
-    font-size: 1.75rem;
-    margin-bottom: 0.5rem;
-  }
+
   .subtitle {
     font-size: 1rem;
     margin-bottom: 1rem;
   }
+
   .sectionHeader {
     font-size: 1.25rem;
-    margin-bottom: 0.75rem;
   }
+
   .longDescription {
     font-size: 1rem;
     margin-bottom: 1.5rem;
   }
-}
-.analysisSection h2 {
-  font-family: var(--font-sans);
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 2rem 0 1rem;
-  color: #1d1d1d; /* Сделает видимым */
-  text-align: center;
-  text-transform: uppercase;
-}
 
-
+  .analysisTable th,
+  .analysisTable td {
+    padding: 12px 12px;
+  }
+}

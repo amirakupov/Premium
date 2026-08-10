@@ -23,9 +23,6 @@ export const NAV_LINKS = [
     { href: "/#address", label: "Адрес" },
 ] as const;
 
-/** Акцентная ссылка — рендерится отдельно от NAV_LINKS. */
-export const EMERGENCY_LINK = { href: "/emergency", label: "Экстренная помощь" } as const;
-
 /**
  * Ключи EmailJS публичные по дизайну, но держим их в env,
  * чтобы менять без деплоя и не размазывать по коду.

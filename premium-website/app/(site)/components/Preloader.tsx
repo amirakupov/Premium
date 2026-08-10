@@ -7,7 +7,7 @@ import styles from './Preloader.module.css';
 export const PRELOADER_SEEN_KEY = 'preloaderSeen';
 export const PRELOADER_DONE_EVENT = 'preloaderFinished';
 
-const word = 'PREMIUM';
+const word = 'ПРЕМИУМ';
 
 export default function Preloader({ onComplete }: { onComplete?: () => void }) {
   const preloaderRef = useRef<HTMLDivElement>(null);

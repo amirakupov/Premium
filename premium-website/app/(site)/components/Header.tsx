@@ -1,16 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
+import { FiPhone } from 'react-icons/fi';
 import SearchBar from './Searchbar';
 import styles from './Header.module.css';
-import { EMERGENCY_LINK, NAV_LINKS } from '@/lib/constants';
+import { CLINIC, NAV_LINKS } from '@/lib/constants';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [menuOpen]);
 
   return (
     <header className={styles.header}>
@@ -20,7 +30,8 @@ export default function Header() {
         aria-label="На главную"
         onClick={closeMenu}
       >
-        PREMIUM
+        <span className={styles.logoName}>Премиум</span>
+        <span className={styles.logoNote}>клиника неврологии</span>
       </Link>
 
       <nav className={styles.nav} aria-label="Основная навигация">
@@ -29,10 +40,16 @@ export default function Header() {
             {link.label}
           </Link>
         ))}
-        <Link href={EMERGENCY_LINK.href} className={styles.emergencyLink}>
-          {EMERGENCY_LINK.label}
-        </Link>
       </nav>
+
+      <a
+        href={CLINIC.phoneHref}
+        className={styles.headerPhone}
+        aria-label={`Позвонить: ${CLINIC.phone}`}
+      >
+        <FiPhone aria-hidden="true" />
+        <span className={styles.headerPhoneNumber}>{CLINIC.phone}</span>
+      </a>
 
       <div className={styles.desktopSearch}>
         <SearchBar />
@@ -62,13 +79,11 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href={EMERGENCY_LINK.href}
-            onClick={closeMenu}
-            className={styles.emergencyLink}
-          >
-            {EMERGENCY_LINK.label}
-          </Link>
+
+          <a href={CLINIC.phoneHref} className={styles.mobilePhone} onClick={closeMenu}>
+            <FiPhone aria-hidden="true" />
+            {CLINIC.phone}
+          </a>
 
           <SearchBar />
         </div>

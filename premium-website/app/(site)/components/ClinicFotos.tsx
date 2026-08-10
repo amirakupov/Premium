@@ -11,7 +11,7 @@ const photos: string[] = [
   '/clinic/clinic10.jpg',
   '/clinic/clinic7.jpg',
   '/clinic/clinic6.jpg',
-  '/clinic/clinic13.jpg',
+  '/clinic/clinic13.png',
   '/clinic/clinic5.jpg',
   '/clinic/clinic4.jpg',
   '/clinic/clinic12.jpg',
@@ -52,7 +52,7 @@ export default function ClinicFotos() {
 
   return (
     <section className={styles.carousel}>
-      <h2 className={styles.heading}>НАША ГАЛЕРЕЯ</h2>
+      <h2 className={styles.heading}>Как выглядит клиника</h2>
       <p className={styles.subheading}>
         Мы используем самое современное и качественное оборудование в связке с
         приятным интерьером для вашего комфорта
@@ -61,14 +61,16 @@ export default function ClinicFotos() {
       <div className={styles.slides} ref={slidesRef}>
         {photos.map((src, index) => (
           <div className={styles.slide} key={src}>
-            <Image
-              src={src}
-              alt={`Интерьер и оборудование клиники — фото ${index + 1}`}
-              fill
-              sizes="(max-width: 768px) 90vw, 45vw"
-              style={{ objectFit: 'cover' }}
-              className={styles.image}
-            />
+            <div className={styles.slideMedia}>
+              <Image
+                src={src}
+                alt={`Интерьер и оборудование клиники — фото ${index + 1}`}
+                fill
+                sizes="(max-width: 768px) 90vw, 45vw"
+                style={{ objectFit: 'cover' }}
+                className={styles.image}
+              />
+            </div>
           </div>
         ))}
       </div>

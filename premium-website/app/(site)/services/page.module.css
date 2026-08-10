@@ -1,24 +1,23 @@
 .container {
-  max-width: 1200px;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 400;
+  font-size: clamp(2rem, 4.4vw, 3rem);
   text-align: center;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  color: #1d1d1d;
+  margin: 0 auto 0.5em;
+  max-width: 22ch;
+  color: var(--ink);
 }
 
 .subtitle {
   font-size: 1.125rem;
-  font-weight: 300;
   text-align: center;
-  margin-bottom: 2rem;
-  color: var(--color-text-soft);
+  margin: 0 auto 2.5rem;
+  max-width: 60ch;
+  color: var(--ink-soft);
 }
 
 .servicesContainer {
@@ -30,18 +29,9 @@
 }
 
 @media (max-width: 767px) {
-  .container {
-    padding: 2rem 1rem;
-  }
-
-  .title {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-
   .subtitle {
     font-size: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
 
   .servicesContainer {

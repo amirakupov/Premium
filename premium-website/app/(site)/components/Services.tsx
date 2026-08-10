@@ -7,9 +7,9 @@ export default function Services({ services }: { services: Service[] }) {
   return (
     <section className={styles.servicesSection}>
       <div className={styles.headerContainer}>
-        <h2 className={styles.heading}>МЫ ПРЕДЛАГАЕМ</h2>
+        <h2 className={styles.heading}>Мы предлагаем</h2>
         <Link href="/services" className={styles.viewAllLink}>
-          посмотреть все услуги
+          Все услуги и цены
         </Link>
       </div>
 

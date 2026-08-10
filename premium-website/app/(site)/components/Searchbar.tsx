@@ -19,13 +19,14 @@ export default function SearchBar() {
     <form className={styles.searchForm} onSubmit={handleSubmit} role="search">
       <input
         type="search"
-        placeholder="Поиск по сайту"
+        className={styles.input}
+        placeholder="Поиск"
         aria-label="Поиск по сайту"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <button type="submit" className={styles.iconWrapper} aria-label="Найти">
-        <BsSearch className={styles.icon} />
+      <button type="submit" className={styles.iconButton} aria-label="Найти">
+        <BsSearch aria-hidden="true" />
       </button>
     </form>
   );

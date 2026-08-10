@@ -33,13 +33,12 @@ export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardP
       }}
     >
       <div className={`${styles.cardInner} ${flipped ? styles.flipped : ''}`}>
-        <div className={styles.cardFace}>
+        <div className={styles.cardFace} aria-hidden={flipped}>
           <Image
             src={imgSrc}
             alt={name}
             fill
             sizes="285px"
-            style={{ objectFit: 'cover' }}
             className={styles.image}
           />
           <div className={styles.overlay}>
@@ -50,6 +49,7 @@ export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardP
                 href="/contacts"
                 className={styles.button}
                 onClick={(e) => e.stopPropagation()}
+                tabIndex={flipped ? -1 : 0}
               >
                 Записаться
               </Link>
@@ -57,10 +57,10 @@ export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardP
           </div>
         </div>
 
-        <div className={styles.cardFace}>
+        <div className={styles.cardFace} aria-hidden={!flipped}>
           <div className={styles.backContent}>
-            <h3 className={styles.name}>{name}</h3>
-            <p className={styles.bio}>{bio}</p>
+            <h3 className={styles.backName}>{name}</h3>
+            {bio && <p className={styles.bio}>{bio}</p>}
           </div>
         </div>
       </div>

@@ -1,62 +1,53 @@
-/* Doctors.module.css */
-
 .doctorsSection {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 12rem;       /* horizontal padding reduced to 2rem */
-    box-sizing: border-box; /* include padding in width calculations */
-  }
-  
-  .heading {
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #1d1d1d;
-    font-family: var(--font-sans);
-  }
-  
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--section-y) var(--gutter) 0;
+}
+
+.headerContainer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  color: var(--ink);
+}
+
+.viewAllLink {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-color: var(--brass-fill);
+  text-underline-offset: 5px;
+  transition: color 0.2s ease;
+}
+
+.viewAllLink:hover {
+  color: var(--brand-deep);
+}
+
+.gridWrapper {
+  display: grid;
+  gap: clamp(16px, 2vw, 24px);
+  justify-items: center;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 560px) {
   .gridWrapper {
-    display: grid;
-    gap: 2px; /* tighten spacing between cards */
-    justify-content: center;
-    justify-items: center;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  /* Small screens: 2 columns */
-  @media (min-width: 640px) {
-    .gridWrapper {
-      grid-template-columns: repeat(2, 1fr);
-    }
+}
+
+@media (min-width: 1024px) {
+  .gridWrapper {
+    grid-template-columns: repeat(4, 1fr);
   }
-  
-  /* Medium screens: 3 columns */
-  @media (min-width: 768px) {
-    .gridWrapper {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  /* Large screens: 4 columns */
-  @media (min-width: 1024px) {
-    .gridWrapper {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-  
-  /* Mobile adjustments */
-  @media (max-width: 639px) {
-    .doctorsSection {
-      padding: 2rem 1rem; /* reduce horizontal padding */
-    }
-    .heading {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-    }
-    .gridWrapper {
-      gap: 2px; /* match desktop gap on mobile */
-    }
-  }
-  
+}

@@ -14,11 +14,11 @@ export default function EegPage() {
     <main className={styles.container}>
       <section className={styles.hero}>
         <h1 className={styles.heroTitle}>
-          <span className={styles.accent}>ЭЭГ-мониторинг</span> в клинике Premium
+          <span className={styles.accent}>ЭЭГ-мониторинг</span> в клинике «Премиум»
         </h1>
-        <h2 className={styles.heroSubtitle}>
+        <p className={styles.heroSubtitle}>
           Точная диагностика эпилепсии и неврологических расстройств
-        </h2>
+        </p>
       </section>
 
       {/* Apparatus Image */}
@@ -28,22 +28,23 @@ export default function EegPage() {
             src="/services/eeg.png"
             alt="Аппарат ЭЭГ-мониторинг"
             fill
-            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 720px) 100vw, 680px"
+            className={styles.image}
           />
         </div>
       </section>
 
       {/* Pricing */}
       <section className={styles.pricing}>
-        <h3 className={styles.sectionTitle}>Форматы и цены</h3>
+        <h2 className={styles.sectionTitle}>Форматы и цены</h2>
         <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Тип исследования</th>
-              <th>Длительность</th>
-              <th>Цена (₽)</th>
-              <th>Когда назначают?</th>
+              <th scope="col">Тип исследования</th>
+              <th scope="col">Длительность</th>
+              <th scope="col">Цена (₽)</th>
+              <th scope="col">Когда назначают?</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +74,7 @@ export default function EegPage() {
 
       {/* Process */}
       <section className={styles.process}>
-        <h3 className={styles.sectionTitle}>Как проходит исследование</h3>
+        <h2 className={styles.sectionTitle}>Как проходит исследование</h2>
         <ol className={styles.processList}>
           <li>
             <strong>Подготовка (15–30 мин):</strong> наложение электродов, провокационные пробы.
@@ -89,10 +90,10 @@ export default function EegPage() {
 
       {/* Preparation */}
       <section className={styles.preparation}>
-        <h3 className={styles.sectionTitle}>Подготовка к ЭЭГ</h3>
+        <h2 className={styles.sectionTitle}>Подготовка к ЭЭГ</h2>
         <div className={styles.prepContainer}>
           <div>
-            <h4>Перед исследованием:</h4>
+            <h3 className={styles.subhead}>Перед исследованием:</h3>
             <ul className={styles.prepList}>
               <li>Не спать днём (для ночного мониторинга).</li>
               <li>Вымыть голову, не использовать косметику.</li>
@@ -100,7 +101,7 @@ export default function EegPage() {
             </ul>
           </div>
           <div>
-            <h4>Противопоказания:</h4>
+            <h3 className={styles.subhead}>Противопоказания:</h3>
             <ul className={styles.prepList}>
               <li>Лихорадка, ОРВИ, педикулёз, кашель.</li>
             </ul>
@@ -110,11 +111,11 @@ export default function EegPage() {
 
       {/* Experts */}
       <section className={styles.experts}>
-        <h3 className={styles.sectionTitle}>Наши специалисты</h3>
+        <h2 className={styles.sectionTitle}>Наши специалисты</h2>
         <div className={styles.expertCard}>
-          
+
           <div>
-            <h4 className={styles.expertName}>Габдрахманова Инга Данировна</h4>
+            <h3 className={styles.expertName}>Габдрахманова Инга Данировна</h3>
             <p className={styles.expertRole}>Эпилептолог, невролог, кандидат наук</p>
             <blockquote className={styles.expertQuote}>
               «ЭЭГ — это окно в работу мозга. Мы поможем расшифровать его язык.»
@@ -130,30 +131,32 @@ export default function EegPage() {
 
       {/* FAQ */}
       <section className={styles.faq}>
-        <h3 className={styles.sectionTitle}>Частые вопросы</h3>
+        <h2 className={styles.sectionTitle}>Частые вопросы</h2>
         <div className={styles.question}>
-          <h4 className={styles.questionTitle}>Больно ли делать ЭЭГ?</h4>
+          <h3 className={styles.questionTitle}>Больно ли делать ЭЭГ?</h3>
           <p className={styles.questionAnswer}>
             Нет, это неинвазивный метод — только электроды на голове.
           </p>
         </div>
         <div className={styles.question}>
-          <h4 className={styles.questionTitle}>Можно ли есть перед исследованием?</h4>
+          <h3 className={styles.questionTitle}>Можно ли есть перед исследованием?</h3>
           <p className={styles.questionAnswer}>
             Да, но исключите кофе и шоколад — они влияют на результаты.
           </p>
         </div>
         <div className={styles.question}>
-          <h4 className={styles.questionTitle}>Как часто нужно повторять ЭЭГ?</h4>
+          <h3 className={styles.questionTitle}>Как часто нужно повторять ЭЭГ?</h3>
           <p className={styles.questionAnswer}>
             Обычно 1–2 раза в год по рекомендации врача.
           </p>
         </div>
       </section>
-      
-        <a href={CLINIC.phoneHref} className={styles.ctaButton}>
+
+      <div className={styles.ctaRow}>
+        <a href={CLINIC.phoneHref} className="btn btn--brass">
           Записаться на ЭЭГ
         </a>
+      </div>
     </main>
   );
 }
