@@ -56,6 +56,20 @@
 
 **Рецепт «плотное стекло»** (сайдбар, топбар, sheet, модалка, тосты, палитра): то же, но `background: var(--glass-bg-strong)`.
 
+**Шкала слоёв.** Все оверлеи считаются от `--z-overlay` одной лестницей — иначе скрим одного слоя окажется под панелью другого. Порядок снизу вверх:
+
+| Слой | z-index |
+|---|---|
+| скрим sheet | `var(--z-overlay)` |
+| панель sheet | `calc(var(--z-overlay) + 1)` |
+| скрим модалки | `calc(var(--z-overlay) + 2)` |
+| модалка | `calc(var(--z-overlay) + 3)` |
+| скрим палитры | `calc(var(--z-overlay) + 4)` |
+| палитра | `calc(var(--z-overlay) + 5)` |
+| стек тостов | `calc(var(--z-overlay) + 6)` |
+
+Модалка обязана быть выше панели sheet: она подтверждает уход из формы, которая живёт внутри sheet, и sheet при этом остаётся открытым. Тосты выше всех — ошибка может прийти при открытой модалке.
+
 **Рецепт «блик по поверхности»** — отдельный слой поверх содержимого, чтобы блик ложился и на фото внутри:
 ```css
   .x::after {
@@ -1794,10 +1808,12 @@ export default function Modal({
 Создать `app/(admin)/admin/components/ui/Modal.module.css`.
 
 ```css
+/* Выше панели sheet: модалка подтверждает уход из формы, которая внутри
+   sheet и остаётся открытой — иначе скрим ляжет под панель. */
 .scrim {
   position: fixed;
   inset: 0;
-  z-index: var(--z-overlay);
+  z-index: calc(var(--z-overlay) + 2);
   background: rgba(var(--scrim), 0.42);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
@@ -1806,7 +1822,7 @@ export default function Modal({
 .wrap {
   position: fixed;
   inset: 0;
-  z-index: calc(var(--z-overlay) + 2);
+  z-index: calc(var(--z-overlay) + 3);
   display: grid;
   place-items: center;
   padding: 24px;
@@ -2006,11 +2022,12 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
 Создать `app/(admin)/admin/components/ui/Toast.module.css`.
 
 ```css
+/* Выше всех оверлеев: ошибка может прийти при открытой модалке или палитре. */
 .stack {
   position: fixed;
   right: 22px;
   bottom: 22px;
-  z-index: calc(var(--z-overlay) + 3);
+  z-index: calc(var(--z-overlay) + 6);
   display: grid;
   gap: 10px;
   justify-items: end;
@@ -2085,7 +2102,7 @@ git commit -m "feat(admin): glass toasts with action and auto-dismiss"
 - Produces:
   - `<TableShell title: ReactNode; actions?: ReactNode; children>` — стеклянный контейнер со шапкой; **единственное место с `backdrop-filter`**
   - `<TableHead cols: string; children>` и `<TableHeadCell sortKey: string; state: SortState<string>; onSort: (key: string) => void; children>`
-  - `<TableRow cols: string; muted?: boolean; leaving?: boolean; children>`
+  - `<TableRow cols: string; muted?: boolean; children>`
   - `<StatusBadge badge: Badge>`
   - `<TableCounter shown: number; total: number>`, `<TableChip>{children}</TableChip>`, `<TableColumnLabel>{children}</TableColumnLabel>` — общий хром шапки списка; таблицы услуг и врачей берут его отсюда, а не заводят свои копии
   - `<InlineEdit value: string; label: string; onCommit: (next: string) => void; validate?: (raw: string) => boolean; children>` — клик по содержимому включает поле, Enter сохраняет, Esc отменяет, blur сохраняет
