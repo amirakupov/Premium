@@ -495,8 +495,12 @@ export function saveDraft<T>(
     storage: DraftStorage | null = defaultStorage(),
 ): void {
     if (!storage) return;
+    // Сериализуем снаружи try: ошибка сериализации — это баг в данных
+    // вызывающего кода, и он должен быть виден, а не проглочен вместе
+    // с отказом хранилища.
+    const raw = JSON.stringify(value);
     try {
-        storage.setItem(draftKey(scope, id), JSON.stringify(value));
+        storage.setItem(draftKey(scope, id), raw);
     } catch {
         // квота или приватный режим — черновик не критичен, молчим
     }
