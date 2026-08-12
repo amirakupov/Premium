@@ -26,6 +26,7 @@
 - Все анимации на `var(--spring)` = `cubic-bezier(0.34, 1.35, 0.64, 1)`, длительности `var(--dur-fast)` 160мс / `var(--dur)` 260мс / `var(--dur-slow)` 420мс. Глобальное правило `@media (prefers-reduced-motion: reduce)` в `globals.css:171-173` уже отключает всё — новых `!important` не добавлять.
 - **`backdrop-filter` только на контейнерах.** Ни на одном элементе, который может повториться десятки раз (строка таблицы, пункт списка, чип), `backdrop-filter` быть не должно.
 - **Фокус виден всегда.** `outline: none` без замены запрещён. Базовое правило `:focus-visible` уже есть в `globals.css:161-164`.
+- **Сообщения коммитов — на английском**, формат `feat(admin): …`. Текст интерфейса, комментарии в коде и этот план — на русском.
 - Иконки — только `react-icons` (наборы `ai`, `bs`, `fi`, `hi2` — как на витрине). Своих SVG не рисовать.
 - Каждая задача заканчивается зелёными `npx tsc --noEmit` и `npm run build` — без ошибок и без новых warning-ов.
 
@@ -244,7 +245,7 @@ Expected: обе команды без ошибок. Витрина визуал
 
 ```bash
 git add app/globals.css
-git commit -m "feat(admin): токены плотного рабочего интерфейса"
+git commit -m "feat(admin): dense-interface design tokens"
 ```
 
 ---
@@ -443,7 +444,7 @@ Expected: без ошибок. Модули пока никем не испол�
 
 ```bash
 git add lib/admin/validation.ts lib/admin/sort.ts lib/admin/badges.ts
-git commit -m "feat(admin): логика валидации, сортировки и статусов строк"
+git commit -m "feat(admin): row logic — validation, sorting, status badges"
 ```
 
 ---
@@ -660,7 +661,7 @@ Expected: без ошибок.
 
 ```bash
 git add lib/admin/draft.ts lib/admin/hotkeys.ts lib/admin/optimistic.ts
-git commit -m "feat(admin): черновики форм, хоткеи и оптимистичные операции"
+git commit -m "feat(admin): form drafts, hotkeys, optimistic collection ops"
 ```
 
 ---
@@ -989,7 +990,7 @@ Expected: без ошибок. Компоненты пока не подключ
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): примитивы GlassCard и Button, блик по курсору"
+git commit -m "feat(admin): GlassCard and Button primitives with cursor glow"
 ```
 
 ---
@@ -1293,7 +1294,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): поля ввода с валидацией и aria-разметкой"
+git commit -m "feat(admin): form fields with validation states and aria wiring"
 ```
 
 ---
@@ -1483,7 +1484,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): скелетоны в геометрии таблицы и пустые состояния"
+git commit -m "feat(admin): table-shaped skeletons and empty states"
 ```
 
 ---
@@ -1842,7 +1843,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): sheet, модалка и ловушка фокуса"
+git commit -m "feat(admin): sheet, modal and focus trap"
 ```
 
 ---
@@ -2030,7 +2031,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): стеклянные тосты с действием и автоскрытием"
+git commit -m "feat(admin): glass toasts with action and auto-dismiss"
 ```
 
 ---
@@ -2471,7 +2472,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): дата-грид с сортировкой и инлайн-правкой"
+git commit -m "feat(admin): data grid with sorting and inline edit"
 ```
 
 ---
@@ -2720,7 +2721,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/ui"
-git commit -m "feat(admin): drag-and-drop загрузка изображений с валидацией"
+git commit -m "feat(admin): drag-and-drop image upload with validation"
 ```
 
 ---
@@ -2934,7 +2935,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/data"
-git commit -m "feat(admin): провайдер данных с оптимистичными мутациями"
+git commit -m "feat(admin): data provider with optimistic mutations"
 ```
 
 ---
@@ -3320,7 +3321,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/admin/components/shell"
-git commit -m "feat(admin): стеклянный сайдбар с перетекающей пилюлей"
+git commit -m "feat(admin): glass sidebar with flowing active pill"
 ```
 
 ---
@@ -4002,7 +4003,7 @@ Run: `npm run dev`, открыть `http://localhost:3000/admin`.
 
 ```bash
 git add -A "app/(admin)"
-git commit -m "feat(admin): каркас с сайдбаром, топбаром и экраном Обзора"
+git commit -m "feat(admin): shell with sidebar, topbar and overview screen"
 ```
 
 ---
@@ -4626,7 +4627,7 @@ Expected: всё зелёное.
 
 ```bash
 git add "app/(admin)/admin/services" "app/(admin)/admin/components"
-git commit -m "feat(admin): раздел услуг с дата-гридом и панелью правки"
+git commit -m "feat(admin): services section with data grid and edit sheet"
 ```
 
 ---
@@ -5211,7 +5212,7 @@ Expected: всё зелёное.
 
 ```bash
 git add "app/(admin)/admin/doctors" "app/(admin)/admin/components"
-git commit -m "feat(admin): раздел врачей с дата-гридом и панелью правки"
+git commit -m "feat(admin): doctors section with data grid and edit sheet"
 ```
 
 ---
@@ -5589,7 +5590,7 @@ Expected: всё зелёное.
 
 ```bash
 git add "app/(admin)/admin"
-git commit -m "feat(admin): палитра команд и глобальные хоткеи"
+git commit -m "feat(admin): command palette and global hotkeys"
 ```
 
 ---
@@ -5914,7 +5915,7 @@ Expected: без ошибок.
 
 ```bash
 git add "app/(admin)/login"
-git commit -m "feat(admin): стеклянный экран входа"
+git commit -m "feat(admin): glass login screen"
 ```
 
 ---
@@ -6149,7 +6150,7 @@ Expected: всё зелёное, новых warning-ов нет.
 
 ```bash
 git add "app/(admin)"
-git commit -m "feat(admin): адаптив — drawer, карточный режим таблицы, полноэкранный sheet"
+git commit -m "feat(admin): responsive — drawer, card-mode table, full-width sheet"
 ```
 
 ---
