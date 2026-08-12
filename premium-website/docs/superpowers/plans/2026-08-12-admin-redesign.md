@@ -1973,6 +1973,10 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
                             <Button
                                 variant="quiet"
                                 size="sm"
+                                // Закрываем сразу, не дожидаясь исхода повтора: иначе при
+                                // успехе рядом с «Сохранено» повиснет противоречащая ошибка.
+                                // Исход виден и без тоста — статус в топбаре показывает
+                                // «Сохраняем…», а повторный провал присылает новый тост.
                                 onClick={() => {
                                     toast.action?.onClick();
                                     dismiss(toast.id);
