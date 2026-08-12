@@ -1,0 +1,63 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: rgba(var(--scrim), 0.28);
+}
+
+/* Плотное стекло: под ним едет содержимое страницы, лёгкого не хватит. */
+.sheet {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: calc(var(--z-overlay) + 1);
+  display: flex;
+  flex-direction: column;
+  width: 520px;
+  max-width: 100%;
+  border-left: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+  animation: sheetIn var(--dur-slow) var(--spring);
+}
+
+@keyframes sheetIn {
+  from { transform: translateX(102%); }
+  to { transform: none; }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px 22px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: 20px 22px;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--glass-border);
+}
