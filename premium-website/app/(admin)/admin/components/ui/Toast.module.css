@@ -1,0 +1,52 @@
+.stack {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: calc(var(--z-overlay) + 3);
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 10px 10px 10px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+  animation: toastIn var(--dur) var(--spring);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Цветная точка — второй канал к цвету текста: не только оттенок. */
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.success .dot { background: var(--success); }
+.error .dot { background: var(--danger); }
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-wrap: pretty;
+}
