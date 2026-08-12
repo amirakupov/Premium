@@ -34,7 +34,8 @@
 1. **Удаления записей нет.** `DELETE /api/cms/service/{id}` и `/doctors/{id}` в бэкенде отсутствуют. Кнопка «Удалить», связанная модалка подтверждения удаления и тост «Отменить» **не делаются**. Компонент `Modal` всё равно строится — он нужен для подтверждения ухода со страницы с несохранёнными изменениями. Колонка «Действия» сужается до одной кнопки «Открыть»: ширина колонки `120px` вместо `196px`.
 2. **Раздела «Медиа» нет.** `GET /api/cms/media` отсутствует. Маршрут `/admin/media` не создаётся, пункт из сайдбара исключён, на Обзоре — две плитки вместо трёх. `Dropzone` всё равно строится: он заменяет `input[type=file]` в формах услуг и врачей.
 3. **Отдельного `Wallpaper.tsx` нет.** Обои уже нарисованы глобально в `app/globals.css:203-217` (`body::before`, `position: fixed`, `z-index: -1`, гаснут в `data-a11y="1"`). Дублировать их отдельным слоем внутри админки — значит рисовать один и тот же градиент дважды. Вместо этого каркас админки держит прозрачный фон, и глобальные обои просвечивают. Расхождение с прототипом — сдвиг центров пятен на 2–4% — визуально неразличимо.
-4. **Автотестов нет.** В проекте нет тестового фреймворка, и он не добавляется. Приёмка каждой задачи — `npx tsc --noEmit`, `npm run build` и явный список того, что смотрится в браузере: он есть у каждой задачи, где появляется видимое поведение. Логика в `lib/admin/` устроена как чистые функции именно поэтому — её можно прочитать и проверить рассуждением, а её поведение наблюдается на экранах Task 14 и Task 15.
+4. **Панели услуги и врача — два отдельных компонента, а не один обобщённый.** `ServiceSheet` и `DoctorSheet` имеют одинаковую форму (черновик, валидация, `beforeunload`, модалка ухода), но разные типы payload, разные наборы полей, разные валидаторы и разные лимиты. Обобщение потребовало бы дженериков по payload и карты описаний полей — читать стало бы труднее, а сущностей всего две и новых не предвидится. Общее у них — примитивы `Sheet`, `Input`, `Textarea`, `Dropzone`, `Modal` и CSS-модуль `ServiceSheet.module.css`, который панель врача переиспользует. Дословно продублированного кода при этом нет: совпадает структура, не текст.
+5. **Автотестов нет.** В проекте нет тестового фреймворка, и он не добавляется. Приёмка каждой задачи — `npx tsc --noEmit`, `npm run build` и явный список того, что смотрится в браузере: он есть у каждой задачи, где появляется видимое поведение. Логика в `lib/admin/` устроена как чистые функции именно поэтому — её можно прочитать и проверить рассуждением, а её поведение наблюдается на экранах Task 14 и Task 15.
 
 ### CSS-конвенции админки
 
@@ -2047,6 +2048,7 @@ git commit -m "feat(admin): стеклянные тосты с действие�
   - `<TableHead cols: string; children>` и `<TableHeadCell sortKey: string; state: SortState<string>; onSort: (key: string) => void; children>`
   - `<TableRow cols: string; muted?: boolean; leaving?: boolean; children>`
   - `<StatusBadge badge: Badge>`
+  - `<TableCounter shown: number; total: number>`, `<TableChip>{children}</TableChip>`, `<TableColumnLabel>{children}</TableColumnLabel>` — общий хром шапки списка; таблицы услуг и врачей берут его отсюда, а не заводят свои копии
   - `<InlineEdit value: string; label: string; onCommit: (next: string) => void; validate?: (raw: string) => boolean; children>` — клик по содержимому включает поле, Enter сохраняет, Esc отменяет, blur сохраняет
 
 - [ ] **Step 1: Table**
@@ -2149,6 +2151,26 @@ export function TableCell({ children }: { children: ReactNode }) {
 
 export function StatusBadge({ badge }: { badge: Badge }) {
     return <span className={`${styles.badge} ${styles[badge.tone]}`}>{badge.label}</span>;
+}
+
+/* ── Хром шапки контейнера. Общий для всех списков, поэтому живёт здесь,
+      а не дублируется в модуле каждой таблицы. ─────────────────────── */
+
+export function TableCounter({ shown, total }: { shown: number; total: number }) {
+    return <span className={styles.counter}>{shown} из {total}</span>;
+}
+
+export function TableChip({ children }: { children: ReactNode }) {
+    return <span className={styles.chip}>{children}</span>;
+}
+
+/** Заголовок несортируемой колонки: выглядит как остальные, но не кликается. */
+export function TableColumnLabel({ children }: { children: ReactNode }) {
+    return (
+        <div role="columnheader" className={styles.columnLabel}>
+            {children}
+        </div>
+    );
 }
 ```
 
@@ -2281,6 +2303,31 @@ export function StatusBadge({ badge }: { badge: Badge }) {
 .success { background: var(--success-tint); color: var(--success); }
 .danger { background: var(--danger-tint); color: var(--danger); }
 .brand { background: var(--brand-tint); color: var(--brand); }
+
+/* ── Хром шапки: счётчик, чип фильтра, подпись несортируемой колонки ── */
+
+.counter {
+  font-weight: 400;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.columnLabel {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 ```
 
 - [ ] **Step 3: InlineEdit**
@@ -3998,6 +4045,9 @@ import { SkeletonRows } from "./ui/Skeleton";
 import {
     StatusBadge,
     TableCell,
+    TableChip,
+    TableColumnLabel,
+    TableCounter,
     TableHead,
     TableHeadCell,
     TableRow,
@@ -4039,10 +4089,8 @@ export default function ServiceTable({
     const title = (
         <>
             <span>Услуги</span>
-            <span className={styles.counter}>
-                {filtered.length} из {services.length}
-            </span>
-            {query ? <span className={styles.chip}>фильтр: {query}</span> : null}
+            <TableCounter shown={filtered.length} total={services.length} />
+            {query ? <TableChip>фильтр: {query}</TableChip> : null}
         </>
     );
 
@@ -4067,8 +4115,8 @@ export default function ServiceTable({
                 <TableHeadCell sortKey="price" state={sort} onSort={(k) => setSort(toggleSort(sort, k))}>
                     Цена
                 </TableHeadCell>
-                <div role="columnheader" className={styles.plainHead}>Статус</div>
-                <div role="columnheader" className={styles.plainHead}>Действия</div>
+                <TableColumnLabel>Статус</TableColumnLabel>
+                <TableColumnLabel>Действия</TableColumnLabel>
             </TableHead>
 
             {loading && services.length === 0 ? <SkeletonRows cols={SERVICE_COLS} /> : null}
@@ -4156,33 +4204,9 @@ export default function ServiceTable({
 
 - [ ] **Step 2: Стили таблицы услуг**
 
-Создать `app/(admin)/admin/components/ServiceTable.module.css`.
+Создать `app/(admin)/admin/components/ServiceTable.module.css`. Счётчика, чипа и подписи колонки здесь нет — они приходят из `Table.tsx`.
 
 ```css
-.counter {
-  font-weight: 400;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-.chip {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--brand-tint);
-  color: var(--brand);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* Несортируемая колонка выглядит как заголовок, но не кликается. */
-.plainHead {
-  color: var(--ink-soft);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 .nameCell {
   display: flex;
   align-items: center;
@@ -4646,6 +4670,9 @@ import { SkeletonRows } from "./ui/Skeleton";
 import {
     StatusBadge,
     TableCell,
+    TableChip,
+    TableColumnLabel,
+    TableCounter,
     TableHead,
     TableHeadCell,
     TableRow,
@@ -4687,10 +4714,8 @@ export default function DoctorTable({
     const title = (
         <>
             <span>Врачи</span>
-            <span className={styles.counter}>
-                {filtered.length} из {doctors.length}
-            </span>
-            {query ? <span className={styles.chip}>фильтр: {query}</span> : null}
+            <TableCounter shown={filtered.length} total={doctors.length} />
+            {query ? <TableChip>фильтр: {query}</TableChip> : null}
         </>
     );
 
@@ -4715,8 +4740,8 @@ export default function DoctorTable({
                 <TableHeadCell sortKey="specialty" state={sort} onSort={(k) => setSort(toggleSort(sort, k))}>
                     Специализация
                 </TableHeadCell>
-                <div role="columnheader" className={styles.plainHead}>Статус</div>
-                <div role="columnheader" className={styles.plainHead}>Действия</div>
+                <TableColumnLabel>Статус</TableColumnLabel>
+                <TableColumnLabel>Действия</TableColumnLabel>
             </TableHead>
 
             {loading && doctors.length === 0 ? <SkeletonRows cols={DOCTOR_COLS} /> : null}
@@ -4808,32 +4833,9 @@ export default function DoctorTable({
 
 - [ ] **Step 2: Стили таблицы врачей**
 
-Создать `app/(admin)/admin/components/DoctorTable.module.css`.
+Создать `app/(admin)/admin/components/DoctorTable.module.css`. Счётчика, чипа и подписи колонки здесь нет — они приходят из `Table.tsx`.
 
 ```css
-.counter {
-  font-weight: 400;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-.chip {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--brand-tint);
-  color: var(--brand);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.plainHead {
-  color: var(--ink-soft);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 .nameCell {
   display: flex;
   align-items: center;
