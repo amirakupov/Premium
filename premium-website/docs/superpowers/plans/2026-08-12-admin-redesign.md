@@ -23,10 +23,11 @@
 - **`app/(admin)/admin/actions.ts` не трогать.** Реальные имена экшенов: `actionListAllServices`, `actionCreateService`, `actionPatchService`, `actionListAllDoctors`, `actionCreateDoctor`, `actionPatchDoctor`, `actionUploadMedia`. (В README пакета они названы иначе — README ошибается, источник истины — файл.)
 - **Логин не менять по сути:** `POST /api/login`, редирект по `?next=`, `middleware.ts` — как есть. Меняется только разметка и стили.
 - **Русский язык интерфейса.**
-- Все анимации на `var(--spring)` = `cubic-bezier(0.34, 1.35, 0.64, 1)`, длительности `var(--dur-fast)` 160мс / `var(--dur)` 260мс / `var(--dur-slow)` 420мс. Глобальное правило `@media (prefers-reduced-motion: reduce)` в `globals.css:171-173` уже отключает всё — новых `!important` не добавлять.
+- Длительности — `var(--dur-fast)` 160мс / `var(--dur)` 260мс / `var(--dur-slow)` 420мс. Кривая зависит от свойства: **перемещение и масштаб** (`transform`) — на `var(--spring)` = `cubic-bezier(0.34, 1.35, 0.64, 1)`; **кроссфейды цвета, фона, границы и тени** — на `ease`. Пружина даёт перелёт, а у цвета перелёта не бывает — витрина уже разделяет их ровно так (`globals.css:303-304`). Глобальное правило `@media (prefers-reduced-motion: reduce)` в `globals.css:171-173` уже отключает всё — новых `!important` не добавлять.
 - **`backdrop-filter` только на контейнерах.** Ни на одном элементе, который может повториться десятки раз (строка таблицы, пункт списка, чип), `backdrop-filter` быть не должно.
 - **Фокус виден всегда.** `outline: none` без замены запрещён. Базовое правило `:focus-visible` уже есть в `globals.css:161-164`.
 - **Сообщения коммитов — на английском**, формат `feat(admin): …`. Текст интерфейса, комментарии в коде и этот план — на русском.
+- **Минимальный тап-таргет 44px — там, где вводят пальцем.** На указателе мыши плотный грид может быть компактнее: `.sm` (36px) живёт в строках таблицы и в шапках контейнеров. Всё, что доступно на тач-вводе, остаётся 44px.
 - Иконки — только `react-icons` (наборы `ai`, `bs`, `fi`, `hi2` — как на витрине). Своих SVG не рисовать.
 - Каждая задача заканчивается зелёными `npx tsc --noEmit` и `npm run build` — без ошибок и без новых warning-ов.
 
@@ -845,6 +846,8 @@ export default function Button({
     className = "",
     children,
     disabled,
+    onPointerMove,
+    onPointerLeave,
     ...rest
 }: Props) {
     const { ref, glowProps } = useCursorGlow<HTMLButtonElement>();
@@ -855,10 +858,19 @@ export default function Button({
             ref={glow ? ref : undefined}
             type="button"
             className={`${styles.btn} ${styles[variant]} ${styles[size]} ${className}`}
-            disabled={disabled || loading}
-            aria-busy={loading || undefined}
-            {...(glow ? glowProps : {})}
             {...rest}
+            disabled={disabled || loading}
+            aria-busy={loading || rest["aria-busy"]}
+            // Блик и обработчики вызывающего кода живут вместе: спред не должен
+            // молча отключать эффект, ради которого кнопка primary и существует.
+            onPointerMove={(e) => {
+                if (glow) glowProps.onPointerMove(e);
+                onPointerMove?.(e);
+            }}
+            onPointerLeave={(e) => {
+                if (glow) glowProps.onPointerLeave(e);
+                onPointerLeave?.(e);
+            }}
         >
             {glow ? <span aria-hidden="true" className={styles.glow} /> : null}
             <span className={styles.label}>
@@ -976,6 +988,8 @@ export default function Button({
 }
 
 .md { min-height: 44px; }
+/* Плотный грид на десктопе: 36px читается как «служебное действие в строке».
+   Тач-ввод сюда не приходит — на узких экранах строка разбирается в карточку. */
 .sm { min-height: 36px; padding: 0 12px; font-size: 13px; }
 /* Квадратная кнопка-иконка: 44px, чтобы попадать пальцем. */
 .icon {
