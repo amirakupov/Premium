@@ -34,12 +34,13 @@ export default function Input({
                 {required ? <span aria-hidden="true" className={styles.star}>*</span> : null}
             </label>
             <input
+                {...rest}
                 id={id}
+                required={required}
                 className={`${styles.input} ${error ? styles.invalid : ""} ${className}`}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={describedBy || undefined}
                 aria-required={required || undefined}
-                {...rest}
             />
             {hint ? <p id={hintId} className={styles.hint}>{hint}</p> : null}
             {error ? (

@@ -39,12 +39,12 @@ export default function Textarea({
                 ) : null}
             </div>
             <textarea
+                {...rest}
                 id={id}
                 value={value}
                 className={`${styles.area} ${error ? styles.invalid : ""} ${className}`}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={describedBy || undefined}
-                {...rest}
             />
             {error ? (
                 <p id={errorId} role="alert" className={styles.error}>{error}</p>

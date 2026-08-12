@@ -68,4 +68,11 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--danger);
+  animation: shake var(--dur-slow) var(--spring);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  30%, 70% { transform: translateX(3px); }
+  50% { transform: translateX(-4px); }
 }

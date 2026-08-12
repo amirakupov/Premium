@@ -65,7 +65,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--danger);
-  animation: shake 320ms var(--spring);
+  animation: shake var(--dur-slow) var(--spring);
 }
 
 @keyframes shake {
