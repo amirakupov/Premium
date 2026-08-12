@@ -1065,13 +1065,17 @@ export default function Input({
                 {label}
                 {required ? <span aria-hidden="true" className={styles.star}>*</span> : null}
             </label>
+            {/* {...rest} идёт первым: aria-разметку собирает сам компонент,
+                и вызывающая форма не должна случайно её перебить — иначе
+                aria-describedby укажет на несуществующий элемент. */}
             <input
+                {...rest}
                 id={id}
+                required={required}
                 className={`${styles.input} ${error ? styles.invalid : ""} ${className}`}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={describedBy || undefined}
                 aria-required={required || undefined}
-                {...rest}
             />
             {hint ? <p id={hintId} className={styles.hint}>{hint}</p> : null}
             {error ? (
@@ -1154,7 +1158,7 @@ export default function Input({
   font-size: 12px;
   font-weight: 600;
   color: var(--danger);
-  animation: shake 320ms var(--spring);
+  animation: shake var(--dur-slow) var(--spring);
 }
 
 @keyframes shake {
@@ -1209,13 +1213,14 @@ export default function Textarea({
                     </span>
                 ) : null}
             </div>
+            {/* Тот же порядок, что в Input: вычисленная aria-разметка последняя. */}
             <textarea
+                {...rest}
                 id={id}
                 value={value}
                 className={`${styles.area} ${error ? styles.invalid : ""} ${className}`}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={describedBy || undefined}
-                {...rest}
             />
             {error ? (
                 <p id={errorId} role="alert" className={styles.error}>{error}</p>
@@ -1295,11 +1300,20 @@ export default function Textarea({
   box-shadow: var(--glass-sheen), var(--ring-danger);
 }
 
+/* Та же встряска, что у Input: два поля в одной форме не должны
+   вести себя по-разному при ошибке. */
 .error {
   margin: 0;
   font-size: 12px;
   font-weight: 600;
   color: var(--danger);
+  animation: shake var(--dur-slow) var(--spring);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  30%, 70% { transform: translateX(3px); }
+  50% { transform: translateX(-4px); }
 }
 ```
 
