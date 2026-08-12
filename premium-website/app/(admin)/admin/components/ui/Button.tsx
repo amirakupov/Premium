@@ -21,6 +21,9 @@ export default function Button({
     className = "",
     children,
     disabled,
+    onPointerMove,
+    onPointerLeave,
+    "aria-busy": ariaBusy,
     ...rest
 }: Props) {
     const { ref, glowProps } = useCursorGlow<HTMLButtonElement>();
@@ -31,10 +34,19 @@ export default function Button({
             ref={glow ? ref : undefined}
             type="button"
             className={`${styles.btn} ${styles[variant]} ${styles[size]} ${className}`}
-            disabled={disabled || loading}
-            aria-busy={loading || undefined}
-            {...(glow ? glowProps : {})}
             {...rest}
+            disabled={disabled || loading}
+            aria-busy={loading || ariaBusy}
+            // Блик и обработчики вызывающего кода живут вместе: спред не должен
+            // молча отключать эффект, ради которого кнопка primary и существует.
+            onPointerMove={(e) => {
+                if (glow) glowProps.onPointerMove(e);
+                if (onPointerMove) onPointerMove(e);
+            }}
+            onPointerLeave={(e) => {
+                if (glow) glowProps.onPointerLeave();
+                if (onPointerLeave) onPointerLeave(e);
+            }}
         >
             {glow ? <span aria-hidden="true" className={styles.glow} /> : null}
             <span className={styles.label}>
