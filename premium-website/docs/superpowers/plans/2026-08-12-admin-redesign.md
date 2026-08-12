@@ -1404,13 +1404,15 @@ export function SkeletonRows({
   padding: 6px;
 }
 
-/* Та же сетка, что у настоящей строки: --cols приходит от таблицы. */
+/* Та же сетка, что у настоящей строки: --cols приходит от таблицы.
+   min-height, а не height: настоящая строка тоже тянется под содержимое,
+   и жёсткая высота развалила бы совпадение ровно там, где оно нужно. */
 .row {
   display: grid;
   grid-template-columns: var(--cols);
   gap: 12px;
   align-items: center;
-  height: var(--row-h);
+  min-height: var(--row-h);
   padding: 0 12px;
   border-radius: var(--radius-sm);
   background: var(--surface);
