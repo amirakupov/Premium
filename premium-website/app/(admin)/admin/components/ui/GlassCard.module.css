@@ -1,0 +1,42 @@
+/* Лёгкое стекло плотного интерфейса: радиус мельче витринного,
+   кромку рисует --glass-sheen, а не рамка. */
+.card {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+.strong {
+  background: var(--glass-bg-strong);
+}
+
+/* Статичный блик поверхности — поверх содержимого, чтобы ложился и на фото. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
+}
+
+/* Подвижный блик: центр берётся из --mx/--my, которые пишет useCursorGlow. */
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    220px circle at var(--mx, 50%) var(--my, 0%),
+    var(--glow-soft),
+    transparent 70%
+  );
+  transition: opacity var(--dur) ease;
+}
