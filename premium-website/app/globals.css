@@ -103,6 +103,44 @@
   --line: 1.55;
   --letter: 0;
   --focus: 3px;
+
+  /* ── Админка: плотный рабочий интерфейс ─────────────────────────── */
+  /* Радиусы витрины (22/30px) слишком крупные для плотного грида —
+     у админки своя, более мелкая шкала. */
+  --radius-md: 18px;       /* стеклянные контейнеры плотного интерфейса */
+  --radius-sm: 12px;       /* поля, кнопки, чипы */
+  --radius-xs: 8px;        /* ячейка инлайн-правки, мелкие теги */
+  --row-h: 52px;           /* высота строки дата-грида */
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 72px;
+  --topbar-h: 64px;
+
+  --danger: #b3261e;             /* деструктивное действие и ошибка поля */
+  --danger-tint: #fdeceb;        /* подложка ошибки на светлом */
+  --danger-line: rgba(179, 38, 30, 0.32);
+  --danger-soft: rgba(179, 38, 30, 0.28);  /* ховер кнопки выхода на тёмном */
+  --success: #0f7a52;            /* статус «сохранено» */
+  --success-tint: #e4f6ee;
+
+  /* Ховер строки без blur: строк в списке могут быть сотни, и
+     backdrop-filter на каждой убивает скролл. */
+  --glass-row-hover: rgba(230, 240, 253, 0.9);
+  --row-line: 0 1px 0 rgba(15, 31, 56, 0.05);  /* волосяная линия под строкой */
+  /* Сайдбар плотнее общего тёмного стекла: под ним едет контент. */
+  --glass-dark-bg-nav: rgba(12, 30, 58, 0.8);
+  --pill-fill: rgba(255, 255, 255, 0.16);      /* активная пилюля сайдбара */
+  /* Кольца фокуса и ошибки — тенью, а не outline: не сдвигают геометрию поля. */
+  --ring-brand: 0 0 0 3px rgba(37, 99, 235, 0.24);
+  --ring-danger: 0 0 0 3px rgba(179, 38, 30, 0.16);
+  --shimmer: linear-gradient(90deg,
+    rgba(15, 31, 56, 0.07) 0%,
+    rgba(15, 31, 56, 0.13) 40%,
+    rgba(15, 31, 56, 0.07) 80%);               /* бегущая полоса скелетона */
+  --glow-soft: rgba(255, 255, 255, 0.4);       /* блик, идущий за курсором */
+
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 420ms;
 }
 
 html[data-a11y="1"] {
@@ -138,6 +176,22 @@ html[data-a11y="1"] {
   --glass-gloss: none;
   --glass-shadow: none;
   --glass-primary: #0b3fb0;
+
+  /* админка: сплошные поверхности, максимальный контраст */
+  --danger: #8c1d16;
+  --danger-tint: #ffffff;
+  --danger-line: #8c1d16;
+  --danger-soft: #8c1d16;
+  --success: #0a5c3d;
+  --success-tint: #ffffff;
+  --glass-row-hover: #eef4fd;
+  --glass-dark-bg-nav: #08183a;
+  --pill-fill: #0b3fb0;
+  --ring-brand: 0 0 0 3px #0b3fb0;
+  --ring-danger: 0 0 0 3px #8c1d16;
+  --row-line: 0 1px 0 rgba(0, 0, 0, 0.35);
+  --shimmer: linear-gradient(90deg, #e8eef8 0%, #d6e2f4 40%, #e8eef8 80%);
+  --glow-soft: transparent;
 }
 
 /* Уважаем системную настройку «меньше прозрачности» — сплошные поверхности. */
@@ -152,6 +206,8 @@ html[data-a11y="1"] {
     --glass-sheen: none;
     --glass-gloss: none;
     --glass-primary: linear-gradient(180deg, #3b76f0, #1d4ed8);
+    --glass-row-hover: #eef4fd;
+    --glass-dark-bg-nav: #12294d;
   }
 }
 html[data-a11y="1"] body {
