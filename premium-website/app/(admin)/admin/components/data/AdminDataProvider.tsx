@@ -107,17 +107,21 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addServiceOp(op);
+            let saved: Service | null;
             try {
-                const saved = await actionCreateService(payload);
-                if (!saved) return fail("Не удалось создать услугу", () => createService(payload));
-                setBaseServices((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                // В try только сетевой вызов: если сюда попадёт ошибка из
+                // commitOp, пользователь увидит «повторить» и создаст дубль —
+                // запрос-то уже прошёл.
+                saved = await actionCreateService(payload);
             } catch {
                 // Экшен возвращает null на ответ не-2xx, но при обрыве сети
                 // fetch бросает — без catch статус навсегда застрял бы
                 // на «Сохраняем…», и об ошибке никто бы не узнал.
-                fail("Не удалось создать услугу", () => createService(payload));
+                return fail("Не удалось создать услугу", () => createService(payload));
             }
+            if (!saved) return fail("Не удалось создать услугу", () => createService(payload));
+            setBaseServices((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -126,14 +130,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addServiceOp(op);
+            let saved: Service | null;
             try {
-                const saved = await actionPatchService(id, patch);
-                if (!saved) return fail("Не удалось сохранить услугу", () => patchService(id, patch));
-                setBaseServices((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionPatchService(id, patch);
             } catch {
-                fail("Не удалось сохранить услугу", () => patchService(id, patch));
+                return fail("Не удалось сохранить услугу", () => patchService(id, patch));
             }
+            if (!saved) return fail("Не удалось сохранить услугу", () => patchService(id, patch));
+            setBaseServices((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -146,14 +151,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addDoctorOp(op);
+            let saved: Doctor | null;
             try {
-                const saved = await actionCreateDoctor(payload);
-                if (!saved) return fail("Не удалось добавить врача", () => createDoctor(payload));
-                setBaseDoctors((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionCreateDoctor(payload);
             } catch {
-                fail("Не удалось добавить врача", () => createDoctor(payload));
+                return fail("Не удалось добавить врача", () => createDoctor(payload));
             }
+            if (!saved) return fail("Не удалось добавить врача", () => createDoctor(payload));
+            setBaseDoctors((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -162,14 +168,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addDoctorOp(op);
+            let saved: Doctor | null;
             try {
-                const saved = await actionPatchDoctor(id, patch);
-                if (!saved) return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
-                setBaseDoctors((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionPatchDoctor(id, patch);
             } catch {
-                fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
+                return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
             }
+            if (!saved) return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
+            setBaseDoctors((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
