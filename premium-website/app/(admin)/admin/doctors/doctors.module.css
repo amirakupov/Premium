@@ -1,0 +1,11 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 26px;
+  color: var(--ink);
+}
