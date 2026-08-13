@@ -1,0 +1,211 @@
+.sidebar {
+  flex: none;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: var(--sidebar-w);
+  padding: 18px 12px;
+  border-right: 1px solid var(--glass-dark-border);
+  background: var(--glass-dark-bg-nav);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen);
+  color: var(--on-dark);
+  transition: width var(--dur-slow) var(--spring);
+}
+
+.collapsed { width: var(--sidebar-w-collapsed); }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--glass-primary);
+  box-shadow: var(--glass-sheen);
+  color: var(--surface);
+  font-family: var(--font-head);
+  font-size: 17px;
+}
+
+.brandText {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.brandKicker {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-soft);
+}
+
+.collapseButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--glass-dark-border);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--on-dark-soft);
+  cursor: pointer;
+  transition: background var(--dur-fast) ease;
+}
+
+.collapseButton:hover { background: var(--pill-fill); }
+
+.chevron {
+  transition: transform var(--dur-slow) var(--spring);
+  transform: rotate(-45deg);
+}
+
+.collapsed .chevron { transform: rotate(135deg); }
+
+.items {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+/* Один абсолютный слой на весь список: перетекает по --pill-y. */
+.pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46px;
+  border-radius: var(--radius-sm);
+  background: var(--pill-fill);
+  box-shadow: var(--glass-sheen);
+  transform: translateY(var(--pill-y, 0));
+  transition: transform var(--dur-slow) var(--spring);
+}
+
+.item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  color: var(--on-dark-soft);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color var(--dur-fast) ease;
+}
+
+.item:hover { color: var(--on-dark); }
+
+.itemActive {
+  color: var(--on-dark);
+  font-weight: 600;
+}
+
+.itemIcon { flex: none; font-size: 18px; }
+
+.itemLabel { flex: 1; min-width: 0; }
+
+.count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-dark-soft);
+}
+
+.hotkeys {
+  display: grid;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+.hotkeyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--on-dark-soft);
+}
+
+.kbd {
+  min-width: 30px;
+  padding: 2px 5px;
+  border: 1px solid var(--glass-dark-border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-body);
+  font-size: 10px;
+  text-align: center;
+}
+
+.user {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--brand-deep);
+  color: var(--brass-bright);
+  font-weight: 600;
+}
+
+.userText { flex: 1; min-width: 0; display: grid; }
+
+.userName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userRole {
+  font-size: 11px;
+  color: var(--on-dark-soft);
+}
+
+.logout { color: var(--on-dark-soft); }
+.logout:hover { background: var(--danger-soft); color: var(--on-dark); }
+
+/* Свёрнутый вид: остаются только иконки и логотип. */
+.collapsed .brandText,
+.collapsed .itemLabel,
+.collapsed .count,
+.collapsed .hotkeys,
+.collapsed .userText,
+.collapsed .logout {
+  display: none;
+}
+
+.collapsed .item { justify-content: center; padding: 0; }
+.collapsed .brand { flex-direction: column; gap: 8px; }
