@@ -2917,17 +2917,21 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addServiceOp(op);
+            let saved;
             try {
-                const saved = await actionCreateService(payload);
-                if (!saved) return fail("Не удалось создать услугу", () => createService(payload));
-                setBaseServices((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                // В try только сетевой вызов: если сюда попадёт ошибка из
+                // commitOp, пользователь увидит «повторить» и создаст дубль —
+                // запрос-то уже прошёл.
+                saved = await actionCreateService(payload);
             } catch {
                 // Экшен возвращает null на ответ не-2xx, но при обрыве сети
                 // fetch бросает — без catch статус навсегда застрял бы
                 // на «Сохраняем…», и об ошибке никто бы не узнал.
-                fail("Не удалось создать услугу", () => createService(payload));
+                return fail("Не удалось создать услугу", () => createService(payload));
             }
+            if (!saved) return fail("Не удалось создать услугу", () => createService(payload));
+            setBaseServices((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -2936,14 +2940,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addServiceOp(op);
+            let saved;
             try {
-                const saved = await actionPatchService(id, patch);
-                if (!saved) return fail("Не удалось сохранить услугу", () => patchService(id, patch));
-                setBaseServices((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionPatchService(id, patch);
             } catch {
-                fail("Не удалось сохранить услугу", () => patchService(id, patch));
+                return fail("Не удалось сохранить услугу", () => patchService(id, patch));
             }
+            if (!saved) return fail("Не удалось сохранить услугу", () => patchService(id, patch));
+            setBaseServices((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -2956,14 +2961,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addDoctorOp(op);
+            let saved;
             try {
-                const saved = await actionCreateDoctor(payload);
-                if (!saved) return fail("Не удалось добавить врача", () => createDoctor(payload));
-                setBaseDoctors((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionCreateDoctor(payload);
             } catch {
-                fail("Не удалось добавить врача", () => createDoctor(payload));
+                return fail("Не удалось добавить врача", () => createDoctor(payload));
             }
+            if (!saved) return fail("Не удалось добавить врача", () => createDoctor(payload));
+            setBaseDoctors((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -2972,14 +2978,15 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
         setSave("saving");
         startTransition(async () => {
             addDoctorOp(op);
+            let saved;
             try {
-                const saved = await actionPatchDoctor(id, patch);
-                if (!saved) return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
-                setBaseDoctors((prev) => commitOp(prev, op, saved));
-                setSave("saved");
+                saved = await actionPatchDoctor(id, patch);
             } catch {
-                fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
+                return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
             }
+            if (!saved) return fail("Не удалось сохранить врача", () => patchDoctor(id, patch));
+            setBaseDoctors((prev) => commitOp(prev, op, saved));
+            setSave("saved");
         });
     }
 
@@ -3134,6 +3141,10 @@ export default function Sidebar() {
                             href={href}
                             className={`${styles.item} ${active ? styles.itemActive : ""}`}
                             aria-current={active ? "page" : undefined}
+                            // В свёрнутом виде подпись скрыта через display: none,
+                            // а такой текст выпадает из имени ссылки — без aria-label
+                            // скринридер прочитает «ссылка» без названия раздела.
+                            aria-label={label}
                         >
                             <Icon aria-hidden="true" className={styles.itemIcon} />
                             <span className={styles.itemLabel}>{label}</span>
@@ -3379,13 +3390,13 @@ export default function Sidebar() {
 .logout { color: var(--on-dark-soft); }
 .logout:hover { background: var(--danger-soft); color: var(--on-dark); }
 
-/* Свёрнутый вид: остаются только иконки и логотип. */
+/* Свёрнутый вид: текст уходит, управление остаётся.
+   Кнопку выхода не прячем — иначе из свёрнутого сайдбара выйти нельзя. */
 .collapsed .brandText,
 .collapsed .itemLabel,
 .collapsed .count,
 .collapsed .hotkeys,
-.collapsed .userText,
-.collapsed .logout {
+.collapsed .userText {
   display: none;
 }
 
