@@ -45,6 +45,11 @@ export default function Dropzone({
                 return;
             }
             onChange(url);
+        } catch {
+            // Экшен возвращает null на ответ не-2xx, но сам fetch при обрыве
+            // сети бросает. Без catch это необработанный reject: тоста нет,
+            // и пользователь видит только погасший индикатор.
+            onError("Сеть недоступна — изображение не загрузилось");
         } finally {
             setBusy(false);
         }
