@@ -1,0 +1,32 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.idle { color: var(--ink-soft); }
+.draft { color: var(--ink-soft); background: var(--brand-tint); }
+.saving { color: var(--brand); background: var(--brand-tint); }
+.saved { color: var(--success); background: var(--success-tint); }
+.error { color: var(--danger); background: var(--danger-tint); }
+
+/* Точка пульсирует только пока запрос в полёте. */
+.saving .dot { animation: pulse 1.1s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.7); }
+}

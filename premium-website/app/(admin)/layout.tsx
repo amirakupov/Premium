@@ -1,10 +1,7 @@
-import AdminHeader from "@/app/(admin)/admin/components/header/AdminHeader";
-
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <>
-            <AdminHeader />
-            <main style={{ paddingTop: 70 }}>{children}</main>
-        </>
-    );
+/**
+ * Группа (admin) не добавляет ни шапки, ни отступов:
+ * /admin рисует собственный каркас, /login — центрированную карточку.
+ */
+export default function AdminGroupLayout({ children }: { children: React.ReactNode }) {
+    return children;
 }

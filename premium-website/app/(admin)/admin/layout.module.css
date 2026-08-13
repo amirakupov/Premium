@@ -1,0 +1,27 @@
+.shell {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  background: transparent;
+}
+
+.column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  transition: filter var(--dur-slow) var(--spring), transform var(--dur-slow) var(--spring);
+}
+
+/* Sheet открыт: содержимое отъезжает по глубине, а не пропадает. */
+.recessed {
+  filter: blur(3px);
+  transform: scale(0.994);
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 26px 22px 40px;
+}

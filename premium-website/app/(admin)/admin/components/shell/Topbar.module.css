@@ -1,0 +1,117 @@
+/* Плотное стекло: под топбаром прокручивается список. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--topbar-h);
+  padding: 0 22px;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), 0 10px 24px -20px rgba(var(--scrim), 0.5);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.crumbRoot { color: var(--ink-soft); }
+.slash { color: var(--ink-soft); }
+.crumbLeaf { font-weight: 600; color: var(--ink); }
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 260px;
+  height: 40px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-sheen);
+  transition:
+    width var(--dur-slow) var(--spring),
+    background var(--dur-fast) ease,
+    box-shadow var(--dur) ease;
+}
+
+.search:focus-within {
+  width: 340px;
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-sheen), var(--ring-brand);
+}
+
+.searchIcon {
+  flex: none;
+  color: var(--brand);
+  font-size: 16px;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.searchInput:focus { outline: none; }
+
+/* Убираем нативный крестик Safari — он ломает капсулу. */
+.searchInput::-webkit-search-cancel-button { appearance: none; }
+
+.paletteHint {
+  flex: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.kbd {
+  padding: 3px 6px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 11px;
+}
+
+/* A11yToggle приходит с витрины без своих стилей — оформляем здесь. */
+.a11y {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-sheen);
+  color: var(--brand);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast) ease;
+}
+
+.a11y:hover { background: var(--glass-bg-strong); }
