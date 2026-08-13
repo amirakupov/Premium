@@ -1,0 +1,53 @@
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.thumb {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs);
+  object-fit: cover;
+}
+
+.thumbEmpty {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs);
+  background: var(--brand-tint);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.nameText { min-width: 0; display: grid; }
+
+.name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slug {
+  padding-left: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}

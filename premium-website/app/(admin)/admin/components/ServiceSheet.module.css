@@ -1,0 +1,14 @@
+.draftHint {
+  flex: 1;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.kbd {
+  margin-left: 6px;
+  padding: 2px 5px;
+  border: 1px solid var(--glass-dark-border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-body);
+  font-size: 10px;
+}
