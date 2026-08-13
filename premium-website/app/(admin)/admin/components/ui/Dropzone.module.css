@@ -1,0 +1,92 @@
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.zone {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  transition:
+    border-color var(--dur-fast) ease,
+    background var(--dur-fast) ease,
+    transform var(--dur) var(--spring);
+}
+
+.over {
+  border-color: var(--brand);
+  background: var(--brand-tint);
+  transform: scale(1.01);
+}
+
+.preview {
+  flex: none;
+  width: 118px;
+  height: 118px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 22px;
+}
+
+.copy { flex: 1; min-width: 0; }
+
+.hint {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.meta {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Поле остаётся достижимым с клавиатуры: не display:none. */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 8px;
+  width: 40%;
+  border-radius: 999px;
+  background: var(--glass-primary);
+  animation: slide 1.2s ease-in-out infinite;
+}
+
+@keyframes slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(280%); }
+}
