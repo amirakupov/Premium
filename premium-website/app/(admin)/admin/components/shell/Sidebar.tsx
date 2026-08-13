@@ -95,6 +95,10 @@ export default function Sidebar() {
                             href={href}
                             className={`${styles.item} ${active ? styles.itemActive : ""}`}
                             aria-current={active ? "page" : undefined}
+                            // В свёрнутом виде подпись скрыта через display: none,
+                            // а такой текст выпадает из имени ссылки — без aria-label
+                            // скринридер прочитает «ссылка» без названия раздела.
+                            aria-label={label}
                         >
                             <Icon aria-hidden="true" className={styles.itemIcon} />
                             <span className={styles.itemLabel}>{label}</span>

@@ -197,15 +197,19 @@
 .logout { color: var(--on-dark-soft); }
 .logout:hover { background: var(--danger-soft); color: var(--on-dark); }
 
-/* Свёрнутый вид: остаются только иконки и логотип. */
+/* Свёрнутый вид: текст уходит, управление остаётся.
+   Кнопку выхода не прячем — иначе из свёрнутого сайдбара выйти нельзя. */
 .collapsed .brandText,
 .collapsed .itemLabel,
 .collapsed .count,
 .collapsed .hotkeys,
-.collapsed .userText,
-.collapsed .logout {
+.collapsed .userText {
   display: none;
 }
 
 .collapsed .item { justify-content: center; padding: 0; }
 .collapsed .brand { flex-direction: column; gap: 8px; }
+
+/* Аватар (34px) и квадратная кнопка выхода (44px) в ряд не помещаются
+   в свёрнутую колонку — та же проблема, что и у .brand, то же решение. */
+.collapsed .user { flex-direction: column; gap: 8px; }
