@@ -2,11 +2,12 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import { Environment, Lightformer } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import type { BloomEffect } from 'postprocessing';
 import * as THREE from 'three';
 
-import { BLOOM, CAMERA, EEG, NEURON, SIGNAL } from './params';
+import { BLOOM, CAMERA, EEG, FOG, LIGHT, NEURON, SIGNAL, SOMA } from './params';
 import type { TierProfile } from './perf';
 import { createSceneState, resolveSceneState } from './sceneScript';
 import { useScrollDirector } from './useScrollDirector';
@@ -18,13 +19,19 @@ import { buildEegGeometry } from './geometry/eeg';
 import { createSignalGeometry, createSignalMaterial } from './materials/signal';
 import { createAuraMaterial } from './materials/aura';
 import { createEegMaterial } from './materials/eeg';
-import { createDendriteMaterial, createSomaMaterial } from './materials/tissue';
+import {
+    createCoreMaterial,
+    createDendriteMaterial,
+    createMembraneMaterial,
+} from './materials/tissue';
 
 /* Модульный scratch: в useFrame нельзя аллоцировать. В v1 `placeSignals`
    создавал new THREE.Vector3() каждый кадр — это десятки тысяч объектов в
    минуту и лишняя работа сборщику мусора ровно в тот момент, когда нужен
    ровный кадр. */
 const scratch = new THREE.Vector3();
+
+const BREATH_RATE = (Math.PI * 2) / SOMA.BREATH_PERIOD;
 
 type SignalState = {
     /** индекс пути «сома → кончик» */
@@ -46,7 +53,8 @@ export default function Neuron({
     const { camera, invalidate } = useThree();
 
     const groupRef = useRef<THREE.Group>(null);
-    const somaRef = useRef<THREE.Mesh>(null);
+    const membraneRef = useRef<THREE.Mesh>(null);
+    const coreRef = useRef<THREE.Mesh>(null);
     const bloomRef = useRef<BloomEffect>(null);
     const parallax = useRef(new THREE.Vector2());
     /** сглаженный сбор импульсов к соме: включается режимом `converge` */
@@ -56,12 +64,13 @@ export default function Neuron({
 
     /* — Геометрия и материалы: строятся один раз на профиль тира — */
     const built = useMemo(() => {
-        const { branches, paths, maxDepth } = growNeuron(profile.branchDepth);
-        const dendrites = buildDendriteGeometry(branches, maxDepth);
-        const signalPaths = buildSignalPaths(paths);
+        const morphology = growNeuron(profile.branchDepth);
+        const dendrites = buildDendriteGeometry(morphology);
+        const signalPaths = buildSignalPaths(morphology.paths);
 
-        const dendriteMaterial = createDendriteMaterial();
-        const somaMaterial = createSomaMaterial();
+        const dendrite = createDendriteMaterial(profile);
+        const membrane = createMembraneMaterial(profile);
+        const coreMaterial = createCoreMaterial();
         const auraMaterial = createAuraMaterial();
         const signalGeometry = createSignalGeometry(profile.signalCount);
         const signalMaterial = createSignalMaterial();
@@ -77,8 +86,11 @@ export default function Neuron({
 
         return {
             dendrites,
-            dendriteMaterial,
-            somaMaterial,
+            dendrite,
+            membrane,
+            /** базовая непрозрачность мембраны зависит от тира — растворение её множит */
+            membraneOpacity: membrane.material.opacity,
+            coreMaterial,
             auraMaterial,
             signalGeometry,
             signalMaterial,
@@ -94,8 +106,9 @@ export default function Neuron({
     useEffect(
         () => () => {
             built.dendrites.dispose();
-            built.dendriteMaterial.dispose();
-            built.somaMaterial.dispose();
+            built.dendrite.material.dispose();
+            built.membrane.material.dispose();
+            built.coreMaterial.dispose();
             built.auraMaterial.dispose();
             built.signalGeometry.dispose();
             built.signalMaterial.dispose();
@@ -179,19 +192,35 @@ export default function Neuron({
 
         const dissolve = state.dissolve;
         const flash = state.flash;
+        const alive = 1 - dissolve;
         group.scale.setScalar(
             Math.max(0.001, state.neuronScale * lerp(1, 0.12, easeOut(dissolve)) * (1 + flash * 0.22)),
         );
 
-        built.dendriteMaterial.opacity = 1 - dissolve;
-        built.somaMaterial.opacity = 1 - dissolve;
-        built.auraMaterial.uniforms.uIntensity.value = (0.9 + flash * 5) * (1 - dissolve);
-        if (somaRef.current) somaRef.current.scale.setScalar(1 + flash * 1.6);
+        built.dendrite.material.opacity = alive;
+        built.dendrite.uniforms.uTime.value = time;
+        built.dendrite.uniforms.uGrow.value = state.grow;
+
+        // Дыхание сомы: медленное, период SOMA.BREATH_PERIOD. В покое именно оно
+        // отличает живой объект от модели.
+        built.membrane.uniforms.uTime.value = time;
+        built.membrane.uniforms.uBreath.value = Math.sin(time * BREATH_RATE) * SOMA.BREATH_AMP;
+        built.membrane.material.opacity = built.membraneOpacity * alive;
+        // В кульминации сома разгорается изнутри: ядро → мембрана → вспышка.
+        built.membrane.material.emissiveIntensity = flash * 2.4;
+        built.coreMaterial.emissiveIntensity = SOMA.CORE_GLOW + flash * 5;
+        built.coreMaterial.opacity = alive;
+
+        if (membraneRef.current) membraneRef.current.scale.setScalar(1 + flash * 1.6);
+        if (coreRef.current) coreRef.current.rotation.y = time * SOMA.CORE_SPIN;
+
+        /* Френель-ореол остался, но теперь он акцент поверх настоящего света, а
+           не единственный источник объёма — отсюда вдвое меньшая база. */
+        built.auraMaterial.uniforms.uIntensity.value = (0.45 + flash * 5) * alive;
 
         built.signalMaterial.uniforms.uColor.value.copy(state.signalColor);
         built.signalMaterial.uniforms.uCore.value.copy(state.signalCore);
-        const intensity =
-            lerp(0.7, 1.25, state.signalLoad) * (1 - dissolve) + flash * 0.5;
+        const intensity = lerp(0.7, 1.25, state.signalLoad) * alive + flash * 0.5;
         placeSignals(intensity, gather.current, state.signalLoad);
 
         // Линия ЭЭГ прочерчивается в последней главе.
@@ -247,14 +276,78 @@ export default function Neuron({
 
     return (
         <>
+            {/* Воздушная перспектива: дальние ветки растворяются в тон страницы. */}
+            <fog attach="fog" args={[FOG.COLOR, FOG.NEAR, FOG.FAR]} />
+
+            {/* Трёхточечная схема. Тени выключены намеренно: контактное
+                затенение в развилках даст SSAO (этап 4), а карты теней на
+                сотне тонких веток стоят дорого и почти не читаются. */}
+            <ambientLight intensity={LIGHT.AMBIENT} />
+            <directionalLight
+                position={LIGHT.KEY_POS as unknown as [number, number, number]}
+                intensity={LIGHT.KEY_INTENSITY}
+                color={LIGHT.KEY_COLOR}
+            />
+            <directionalLight
+                position={LIGHT.FILL_POS as unknown as [number, number, number]}
+                intensity={LIGHT.FILL_INTENSITY}
+                color={LIGHT.FILL_COLOR}
+            />
+            <directionalLight
+                position={LIGHT.RIM_POS as unknown as [number, number, number]}
+                intensity={LIGHT.RIM_INTENSITY}
+                color={LIGHT.RIM_COLOR}
+            />
+
+            {/* Окружение собрано вручную из Lightformer-ов и печётся один раз
+                (frames={1}). Именно оно даёт стеклу читаемые блики — без него
+                transmission и clearcoat отражают пустоту. HDR-файл из сети не
+                тянем: лишний вес и внешняя зависимость. */}
+            <Environment resolution={LIGHT.ENV_RESOLUTION} frames={1}>
+                <color attach="background" args={[LIGHT.ENV_BACKGROUND]} />
+                <Lightformer
+                    form="rect"
+                    intensity={2.2}
+                    color={LIGHT.KEY_COLOR}
+                    position={[4, 5, 4]}
+                    scale={[7, 7, 1]}
+                    target={[0, 0, 0]}
+                />
+                <Lightformer
+                    form="circle"
+                    intensity={1.1}
+                    color={LIGHT.FILL_COLOR}
+                    position={[-5, -2, 3]}
+                    scale={[5, 5, 1]}
+                    target={[0, 0, 0]}
+                />
+                <Lightformer
+                    form="rect"
+                    intensity={2.6}
+                    color={LIGHT.RIM_COLOR}
+                    position={[-2, 3.5, -6]}
+                    scale={[9, 3, 1]}
+                    target={[0, 0, 0]}
+                />
+            </Environment>
+
             <group ref={groupRef}>
-                <mesh geometry={built.dendrites} material={built.dendriteMaterial} />
-                <mesh ref={somaRef} material={built.somaMaterial}>
-                    <icosahedronGeometry args={[NEURON.SOMA_RADIUS, 4]} />
+                <mesh geometry={built.dendrites} material={built.dendrite.material} />
+
+                {/* Сома двухслойная: сквозь мембрану видно ядро, у каждого слоя
+                    своё вращение. Это самый дешёвый способ прочитать объект как
+                    объём, а не как круг. */}
+                <mesh ref={membraneRef} material={built.membrane.material}>
+                    <icosahedronGeometry args={[NEURON.SOMA_RADIUS, SOMA.MEMBRANE_DETAIL]} />
                 </mesh>
+                <mesh ref={coreRef} material={built.coreMaterial}>
+                    <icosahedronGeometry args={[SOMA.CORE_RADIUS, 3]} />
+                </mesh>
+
                 <mesh material={built.auraMaterial}>
                     <icosahedronGeometry args={[NEURON.SOMA_RADIUS * 2.1, 3]} />
                 </mesh>
+
                 <points
                     geometry={built.signalGeometry}
                     material={built.signalMaterial}

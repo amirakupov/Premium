@@ -29,8 +29,17 @@ export type TierProfile = {
     dof: boolean;
     /** mipmapBlur даёт мягкий широкий ореол, но это лишний проход */
     bloomMipmap: boolean;
-    /** physical = MeshPhysicalMaterial с transmission, shader = дешёвая аппроксимация */
+    /**
+     * physical — MeshPhysicalMaterial с transmission на ветвях; shader — тот же
+     * материал без преломления (по стоимости примерно Standard).
+     */
     branchMaterial: 'shader' | 'physical';
+    /**
+     * Преломление в мембране сомы. Оно включает в three отдельный проход
+     * рендера сцены в буфер — на слабом железе этого не может быть, там
+     * мембрана работает на обычной альфе.
+     */
+    somaTransmission: boolean;
     /**
      * Оставлять ли странице стеклянное размытие. Карточки сайта используют
      * backdrop-filter, а под ними теперь едет анимированный canvas — на слабом
@@ -51,6 +60,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         dof: false,
         bloomMipmap: false,
         branchMaterial: 'shader',
+        somaTransmission: false,
         pageGlass: false,
     },
     mid: {
@@ -63,6 +73,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         dof: false,
         bloomMipmap: true,
         branchMaterial: 'shader',
+        somaTransmission: true,
         pageGlass: true,
     },
     high: {
@@ -75,6 +86,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         dof: true,
         bloomMipmap: true,
         branchMaterial: 'physical',
+        somaTransmission: true,
         pageGlass: true,
     },
 };

@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three';
 import { CAMERA } from './params';
 import { detectTier, TIERS } from './perf';
 import { SCENE_SCRIPT } from './sceneScript';
@@ -31,7 +32,19 @@ export default function NeuronCanvas() {
                 className={styles.canvas}
                 dpr={[1, profile.dpr]}
                 frameloop={reduced ? 'demand' : 'always'}
-                gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+                gl={{
+                    antialias: false,
+                    // alpha обязателен: сквозь сцену читаются «обои» страницы,
+                    // и стеклянным карточкам есть что преломлять
+                    alpha: true,
+                    powerPreference: 'high-performance',
+                    /* Тональная компрессия включена явно. В v1 все материалы
+                       стояли с toneMapped: false, то есть сцена рисовалась
+                       линейными значениями «как есть» — блики никуда не
+                       сходились и объём терялся. */
+                    toneMapping: THREE.ACESFilmicToneMapping,
+                    outputColorSpace: THREE.SRGBColorSpace,
+                }}
                 camera={{
                     fov: start.fov,
                     position: [start.position[0], start.position[1], start.position[2]],

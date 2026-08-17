@@ -7,6 +7,10 @@ export type Branch = {
     /** поколение ветки: 0 — ствол от сомы */
     depth: number;
     radius: number;
+    /** расстояние от сомы до начала ветки вдоль дерева */
+    start: number;
+    /** длина ветки по ломаной */
+    length: number;
 };
 
 export type Morphology = {
@@ -14,6 +18,8 @@ export type Morphology = {
     /** пути «сома → кончик»: по ним бегут импульсы */
     paths: Branch[][];
     maxDepth: number;
+    /** самая дальняя точка дерева от сомы — нормировка для атрибута aPathT */
+    maxDistance: number;
 };
 
 /**
@@ -28,6 +34,8 @@ export function growNeuron(branchDepth: number): Morphology {
     const jitter = (amount: number) =>
         new THREE.Vector3(rand() - 0.5, rand() - 0.5, rand() - 0.5).multiplyScalar(amount);
 
+    let maxDistance = 0;
+
     function grow(
         origin: THREE.Vector3,
         direction: THREE.Vector3,
@@ -37,6 +45,7 @@ export function growNeuron(branchDepth: number): Morphology {
         trail: Branch[],
         depthLimit: number,
         splits: number,
+        startDistance: number,
     ) {
         const points = [origin.clone()];
         const dir = direction.clone().normalize();
@@ -49,8 +58,23 @@ export function growNeuron(branchDepth: number): Morphology {
             points.push(cursor.clone());
         }
 
-        const branch: Branch = { points, depth, radius };
+        /* Длина по ломаной, а не заданная `length`: виляние (WANDER) удлиняет
+           ветку, и без честного замера атрибут aPathT поехал бы относительно
+           реальной геометрии — сканирующая волна шла бы неровно. */
+        let polyline = 0;
+        for (let i = 1; i < points.length; i += 1) {
+            polyline += points[i].distanceTo(points[i - 1]);
+        }
+
+        const branch: Branch = {
+            points,
+            depth,
+            radius,
+            start: startDistance,
+            length: polyline,
+        };
         branches.push(branch);
+        maxDistance = Math.max(maxDistance, startDistance + polyline);
         const path = [...trail, branch];
 
         if (depth >= depthLimit) {
@@ -70,6 +94,7 @@ export function growNeuron(branchDepth: number): Morphology {
                 path,
                 depthLimit,
                 splits,
+                startDistance + polyline,
             );
         }
     }
@@ -88,6 +113,7 @@ export function growNeuron(branchDepth: number): Morphology {
             [],
             branchDepth,
             NEURON.SPLIT_MIN,
+            0,
         );
     }
 
@@ -103,7 +129,8 @@ export function growNeuron(branchDepth: number): Morphology {
         [],
         1,
         2,
+        0,
     );
 
-    return { branches, paths, maxDepth: branchDepth };
+    return { branches, paths, maxDepth: branchDepth, maxDistance };
 }
