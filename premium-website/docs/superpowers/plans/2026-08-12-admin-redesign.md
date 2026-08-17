@@ -160,7 +160,7 @@ app/(admin)/
 
 Каждый цветовой токен обязан появиться в трёх местах: `:root`, `html[data-a11y="1"]` и — где это меняет дело — в `@media (prefers-reduced-transparency: reduce)`. Токены геометрии и таймингов переопределять не нужно: они не про контраст.
 
-- [ ] **Step 1: Добавить токены в `:root`**
+- [x] **Step 1: Добавить токены в `:root`**
 
 В `app/globals.css` перед закрывающей скобкой `:root` (сразу после строки `--focus: 3px;`, `globals.css:105`) вставить:
 
@@ -205,7 +205,7 @@ app/(admin)/
   --dur-slow: 420ms;
 ```
 
-- [ ] **Step 2: Переопределить цветовые токены в режиме для слабовидящих**
+- [x] **Step 2: Переопределить цветовые токены в режиме для слабовидящих**
 
 В блок `html[data-a11y="1"]` (`app/globals.css:108-141`), после строки `--glass-primary: #0b3fb0;`, вставить:
 
@@ -228,7 +228,7 @@ app/(admin)/
   --glow-soft: transparent;
 ```
 
-- [ ] **Step 3: Переопределить в `prefers-reduced-transparency`**
+- [x] **Step 3: Переопределить в `prefers-reduced-transparency`**
 
 В медиазапрос `@media (prefers-reduced-transparency: reduce)` (`app/globals.css:144-156`), в блок `:root`, добавить две строки — остальное уже перекрыто существующими правилами стекла:
 
@@ -237,7 +237,7 @@ app/(admin)/
     --glass-dark-bg-nav: #12294d;
 ```
 
-- [ ] **Step 4: Проверить, что ни один цветовой токен не забыт в a11y-блоке**
+- [x] **Step 4: Проверить, что ни один цветовой токен не забыт в a11y-блоке**
 
 Run:
 ```bash
@@ -251,12 +251,12 @@ done
 ```
 Expected: у каждого токена `a11y=1`. `root` может быть больше единицы — токен встречается и в `:root`, и в переопределениях; важно, что в блоке доступности он есть.
 
-- [ ] **Step 5: Проверить типы и сборку**
+- [x] **Step 5: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: обе команды без ошибок. Витрина визуально не изменилась — новые токены пока никем не используются.
 
-- [ ] **Step 6: Коммит**
+- [x] **Step 6: Коммит**
 
 ```bash
 git add app/globals.css
@@ -281,7 +281,7 @@ git commit -m "feat(admin): dense-interface design tokens"
   - `sort.ts`: `type SortDir = "asc" | "desc"`, `type SortKind = "text" | "number"`, `type SortState<K extends string> = { key: K; dir: SortDir }`, `sortRows<T>(rows: T[], key: keyof T, dir: SortDir, kind: SortKind): T[]`, `filterRows<T>(rows: T[], query: string, fields: (keyof T)[]): T[]`, `toggleSort<K extends string>(current: SortState<K>, key: K): SortState<K>`, `ariaSort(state: SortState<string>, key: string): "ascending" | "descending" | "none"`
   - `badges.ts`: `type BadgeTone = "success" | "danger" | "brand"`, `type Badge = { label: string; tone: BadgeTone }`, `serviceBadge(s: Pick<Service, "imageSrc" | "price">, pending: boolean): Badge`, `doctorBadge(d: Pick<Doctor, "imgSrc">, pending: boolean): Badge`, `countAttention<T>(rows: T[], badge: (row: T) => Badge): number`
 
-- [ ] **Step 1: Валидация**
+- [x] **Step 1: Валидация**
 
 Создать `lib/admin/validation.ts`.
 
@@ -356,7 +356,7 @@ export function isPriceInput(raw: string): boolean {
 }
 ```
 
-- [ ] **Step 2: Сортировка и фильтрация**
+- [x] **Step 2: Сортировка и фильтрация**
 
 Создать `lib/admin/sort.ts`.
 
@@ -409,7 +409,7 @@ export function ariaSort(
 }
 ```
 
-- [ ] **Step 3: Статус-бейджи**
+- [x] **Step 3: Статус-бейджи**
 
 Создать `lib/admin/badges.ts`.
 
@@ -450,12 +450,12 @@ export function countAttention<T>(rows: T[], badge: (row: T) => Badge): number {
 }
 ```
 
-- [ ] **Step 4: Проверить типы и сборку**
+- [x] **Step 4: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок. Модули пока никем не используются — поведение проверяется в Task 14 и Task 15, где они попадают в интерфейс.
 
-- [ ] **Step 5: Коммит**
+- [x] **Step 5: Коммит**
 
 ```bash
 git add lib/admin/validation.ts lib/admin/sort.ts lib/admin/badges.ts
@@ -478,7 +478,7 @@ git commit -m "feat(admin): row logic — validation, sorting, status badges"
   - `hotkeys.ts`: `type HotkeyAction = "palette" | "focusSearch" | "close" | "save" | "submit"`, `interface HotkeyEventLike { key; metaKey; ctrlKey }`, `interface EditableLike { tagName?; isContentEditable? }`, `isEditableTarget(target: EditableLike | null): boolean`, `matchHotkey(e: HotkeyEventLike, ctx: { inEditable: boolean }): HotkeyAction | null`, `type OverlayState = { palette: boolean; modal: boolean; sheet: boolean }`, `nextOverlayToClose(s: OverlayState): "palette" | "modal" | "sheet" | null`
   - `optimistic.ts`: `type Identified = { id: number }`, `type Pending<T> = T & { pending?: true }`, `type CollectionOp<T extends Identified>`, `nextTempId(rows: Identified[]): number`, `applyOp<T extends Identified>(rows: Pending<T>[], op: CollectionOp<T>): Pending<T>[]`, `commitOp<T extends Identified>(rows: Pending<T>[], op: CollectionOp<T>, saved: T): Pending<T>[]`, `isPending<T extends Identified>(row: Pending<T>): boolean`
 
-- [ ] **Step 1: Черновики форм**
+- [x] **Step 1: Черновики форм**
 
 Создать `lib/admin/draft.ts`. Хранилище передаётся параметром, чтобы модуль не падал при серверном рендере.
 
@@ -553,7 +553,7 @@ export function isDirty<T extends object>(a: T, b: T): boolean {
 }
 ```
 
-- [ ] **Step 2: Хоткеи**
+- [x] **Step 2: Хоткеи**
 
 Создать `lib/admin/hotkeys.ts`.
 
@@ -613,7 +613,7 @@ export function nextOverlayToClose(s: OverlayState): "palette" | "modal" | "shee
 }
 ```
 
-- [ ] **Step 3: Оптимистичные операции**
+- [x] **Step 3: Оптимистичные операции**
 
 Создать `lib/admin/optimistic.ts`.
 
@@ -671,12 +671,12 @@ export function isPending<T extends Identified>(row: Pending<T>): boolean {
 }
 ```
 
-- [ ] **Step 4: Проверить типы и сборку**
+- [x] **Step 4: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 5: Коммит**
+- [x] **Step 5: Коммит**
 
 ```bash
 git add lib/admin/draft.ts lib/admin/hotkeys.ts lib/admin/optimistic.ts
@@ -704,7 +704,7 @@ git commit -m "feat(admin): form drafts, hotkeys, optimistic collection ops"
   - `<GlassCard as?: "div" | "section" | "article"; density?: "light" | "strong"; glow?: boolean; className?: string>`
   - `<Button variant?: "primary" | "ghost" | "quiet" | "danger"; size?: "md" | "sm" | "icon"; loading?: boolean>` — расширяет `React.ButtonHTMLAttributes<HTMLButtonElement>`
 
-- [ ] **Step 1: Хук блика**
+- [x] **Step 1: Хук блика**
 
 Создать `app/(admin)/admin/components/ui/useCursorGlow.ts`.
 
@@ -740,7 +740,7 @@ export function useCursorGlow<T extends HTMLElement>() {
 }
 ```
 
-- [ ] **Step 2: GlassCard**
+- [x] **Step 2: GlassCard**
 
 Создать `app/(admin)/admin/components/ui/GlassCard.tsx`.
 
@@ -783,7 +783,7 @@ export default function GlassCard({
 }
 ```
 
-- [ ] **Step 3: Стили GlassCard**
+- [x] **Step 3: Стили GlassCard**
 
 Создать `app/(admin)/admin/components/ui/GlassCard.module.css`.
 
@@ -832,7 +832,7 @@ export default function GlassCard({
 }
 ```
 
-- [ ] **Step 4: Button**
+- [x] **Step 4: Button**
 
 Создать `app/(admin)/admin/components/ui/Button.tsx`.
 
@@ -895,7 +895,7 @@ export default function Button({
 }
 ```
 
-- [ ] **Step 5: Стили Button**
+- [x] **Step 5: Стили Button**
 
 Создать `app/(admin)/admin/components/ui/Button.module.css`.
 
@@ -1013,12 +1013,12 @@ export default function Button({
 }
 ```
 
-- [ ] **Step 6: Проверить типы и сборку**
+- [x] **Step 6: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок. Компоненты пока не подключены — визуальных изменений нет.
 
-- [ ] **Step 7: Коммит**
+- [x] **Step 7: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -1039,7 +1039,7 @@ git commit -m "feat(admin): GlassCard and Button primitives with cursor glow"
   - `<Input id: string; label: string; error?: string; hint?: string; ...InputHTMLAttributes>` — сам расставляет `aria-invalid`, `aria-describedby`, `role="alert"` на сообщении.
   - `<Textarea id: string; label: string; error?: string; max?: number; ...TextareaHTMLAttributes>` — плюс счётчик «N / MAX».
 
-- [ ] **Step 1: Input**
+- [x] **Step 1: Input**
 
 Создать `app/(admin)/admin/components/ui/Input.tsx`.
 
@@ -1100,7 +1100,7 @@ export default function Input({
 }
 ```
 
-- [ ] **Step 2: Стили Input**
+- [x] **Step 2: Стили Input**
 
 Создать `app/(admin)/admin/components/ui/Input.module.css`.
 
@@ -1182,7 +1182,7 @@ export default function Input({
 }
 ```
 
-- [ ] **Step 3: Textarea**
+- [x] **Step 3: Textarea**
 
 Создать `app/(admin)/admin/components/ui/Textarea.tsx`.
 
@@ -1244,7 +1244,7 @@ export default function Textarea({
 }
 ```
 
-- [ ] **Step 4: Стили Textarea**
+- [x] **Step 4: Стили Textarea**
 
 Создать `app/(admin)/admin/components/ui/Textarea.module.css`. Повторяет геометрию Input, отличается высотой и шапкой со счётчиком.
 
@@ -1331,12 +1331,12 @@ export default function Textarea({
 }
 ```
 
-- [ ] **Step 5: Проверить типы и сборку**
+- [x] **Step 5: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 6: Коммит**
+- [x] **Step 6: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -1358,7 +1358,7 @@ git commit -m "feat(admin): form fields with validation states and aria wiring"
   - `<SkeletonRows cols: string; rows?: number; widths?: string[][]>` — скелетон в геометрии таблицы; `cols` — то же значение `grid-template-columns`, что у настоящей таблицы
   - `<EmptyState title: string; description: string; action?: ReactNode>`
 
-- [ ] **Step 1: Skeleton**
+- [x] **Step 1: Skeleton**
 
 Создать `app/(admin)/admin/components/ui/Skeleton.tsx`.
 
@@ -1407,7 +1407,7 @@ export function SkeletonRows({
 }
 ```
 
-- [ ] **Step 2: Стили Skeleton**
+- [x] **Step 2: Стили Skeleton**
 
 Создать `app/(admin)/admin/components/ui/Skeleton.module.css`.
 
@@ -1448,7 +1448,7 @@ export function SkeletonRows({
 }
 ```
 
-- [ ] **Step 3: EmptyState**
+- [x] **Step 3: EmptyState**
 
 Создать `app/(admin)/admin/components/ui/EmptyState.tsx`.
 
@@ -1481,7 +1481,7 @@ export default function EmptyState({
 }
 ```
 
-- [ ] **Step 4: Стили EmptyState**
+- [x] **Step 4: Стили EmptyState**
 
 Создать `app/(admin)/admin/components/ui/EmptyState.module.css`.
 
@@ -1523,12 +1523,12 @@ export default function EmptyState({
 }
 ```
 
-- [ ] **Step 5: Проверить типы и сборку**
+- [x] **Step 5: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 6: Коммит**
+- [x] **Step 6: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -1553,7 +1553,7 @@ git commit -m "feat(admin): table-shaped skeletons and empty states"
 
 `Esc` компоненты не слушают сами: порядок закрытия слоёв решает глобальный обработчик из Task 17 через `nextOverlayToClose`. Клик по скриму закрывает.
 
-- [ ] **Step 1: Ловушка фокуса**
+- [x] **Step 1: Ловушка фокуса**
 
 Создать `app/(admin)/admin/components/ui/useFocusTrap.ts`.
 
@@ -1606,7 +1606,7 @@ export function useFocusTrap(open: boolean) {
 }
 ```
 
-- [ ] **Step 2: Sheet**
+- [x] **Step 2: Sheet**
 
 Создать `app/(admin)/admin/components/ui/Sheet.tsx`.
 
@@ -1669,7 +1669,7 @@ export default function Sheet({
 }
 ```
 
-- [ ] **Step 3: Стили Sheet**
+- [x] **Step 3: Стили Sheet**
 
 Создать `app/(admin)/admin/components/ui/Sheet.module.css`.
 
@@ -1739,7 +1739,7 @@ export default function Sheet({
 }
 ```
 
-- [ ] **Step 4: Modal**
+- [x] **Step 4: Modal**
 
 Создать `app/(admin)/admin/components/ui/Modal.tsx`. Используется для подтверждения ухода с несохранёнными изменениями.
 
@@ -1803,7 +1803,7 @@ export default function Modal({
 }
 ```
 
-- [ ] **Step 5: Стили Modal**
+- [x] **Step 5: Стили Modal**
 
 Создать `app/(admin)/admin/components/ui/Modal.module.css`.
 
@@ -1884,12 +1884,12 @@ export default function Modal({
 }
 ```
 
-- [ ] **Step 6: Проверить типы и сборку**
+- [x] **Step 6: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 7: Коммит**
+- [x] **Step 7: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -1912,7 +1912,7 @@ git commit -m "feat(admin): sheet, modal and focus trap"
 
 Успех скрывается сам через 4200мс, ошибка висит до закрытия — иначе пользователь не успеет прочитать, что сломалось, и нажать «Повторить».
 
-- [ ] **Step 1: ToastProvider**
+- [x] **Step 1: ToastProvider**
 
 Создать `app/(admin)/admin/components/ui/ToastProvider.tsx`.
 
@@ -2017,7 +2017,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 2: Стили тостов**
+- [x] **Step 2: Стили тостов**
 
 Создать `app/(admin)/admin/components/ui/Toast.module.css`.
 
@@ -2077,12 +2077,12 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 3: Проверить типы и сборку**
+- [x] **Step 3: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 4: Коммит**
+- [x] **Step 4: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -2107,7 +2107,7 @@ git commit -m "feat(admin): glass toasts with action and auto-dismiss"
   - `<TableCounter shown: number; total: number>`, `<TableChip>{children}</TableChip>`, `<TableColumnLabel>{children}</TableColumnLabel>` — общий хром шапки списка; таблицы услуг и врачей берут его отсюда, а не заводят свои копии
   - `<InlineEdit value: string; label: string; onCommit: (next: string) => void; validate?: (raw: string) => boolean; children>` — клик по содержимому включает поле, Enter сохраняет, Esc отменяет, blur сохраняет
 
-- [ ] **Step 1: Table**
+- [x] **Step 1: Table**
 
 Создать `app/(admin)/admin/components/ui/Table.tsx`.
 
@@ -2230,7 +2230,7 @@ export function TableColumnLabel({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 2: Стили Table**
+- [x] **Step 2: Стили Table**
 
 Создать `app/(admin)/admin/components/ui/Table.module.css`.
 
@@ -2386,7 +2386,7 @@ export function TableColumnLabel({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 3: InlineEdit**
+- [x] **Step 3: InlineEdit**
 
 Создать `app/(admin)/admin/components/ui/InlineEdit.tsx`.
 
@@ -2475,7 +2475,7 @@ export default function InlineEdit({
 }
 ```
 
-- [ ] **Step 4: Стили InlineEdit**
+- [x] **Step 4: Стили InlineEdit**
 
 Создать `app/(admin)/admin/components/ui/InlineEdit.module.css`.
 
@@ -2518,12 +2518,12 @@ export default function InlineEdit({
 .input:focus { outline: none; }
 ```
 
-- [ ] **Step 5: Проверить типы и сборку**
+- [x] **Step 5: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 6: Коммит**
+- [x] **Step 6: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -2543,7 +2543,7 @@ git commit -m "feat(admin): data grid with sorting and inline edit"
   - `<Dropzone label: string; value: string; onChange: (url: string) => void; onError: (message: string) => void>`
   - `const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"]`, `const MAX_BYTES = 5 * 1024 * 1024`
 
-- [ ] **Step 1: Dropzone**
+- [x] **Step 1: Dropzone**
 
 Создать `app/(admin)/admin/components/ui/Dropzone.tsx`.
 
@@ -2673,7 +2673,7 @@ export default function Dropzone({
 }
 ```
 
-- [ ] **Step 2: Стили Dropzone**
+- [x] **Step 2: Стили Dropzone**
 
 Создать `app/(admin)/admin/components/ui/Dropzone.module.css`.
 
@@ -2772,12 +2772,12 @@ export default function Dropzone({
 }
 ```
 
-- [ ] **Step 3: Проверить типы и сборку**
+- [x] **Step 3: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 4: Коммит**
+- [x] **Step 4: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/ui"
@@ -2803,7 +2803,7 @@ git commit -m "feat(admin): drag-and-drop image upload with validation"
 
 Один источник данных на всю админку: из него берут счётчики сайдбара, плитки Обзора, палитра ⌘K и обе таблицы. Иначе те же два запроса ушли бы четыре раза.
 
-- [ ] **Step 1: Провайдер**
+- [x] **Step 1: Провайдер**
 
 Создать `app/(admin)/admin/components/data/AdminDataProvider.tsx`.
 
@@ -3009,17 +3009,17 @@ export default function AdminDataProvider({ children }: { children: ReactNode })
 }
 ```
 
-- [ ] **Step 2: Проверить типы**
+- [x] **Step 2: Проверить типы**
 
 Run: `npx tsc --noEmit`
 Expected: без ошибок. Если `useOptimistic` ругается на сигнатуру редьюсера — проверить, что `applyOp` экспортирован как generic-функция и подставлен как `applyOp<Service>`, а не вызван.
 
-- [ ] **Step 3: Проверить сборку**
+- [x] **Step 3: Проверить сборку**
 
 Run: `npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 4: Коммит**
+- [x] **Step 4: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/data"
@@ -3039,7 +3039,7 @@ git commit -m "feat(admin): data provider with optimistic mutations"
 
 Разделы: Обзор `/admin`, Услуги `/admin/services`, Врачи `/admin/doctors`. «Медиа» нет — см. решение 2 в Global Constraints.
 
-- [ ] **Step 1: Сайдбар**
+- [x] **Step 1: Сайдбар**
 
 Создать `app/(admin)/admin/components/shell/Sidebar.tsx`.
 
@@ -3186,7 +3186,7 @@ export default function Sidebar() {
 }
 ```
 
-- [ ] **Step 2: Стили сайдбара**
+- [x] **Step 2: Стили сайдбара**
 
 Создать `app/(admin)/admin/components/shell/Sidebar.module.css`.
 
@@ -3404,12 +3404,12 @@ export default function Sidebar() {
 .collapsed .brand { flex-direction: column; gap: 8px; }
 ```
 
-- [ ] **Step 3: Проверить типы и сборку**
+- [x] **Step 3: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
 
-- [ ] **Step 4: Коммит**
+- [x] **Step 4: Коммит**
 
 ```bash
 git add "app/(admin)/admin/components/shell"
@@ -3440,7 +3440,7 @@ git commit -m "feat(admin): glass sidebar with flowing active pill"
   - `<SaveStatus state: SaveState />`
   - `<Topbar />` — раздел для крошек и подписи поиска определяет сам из `usePathname()`, состояние сохранения берёт из `useAdminData()`.
 
-- [ ] **Step 1: AdminUiProvider**
+- [x] **Step 1: AdminUiProvider**
 
 Создать `app/(admin)/admin/components/shell/AdminUiProvider.tsx`.
 
@@ -3511,7 +3511,7 @@ export default function AdminUiProvider({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 2: SaveStatus**
+- [x] **Step 2: SaveStatus**
 
 Создать `app/(admin)/admin/components/shell/SaveStatus.tsx`.
 
@@ -3538,7 +3538,7 @@ export default function SaveStatus({ state }: { state: SaveState }) {
 }
 ```
 
-- [ ] **Step 3: Стили SaveStatus**
+- [x] **Step 3: Стили SaveStatus**
 
 Создать `app/(admin)/admin/components/shell/SaveStatus.module.css`.
 
@@ -3577,7 +3577,7 @@ export default function SaveStatus({ state }: { state: SaveState }) {
 }
 ```
 
-- [ ] **Step 4: Topbar**
+- [x] **Step 4: Topbar**
 
 Создать `app/(admin)/admin/components/shell/Topbar.tsx`.
 
@@ -3645,7 +3645,7 @@ export default function Topbar() {
 }
 ```
 
-- [ ] **Step 5: Стили Topbar**
+- [x] **Step 5: Стили Topbar**
 
 Создать `app/(admin)/admin/components/shell/Topbar.module.css`.
 
@@ -3769,7 +3769,7 @@ export default function Topbar() {
 .a11y:hover { background: var(--glass-bg-strong); }
 ```
 
-- [ ] **Step 6: Каркас `admin/layout.tsx`**
+- [x] **Step 6: Каркас `admin/layout.tsx`**
 
 Создать `app/(admin)/admin/layout.tsx`. Порядок провайдеров важен: `ToastProvider` снаружи, потому что `AdminDataProvider` вызывает `useToast`.
 
@@ -3811,7 +3811,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 7: Стили каркаса**
+- [x] **Step 7: Стили каркаса**
 
 Создать `app/(admin)/admin/layout.module.css`. Фон прозрачный — сквозь него видны глобальные обои `body::before`.
 
@@ -3845,7 +3845,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 8: Голая обёртка группы**
+- [x] **Step 8: Голая обёртка группы**
 
 Заменить содержимое `app/(admin)/layout.tsx` целиком. Инлайн-стиль `paddingTop: 70` и `AdminHeader` уходят: `/admin` строит свой каркас, `/login` — свой центрированный экран.
 
@@ -3859,7 +3859,7 @@ export default function AdminGroupLayout({ children }: { children: React.ReactNo
 }
 ```
 
-- [ ] **Step 9: Экран «Обзор»**
+- [x] **Step 9: Экран «Обзор»**
 
 Заменить содержимое `app/(admin)/admin/page.tsx` целиком. Метрики только настоящие: количество записей и сколько из них требуют внимания.
 
@@ -3941,7 +3941,7 @@ export default function OverviewPage() {
 }
 ```
 
-- [ ] **Step 10: Стили Обзора**
+- [x] **Step 10: Стили Обзора**
 
 Создать `app/(admin)/admin/overview.module.css`.
 
@@ -4059,7 +4059,7 @@ export default function OverviewPage() {
 }
 ```
 
-- [ ] **Step 11: Удалить старый каркас**
+- [x] **Step 11: Удалить старый каркас**
 
 ```bash
 git rm "app/(admin)/admin/components/header/AdminHeader.tsx" \
@@ -4068,12 +4068,12 @@ git rm "app/(admin)/admin/components/header/AdminHeader.tsx" \
        "app/(admin)/admin/components/DoctorManager.tsx"
 ```
 
-- [ ] **Step 12: Убедиться, что ссылок на удалённое не осталось**
+- [x] **Step 12: Убедиться, что ссылок на удалённое не осталось**
 
 Run: `grep -rn "AdminHeader\|admin.module.css\|ServiceManager\|DoctorManager" app/ lib/`
 Expected: пустой вывод.
 
-- [ ] **Step 13: Проверить типы, тесты и сборку**
+- [x] **Step 13: Проверить типы, тесты и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: всё зелёное.
@@ -4091,7 +4091,7 @@ Run: `npm run dev`, открыть `http://localhost:3000/admin`.
 - Кнопка «Версия для слабовидящих» убирает стекло — всё остаётся читаемым, сайдбар становится сплошным.
 - В консоли нет ошибок гидрации.
 
-- [ ] **Step 15: Коммит**
+- [x] **Step 15: Коммит**
 
 ```bash
 git add -A "app/(admin)"
@@ -4116,7 +4116,7 @@ git commit -m "feat(admin): shell with sidebar, topbar and overview screen"
   - `<ServiceTable services; loading; query; onOpen: (id: number) => void; onPatch: (id: number, patch: Partial<ServicePayload>) => void; onResetQuery: () => void; onCreate: () => void />`
   - `<ServiceSheet open; service: Service | null; onClose: () => void; onSubmit: (payload: ServicePayload) => void />`
 
-- [ ] **Step 1: Таблица услуг**
+- [x] **Step 1: Таблица услуг**
 
 Создать `app/(admin)/admin/components/ServiceTable.tsx`.
 
@@ -4295,7 +4295,7 @@ export default function ServiceTable({
 }
 ```
 
-- [ ] **Step 2: Стили таблицы услуг**
+- [x] **Step 2: Стили таблицы услуг**
 
 Создать `app/(admin)/admin/components/ServiceTable.module.css`. Счётчика, чипа и подписи колонки здесь нет — они приходят из `Table.tsx`.
 
@@ -4355,7 +4355,7 @@ export default function ServiceTable({
 }
 ```
 
-- [ ] **Step 3: Sheet услуги**
+- [x] **Step 3: Sheet услуги**
 
 Создать `app/(admin)/admin/components/ServiceSheet.tsx`.
 
@@ -4576,7 +4576,7 @@ export default function ServiceSheet({
 }
 ```
 
-- [ ] **Step 4: Стили sheet услуги**
+- [x] **Step 4: Стили sheet услуги**
 
 Создать `app/(admin)/admin/components/ServiceSheet.module.css`.
 
@@ -4597,7 +4597,7 @@ export default function ServiceSheet({
 }
 ```
 
-- [ ] **Step 5: Страница раздела**
+- [x] **Step 5: Страница раздела**
 
 Создать `app/(admin)/admin/services/page.tsx`.
 
@@ -4675,7 +4675,7 @@ export default function ServicesPage() {
 }
 ```
 
-- [ ] **Step 6: Стили страницы**
+- [x] **Step 6: Стили страницы**
 
 Создать `app/(admin)/admin/services/services.module.css`.
 
@@ -4693,7 +4693,7 @@ export default function ServicesPage() {
 }
 ```
 
-- [ ] **Step 7: Проверить типы, тесты и сборку**
+- [x] **Step 7: Проверить типы, тесты и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: всё зелёное.
@@ -4715,7 +4715,7 @@ Expected: всё зелёное.
 - Загрузка картинки перетаскиванием: рамка синеет, появляется превью.
 - В `data-a11y="1"` таблица и sheet читаемы на сплошных поверхностях.
 
-- [ ] **Step 9: Коммит**
+- [x] **Step 9: Коммит**
 
 ```bash
 git add "app/(admin)/admin/services" "app/(admin)/admin/components"
@@ -4742,7 +4742,7 @@ git commit -m "feat(admin): services section with data grid and edit sheet"
 
 `DoctorSheet.module.css` не создаётся: панель врача переиспользует `ServiceSheet.module.css` — там всего два класса (`draftHint`, `kbd`), и дублировать их незачем.
 
-- [ ] **Step 1: Таблица врачей**
+- [x] **Step 1: Таблица врачей**
 
 Создать `app/(admin)/admin/components/DoctorTable.tsx`.
 
@@ -4924,7 +4924,7 @@ export default function DoctorTable({
 }
 ```
 
-- [ ] **Step 2: Стили таблицы врачей**
+- [x] **Step 2: Стили таблицы врачей**
 
 Создать `app/(admin)/admin/components/DoctorTable.module.css`. Счётчика, чипа и подписи колонки здесь нет — они приходят из `Table.tsx`.
 
@@ -5004,7 +5004,7 @@ export default function DoctorTable({
 }
 ```
 
-- [ ] **Step 3: Sheet врача**
+- [x] **Step 3: Sheet врача**
 
 Создать `app/(admin)/admin/components/DoctorSheet.tsx`.
 
@@ -5191,7 +5191,7 @@ export default function DoctorSheet({
 }
 ```
 
-- [ ] **Step 4: Страница раздела**
+- [x] **Step 4: Страница раздела**
 
 Создать `app/(admin)/admin/doctors/page.tsx`.
 
@@ -5265,7 +5265,7 @@ export default function DoctorsPage() {
 }
 ```
 
-- [ ] **Step 5: Стили страницы**
+- [x] **Step 5: Стили страницы**
 
 Создать `app/(admin)/admin/doctors/doctors.module.css`.
 
@@ -5283,7 +5283,7 @@ export default function DoctorsPage() {
 }
 ```
 
-- [ ] **Step 6: Проверить типы, тесты и сборку**
+- [x] **Step 6: Проверить типы, тесты и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: всё зелёное.
@@ -5300,7 +5300,7 @@ Expected: всё зелёное.
 - Добавление врача: строка появляется сверху с бейджем «Отправка», затем становится обычной.
 - Биография больше 400 символов краснит счётчик и не даёт сохранить.
 
-- [ ] **Step 8: Коммит**
+- [x] **Step 8: Коммит**
 
 ```bash
 git add "app/(admin)/admin/doctors" "app/(admin)/admin/components"
@@ -5324,7 +5324,7 @@ git commit -m "feat(admin): doctors section with data grid and edit sheet"
 
 Один слушатель на всю админку: если каждый компонент вешает свой, порядок закрытия слоёв по Esc становится случайным.
 
-- [ ] **Step 1: Палитра**
+- [x] **Step 1: Палитра**
 
 Создать `app/(admin)/admin/components/ui/CommandPalette.tsx`.
 
@@ -5431,7 +5431,7 @@ export default function CommandPalette() {
 }
 ```
 
-- [ ] **Step 2: Стили палитры**
+- [x] **Step 2: Стили палитры**
 
 Создать `app/(admin)/admin/components/ui/CommandPalette.module.css`.
 
@@ -5551,7 +5551,7 @@ export default function CommandPalette() {
 }
 ```
 
-- [ ] **Step 3: Слой хоткеев**
+- [x] **Step 3: Слой хоткеев**
 
 Создать `app/(admin)/admin/components/shell/HotkeyLayer.tsx`.
 
@@ -5618,7 +5618,7 @@ export default function HotkeyLayer() {
 }
 ```
 
-- [ ] **Step 4: Подключить слой к каркасу**
+- [x] **Step 4: Подключить слой к каркасу**
 
 В `app/(admin)/admin/layout.tsx` добавить импорт и вставить `<HotkeyLayer />` последним ребёнком внутри `AdminUiProvider`:
 
@@ -5636,7 +5636,7 @@ import HotkeyLayer from "./components/shell/HotkeyLayer";
                 </AdminUiProvider>
 ```
 
-- [ ] **Step 5: Закрывать sheet по Esc в разделах**
+- [x] **Step 5: Закрывать sheet по Esc в разделах**
 
 `HotkeyLayer` умеет только сбросить флаг `sheetOpen`, а состоянием панели владеет страница раздела. Подписать обе страницы на этот флаг.
 
@@ -5663,7 +5663,7 @@ import HotkeyLayer from "./components/shell/HotkeyLayer";
 
 То же самое дословно — в `app/(admin)/admin/doctors/page.tsx`.
 
-- [ ] **Step 6: Проверить типы, тесты и сборку**
+- [x] **Step 6: Проверить типы, тесты и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: всё зелёное.
@@ -5678,7 +5678,7 @@ Expected: всё зелёное.
 - ⌘S и ⌘↵ при открытой панели сохраняют форму.
 - Esc внутри инлайн-правки отменяет правку и не закрывает панель.
 
-- [ ] **Step 8: Коммит**
+- [x] **Step 8: Коммит**
 
 ```bash
 git add "app/(admin)/admin"
@@ -5699,7 +5699,7 @@ git commit -m "feat(admin): command palette and global hotkeys"
 
 Логика не меняется: `POST /api/login`, редирект по `?next=`, `Suspense` вокруг `useSearchParams`.
 
-- [ ] **Step 1: Страница входа**
+- [x] **Step 1: Страница входа**
 
 Заменить содержимое `app/(admin)/login/page.tsx` целиком.
 
@@ -5818,7 +5818,7 @@ export default function LoginPage() {
 }
 ```
 
-- [ ] **Step 2: Стили входа**
+- [x] **Step 2: Стили входа**
 
 Создать `app/(admin)/login/login.module.css`. Фон прозрачный — под карточкой работают глобальные обои `body::before`, иначе стекло выглядит серой плёнкой.
 
@@ -5986,7 +5986,7 @@ export default function LoginPage() {
 .submit:disabled { opacity: 0.6; cursor: not-allowed; }
 ```
 
-- [ ] **Step 3: Проверить типы и сборку**
+- [x] **Step 3: Проверить типы и сборку**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: без ошибок.
@@ -6003,7 +6003,7 @@ Expected: без ошибок.
 - Правильный вход ведёт на `/admin` или на адрес из `?next=`.
 - В `data-a11y="1"` карточка сплошная и читаемая.
 
-- [ ] **Step 5: Коммит**
+- [x] **Step 5: Коммит**
 
 ```bash
 git add "app/(admin)/login"
@@ -6028,7 +6028,7 @@ git commit -m "feat(admin): glass login screen"
 - Consumes: всё, что построено выше.
 - Produces: ничего нового — только поведение на узких экранах.
 
-- [ ] **Step 1: Drawer сайдбара ≤1100px**
+- [x] **Step 1: Drawer сайдбара ≤1100px**
 
 В `Sidebar.module.css` добавить в конец:
 
@@ -6064,7 +6064,7 @@ git commit -m "feat(admin): glass login screen"
 }
 ```
 
-- [ ] **Step 2: Управление drawer в Sidebar.tsx**
+- [x] **Step 2: Управление drawer в Sidebar.tsx**
 
 Добавить в компонент проп `drawerOpen: boolean` и `onCloseDrawer: () => void`, применить класс и отрисовать скрим:
 
@@ -6094,7 +6094,7 @@ export default function Sidebar({
 
 Обернуть возвращаемое в фрагмент `<>…</>`. Переход по пункту меню закрывает drawer — добавить `onClick={onCloseDrawer}` на каждый `<Link>`.
 
-- [ ] **Step 3: Кнопка меню в топбаре**
+- [x] **Step 3: Кнопка меню в топбаре**
 
 Добавить в `Topbar.tsx` проп `onOpenDrawer: () => void` и кнопку первым элементом:
 
@@ -6137,7 +6137,7 @@ export default function Sidebar({
 }
 ```
 
-- [ ] **Step 4: Прокинуть состояние drawer в каркасе**
+- [x] **Step 4: Прокинуть состояние drawer в каркасе**
 
 В `app/(admin)/admin/layout.tsx` завести состояние и передать в оба компонента:
 
@@ -6151,7 +6151,7 @@ export default function Sidebar({
 
 и в `Content` пробросить `onOpenDrawer` до `<Topbar onOpenDrawer={() => setDrawer(true)} />`. `AdminLayout` уже клиентский — `useState` в нём допустим.
 
-- [ ] **Step 5: Карточный режим таблицы ≤820px**
+- [x] **Step 5: Карточный режим таблицы ≤820px**
 
 В `app/(admin)/admin/components/ui/Table.module.css` добавить в конец:
 
@@ -6173,7 +6173,7 @@ export default function Sidebar({
 }
 ```
 
-- [ ] **Step 6: Sheet во всю ширину**
+- [x] **Step 6: Sheet во всю ширину**
 
 В `app/(admin)/admin/components/ui/Sheet.module.css` добавить:
 
@@ -6183,7 +6183,7 @@ export default function Sidebar({
 }
 ```
 
-- [ ] **Step 7: Одна колонка на Обзоре**
+- [x] **Step 7: Одна колонка на Обзоре**
 
 В `app/(admin)/admin/overview.module.css` добавить:
 
@@ -6202,7 +6202,7 @@ export default function Sidebar({
 }
 ```
 
-- [ ] **Step 8: Проверить, что литеральных цветов и инлайн-стилей не осталось**
+- [x] **Step 8: Проверить, что литеральных цветов и инлайн-стилей не осталось**
 
 Run:
 ```bash
@@ -6216,7 +6216,7 @@ grep -rn "style={{" "app/(admin)"
 ```
 Expected: только строки, где передаются CSS-переменные `--cols`, `--pill-y`, `--bar-w`. Ничего другого.
 
-- [ ] **Step 9: Проверить, что backdrop-filter не размножен по строкам**
+- [x] **Step 9: Проверить, что backdrop-filter не размножен по строкам**
 
 Run:
 ```bash
@@ -6224,7 +6224,7 @@ grep -rn "backdrop-filter" "app/(admin)" --include=*.module.css
 ```
 Expected: только контейнеры — `GlassCard.card`, `Table.shell`, `Sidebar.sidebar`, `Topbar.topbar`, `Topbar.a11y`, `Sheet.sheet`, `Modal.scrim`, `Modal.modal`, `CommandPalette.palette`, `Toast.toast`, `Input.input`, `Textarea.area`, `Button.ghost`, `login.card`. В `Table.row`, `Table.cell`, `InlineEdit.*`, `Skeleton.*` его быть не должно.
 
-- [ ] **Step 10: Полная проверка**
+- [x] **Step 10: Полная проверка**
 
 Run: `npx tsc --noEmit && npm run build`
 Expected: всё зелёное, новых warning-ов нет.
@@ -6238,7 +6238,7 @@ Expected: всё зелёное, новых warning-ов нет.
 - Все кнопки и строки не ниже 44px.
 - Скролл длинного списка плавный: `backdrop-filter` только на контейнере.
 
-- [ ] **Step 12: Коммит**
+- [x] **Step 12: Коммит**
 
 ```bash
 git add "app/(admin)"
@@ -6246,6 +6246,45 @@ git commit -m "feat(admin): responsive — drawer, card-mode table, full-width s
 ```
 
 ---
+
+## Что изменилось при исполнении (2026-08-17)
+
+Tasks 1–18 реализованы. Неотмеченными остались только шаги «Посмотреть в
+браузере» — визуальная приёмка за пользователем.
+
+**Розовый скин админки.** Отдельная работа поверх плана, по запросу
+пользователя: палитра админки переведена в розовый. Реализована как блок
+переопределений токенов `.admin-skin` в `app/globals.css` (плюс варианты
+для `html[data-a11y="1"]` и `prefers-reduced-transparency`), который
+надевает группа `(admin)` на `/admin` и `/login`. Ни один компонент
+админки не правился — они целиком на `var(--…)`. Витрина остаётся синей:
+`PRODUCT.md` пинит палитру для публичного сайта и сам выносит админку за
+охват. Единственное отклонение от решения 3: у скина есть собственные
+обои `.admin-skin::before` — глобальные `body::before` синие, и
+перекрасить их из вложенного слоя нельзя.
+
+**Три расхождения с текстом плана, найденные при исполнении:**
+
+1. **Task 16, Step 5 в исходной формулировке не работал.** Условие
+   `if (!sheetOpen && sheet !== null) setSheet(null)` срабатывало в том же
+   коммите, где панель открывалась: эффект выше только что назначил
+   `setSheetOpen(true)`, но в текущем рендере `sheetOpen` ещё `false` —
+   и панель закрывалась сразу после открытия. Реализовано через переход
+   `true → false` с `useRef`. Та же ошибка была бы у модалки
+   подтверждения (`modalOpen` в контексте — тоже зеркало локального
+   `confirmClose`, и Esc гасил бы только зеркало), поэтому в
+   `ServiceSheet` и `DoctorSheet` добавлен такой же эффект — без него
+   пункт приёмки «Esc закрывает палитру, потом модалку, потом sheet»
+   не выполнялся.
+2. **Task 18: сворачивание сайдбара ограничено `min-width: 1101px`.**
+   План прятал в drawer только `.collapseButton`, но правила
+   `.collapsed .itemLabel { display: none }` продолжали действовать — и
+   при сохранённом в `localStorage` «свёрнуто» выехавший drawer полной
+   ширины оставался без подписей.
+3. **Task 18: `ServiceTable.module.css` и `DoctorTable.module.css` не
+   потребовали правок.** В карточном режиме ячейка становится строкой
+   полной ширины, и `.nameCell` с миниатюрой работает как есть. Список
+   файлов задачи оказался шире, чем её шаги.
 
 ## Покрытие спецификации
 
