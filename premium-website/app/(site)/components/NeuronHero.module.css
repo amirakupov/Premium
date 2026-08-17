@@ -1,89 +1,34 @@
 /**
- * Оформление скролл-нарратива с 3D-нейроном.
+ * Первый экран нарратива.
  *
- * Устройство DOM (его строит drei <ScrollControls>, менять разметку нельзя):
- *
- *   section.stage            ← высота задаётся ЗДЕСЬ, иначе канвас схлопнется
- *     div.canvas             ← обёртка R3F: inline position:relative + 100%/100%
- *       canvas
- *       div (el)             ← absolute, height:100%, overflow-y:auto — он скроллится
- *         div (fixed)        ← sticky, height:100%, overflow:hidden — окно просмотра
- *           div              ← <Scroll html>: absolute + translate3d по прогрессу
- *             div.acts
- *         div (fill)         ← распорка высотой pages × 100%
- *
- * Отсюда два следствия, на которых держится вся раскладка:
- *  1) .stage обязана иметь явную высоту — от неё считается всё остальное;
- *  2) экран акта равен высоте .stage, а НЕ 100svh: контейнер прокрутки живёт
- *     внутри секции. Поэтому высота вынесена в --stage-h и переиспользуется
- *     обоими (переменная наследуется в .acts — fixed лежит внутри .stage).
+ * В v1 разметку строил drei <ScrollControls>: секция держала внутри себя
+ * собственный контейнер прокрутки, и высоты приходилось считать от .stage, а не
+ * от вьюпорта. Теперь скролл нативный, сцена лежит фиксированным слоем за всей
+ * страницей, а это — обычная секция обычной высоты.
  */
 
 .stage {
-  /* Одно число на всю сцену: и высота секции, и высота экрана акта.
-     svh — чтобы адресная строка мобильного не дёргала раскладку. */
-  --stage-h: calc(100svh - var(--header-h) - 24px);
+  /* Один экран минус парящая капсула шапки. svh — чтобы адресная строка
+     мобильного не дёргала раскладку. */
+  min-height: calc(100svh - var(--header-h) - 24px);
+  /* ниже этого текст начинает наезжать на нейрон */
+  --stage-min: 560px;
 
   position: relative;
-  height: var(--stage-h);
-  /* ниже этого сцена нечитаема: нейрон и текст начинают наезжать друг на друга */
-  min-height: 560px;
-  overflow: hidden;
-  margin-bottom: clamp(48px, 6vw, 88px);
-
-  /* Прозрачный фон — как у остальных секций сайта: сквозь сцену читаются
-     голубые «блобы» body, и первый экран не выпадает из общей страницы.
-     Нейрон рассчитан под это: свечение переведено на обычный блендинг,
-     а палитра затемнена (NEURON.COLOR_*, SIGNAL.COLOR в NeuronScene.tsx). */
-  background: transparent;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: var(--container);
+  margin: 0 auto clamp(48px, 6vw, 88px);
+  padding: clamp(24px, 4vh, 56px) var(--gutter) clamp(32px, 6vh, 72px);
   color: var(--ink);
 }
 
-.canvas {
-  /* R3F проставляет размеры инлайном; класс нужен как якорь для фона на
-     случай, если WebGL-контекст потерян — под канвасом остаётся грунт. */
-  background: transparent;
-}
-
-/* ─────────────────────── HTML поверх сцены ─────────────────────── */
-
-.acts {
-  width: 100%;
-}
-
-.act {
-  /* Ровно один экран прокрутки: pages в ScrollControls и число актов
-     обязаны совпадать, иначе контент разъедется с анимацией сцены. */
-  height: var(--stage-h);
-  min-height: 560px;
-  box-sizing: border-box;
-  max-width: var(--container);
-  margin: 0 auto;
-  /* сверху — воздух под парящую капсулу шапки */
-  padding: calc(var(--header-h) + 32px) var(--gutter) clamp(32px, 6vh, 72px);
+.inner {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-/* Акт 1 — крупный заголовок слева, нейрон ещё по центру кадра. */
-.actLead {
   align-items: flex-start;
   text-align: left;
-}
-
-/* Акт 2 — сцена уводит нейрон влево (group.position.x → -1.5),
-   поэтому текст уходит вправо и не спорит с ним за место. */
-.actMiddle {
-  align-items: flex-end;
-  text-align: right;
-}
-
-/* Акт 3 — нейрон схлопнулся во вспышку, кадр свободен: текст по центру
-   над линией ЭЭГ, которая прочерчивается ровно здесь. */
-.actFinal {
-  align-items: center;
-  text-align: center;
 }
 
 .kicker {
@@ -117,83 +62,14 @@
   max-width: 46ch;
 }
 
-.actTitle {
-  margin: 0 0 0.5em;
-  font-family: var(--font-head);
-  font-weight: 400;
-  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
-  line-height: 1.16;
-  color: var(--ink);
-  max-width: 20ch;
-  text-wrap: balance;
-}
-
-.actText {
-  margin: 0 0 1.75rem;
-  font-size: clamp(1rem, 1.4vw, 1.1rem);
-  color: var(--ink-soft);
-  max-width: 48ch;
-}
-
-/**
- * Статичная SVG-линия для тех, у кого анимации выключены: у них 3D-финал
- * не прочерчивается (useFrame выключен, кадр застыл на прогрессе 0.12),
- * и без этой подмены последний акт остался бы без своего образа.
- * Всем остальным линию рисует сцена — здесь дубль лишний.
- */
-.staticEeg {
-  display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .staticEeg {
-    display: block;
-    margin: 0 auto 1.75rem;
-  }
-}
-
-/* ─────────────────────── Постер до загрузки ───────────────────────
-   Сцена приезжает через next/dynamic(ssr:false), поэтому в серверном HTML
-   её нет. Постер повторяет первый акт: держит LCP и остаётся единственным
-   содержимым, если WebGL недоступен. */
-
-.poster {
-  position: absolute;
-  inset: 0;
-  box-sizing: border-box;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: calc(var(--header-h) + 32px) var(--gutter) clamp(32px, 6vh, 72px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  text-align: left;
-}
-
-/* ─────────────────────── Адаптив ─────────────────────── */
-
 @media (max-width: 900px) {
-  /* На узком экране нейрон занимает весь кадр — текст спорить с ним не
-     может, поэтому все акты выравниваются одинаково по левому краю. */
-  .actMiddle {
-    align-items: flex-start;
-    text-align: left;
-  }
-
   .title {
     max-width: 100%;
   }
 }
 
 @media (max-width: 600px) {
-  .act,
-  .poster {
-    padding-top: calc(var(--header-h) + 20px);
-  }
-
-  .lede,
-  .actText {
+  .lede {
     max-width: 100%;
   }
 }

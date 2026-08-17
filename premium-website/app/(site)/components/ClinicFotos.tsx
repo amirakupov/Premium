@@ -51,7 +51,7 @@ export default function ClinicFotos() {
   }, []);
 
   return (
-    <section className={styles.carousel}>
+    <section id="clinic-photos" className={styles.carousel}>
       <h2 className={styles.heading}>Как выглядит клиника</h2>
       <p className={styles.subheading}>
         Мы используем самое современное и качественное оборудование в связке с

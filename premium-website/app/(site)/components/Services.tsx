@@ -5,7 +5,7 @@ import type { Service } from '@/lib/types';
 
 export default function Services({ services }: { services: Service[] }) {
   return (
-    <section className={styles.servicesSection}>
+    <section id="services" className={styles.servicesSection}>
       <div className={styles.headerContainer}>
         <h2 className={styles.heading}>Мы предлагаем</h2>
         <Link href="/services" className={styles.viewAllLink}>

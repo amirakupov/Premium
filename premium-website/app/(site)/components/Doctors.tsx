@@ -5,7 +5,7 @@ import type { Doctor } from '@/lib/types';
 
 export default function Doctors({ doctors }: { doctors: Doctor[] }) {
   return (
-    <section className={styles.doctorsSection}>
+    <section id="doctors" className={styles.doctorsSection}>
       <div className={styles.headerContainer}>
         <h2 className={styles.heading}>Наши специалисты</h2>
         <Link href="/doctors" className={styles.viewAllLink}>
