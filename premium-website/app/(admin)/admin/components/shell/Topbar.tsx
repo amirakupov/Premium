@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FiSearch } from "react-icons/fi";
+import { FiMenu, FiSearch } from "react-icons/fi";
 import A11yToggle from "@/app/(site)/components/A11yToggle";
 import { useAdminData } from "../data/AdminDataProvider";
 import { useAdminUi } from "./AdminUiProvider";
@@ -14,7 +14,7 @@ const SECTIONS: { prefix: string; label: string }[] = [
     { prefix: "/admin", label: "Обзор" },
 ];
 
-export default function Topbar() {
+export default function Topbar({ onOpenDrawer }: { onOpenDrawer: () => void }) {
     const pathname = usePathname();
     const { save } = useAdminData();
     const { query, setQuery, searchRef, setPaletteOpen } = useAdminUi();
@@ -23,6 +23,16 @@ export default function Topbar() {
 
     return (
         <header className={styles.topbar}>
+            {/* Видна только в drawer-режиме — на широком экране сайдбар и так на месте. */}
+            <button
+                type="button"
+                className={styles.menu}
+                onClick={onOpenDrawer}
+                aria-label="Открыть меню разделов"
+            >
+                <FiMenu aria-hidden="true" />
+            </button>
+
             <nav aria-label="Хлебные крошки" className={styles.crumbs}>
                 <span className={styles.crumbRoot}>Админка</span>
                 <span aria-hidden="true" className={styles.slash}>/</span>

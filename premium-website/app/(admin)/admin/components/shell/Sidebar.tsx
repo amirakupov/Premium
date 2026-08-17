@@ -26,7 +26,13 @@ const HOTKEYS = [
     ["⌘↵", "отправить"],
 ] as const;
 
-export default function Sidebar() {
+export default function Sidebar({
+    drawerOpen,
+    onCloseDrawer,
+}: {
+    drawerOpen: boolean;
+    onCloseDrawer: () => void;
+}) {
     const pathname = usePathname();
     const { services, doctors } = useAdminData();
     const [collapsed, setCollapsed] = useState(false);
@@ -59,82 +65,90 @@ export default function Sidebar() {
     }
 
     return (
-        <nav
-            aria-label="Разделы админки"
-            className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}
-        >
-            <div className={styles.brand}>
-                <span aria-hidden="true" className={styles.logo}>П</span>
-                <span className={styles.brandText}>
-                    <span className={styles.brandName}>Премиум</span>
-                    <span className={styles.brandKicker}>CMS</span>
-                </span>
-                <button
-                    type="button"
-                    className={styles.collapseButton}
-                    onClick={toggle}
-                    aria-label={collapsed ? "Развернуть меню" : "Свернуть меню"}
-                    aria-expanded={!collapsed}
-                >
-                    <FiChevronLeft aria-hidden="true" className={styles.chevron} />
-                </button>
-            </div>
-
-            <div className={styles.items}>
-                {/* Пилюля перетекает между пунктами, а не перескакивает. */}
-                <span
-                    aria-hidden="true"
-                    className={styles.pill}
-                    style={{ "--pill-y": `${activeIndex * ITEM_STEP}px` } as CSSProperties}
-                />
-                {ITEMS.map(({ href, label, Icon }) => {
-                    const active = ITEMS[activeIndex].href === href;
-                    return (
-                        <Link
-                            key={href}
-                            href={href}
-                            className={`${styles.item} ${active ? styles.itemActive : ""}`}
-                            aria-current={active ? "page" : undefined}
-                            // В свёрнутом виде подпись скрыта через display: none,
-                            // а такой текст выпадает из имени ссылки — без aria-label
-                            // скринридер прочитает «ссылка» без названия раздела.
-                            aria-label={label}
-                        >
-                            <Icon aria-hidden="true" className={styles.itemIcon} />
-                            <span className={styles.itemLabel}>{label}</span>
-                            {counts[href] !== null ? (
-                                <span className={styles.count}>{counts[href]}</span>
-                            ) : null}
-                        </Link>
-                    );
-                })}
-            </div>
-
-            <div className={styles.hotkeys}>
-                {HOTKEYS.map(([keys, what]) => (
-                    <span key={keys} className={styles.hotkeyRow}>
-                        <kbd className={styles.kbd}>{keys}</kbd>
-                        <span className={styles.hotkeyWhat}>{what}</span>
+        <>
+            {drawerOpen ? (
+                <div className={styles.scrim} onClick={onCloseDrawer} aria-hidden="true" />
+            ) : null}
+            <nav
+                aria-label="Разделы админки"
+                className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""} ${drawerOpen ? styles.drawerOpen : ""}`}
+            >
+                <div className={styles.brand}>
+                    <span aria-hidden="true" className={styles.logo}>П</span>
+                    <span className={styles.brandText}>
+                        <span className={styles.brandName}>Премиум</span>
+                        <span className={styles.brandKicker}>CMS</span>
                     </span>
-                ))}
-            </div>
+                    <button
+                        type="button"
+                        className={styles.collapseButton}
+                        onClick={toggle}
+                        aria-label={collapsed ? "Развернуть меню" : "Свернуть меню"}
+                        aria-expanded={!collapsed}
+                    >
+                        <FiChevronLeft aria-hidden="true" className={styles.chevron} />
+                    </button>
+                </div>
 
-            <div className={styles.user}>
-                <span aria-hidden="true" className={styles.avatar}>А</span>
-                <span className={styles.userText}>
-                    <span className={styles.userName}>Администратор</span>
-                    <span className={styles.userRole}>Управление контентом</span>
-                </span>
-                <Button
-                    variant="quiet"
-                    size="icon"
-                    className={styles.logout}
-                    onClick={() => void logout()}
-                    aria-label="Выйти из админки"
-                >
-                    <FiLogOut aria-hidden="true" />
-                </Button>
-            </div>
-        </nav>
+                <div className={styles.items}>
+                    {/* Пилюля перетекает между пунктами, а не перескакивает. */}
+                    <span
+                        aria-hidden="true"
+                        className={styles.pill}
+                        style={{ "--pill-y": `${activeIndex * ITEM_STEP}px` } as CSSProperties}
+                    />
+                    {ITEMS.map(({ href, label, Icon }) => {
+                        const active = ITEMS[activeIndex].href === href;
+                        return (
+                            <Link
+                                key={href}
+                                href={href}
+                                className={`${styles.item} ${active ? styles.itemActive : ""}`}
+                                aria-current={active ? "page" : undefined}
+                                // В свёрнутом виде подпись скрыта через display: none,
+                                // а такой текст выпадает из имени ссылки — без aria-label
+                                // скринридер прочитает «ссылка» без названия раздела.
+                                aria-label={label}
+                                // Переход по разделу закрывает drawer: на узком экране
+                                // панель перекрывает то, куда пользователь только что ушёл.
+                                onClick={onCloseDrawer}
+                            >
+                                <Icon aria-hidden="true" className={styles.itemIcon} />
+                                <span className={styles.itemLabel}>{label}</span>
+                                {counts[href] !== null ? (
+                                    <span className={styles.count}>{counts[href]}</span>
+                                ) : null}
+                            </Link>
+                        );
+                    })}
+                </div>
+
+                <div className={styles.hotkeys}>
+                    {HOTKEYS.map(([keys, what]) => (
+                        <span key={keys} className={styles.hotkeyRow}>
+                            <kbd className={styles.kbd}>{keys}</kbd>
+                            <span className={styles.hotkeyWhat}>{what}</span>
+                        </span>
+                    ))}
+                </div>
+
+                <div className={styles.user}>
+                    <span aria-hidden="true" className={styles.avatar}>А</span>
+                    <span className={styles.userText}>
+                        <span className={styles.userName}>Администратор</span>
+                        <span className={styles.userRole}>Управление контентом</span>
+                    </span>
+                    <Button
+                        variant="quiet"
+                        size="icon"
+                        className={styles.logout}
+                        onClick={() => void logout()}
+                        aria-label="Выйти из админки"
+                    >
+                        <FiLogOut aria-hidden="true" />
+                    </Button>
+                </div>
+            </nav>
+        </>
     );
 }

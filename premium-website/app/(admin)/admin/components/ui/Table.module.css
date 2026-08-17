@@ -147,3 +147,19 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+/* На узком экране строка разбирается в карточку: колонки становятся строками. */
+@media (max-width: 820px) {
+  .head { display: none; }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .row:hover { transform: none; }
+
+  .cell { min-height: 44px; display: flex; align-items: center; }
+}

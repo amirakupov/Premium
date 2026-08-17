@@ -16,8 +16,6 @@
   transition: width var(--dur-slow) var(--spring);
 }
 
-.collapsed { width: var(--sidebar-w-collapsed); }
-
 .brand {
   display: flex;
   align-items: center;
@@ -197,19 +195,56 @@
 .logout { color: var(--on-dark-soft); }
 .logout:hover { background: var(--danger-soft); color: var(--on-dark); }
 
-/* Свёрнутый вид: текст уходит, управление остаётся.
-   Кнопку выхода не прячем — иначе из свёрнутого сайдбара выйти нельзя. */
-.collapsed .brandText,
-.collapsed .itemLabel,
-.collapsed .count,
-.collapsed .hotkeys,
-.collapsed .userText {
-  display: none;
+/* Свёрнутый вид живёт только на широком экране. Ниже 1100px сайдбар
+   работает drawer-ом полной ширины, и сохранённое в localStorage
+   «свёрнуто» не должно обрезать подписи у выехавшей панели. */
+@media (min-width: 1101px) {
+  .collapsed { width: var(--sidebar-w-collapsed); }
+
+  /* Текст уходит, управление остаётся. Кнопку выхода не прячем —
+     иначе из свёрнутого сайдбара выйти нельзя. */
+  .collapsed .brandText,
+  .collapsed .itemLabel,
+  .collapsed .count,
+  .collapsed .hotkeys,
+  .collapsed .userText {
+    display: none;
+  }
+
+  .collapsed .item { justify-content: center; padding: 0; }
+  .collapsed .brand { flex-direction: column; gap: 8px; }
+
+  /* Аватар (34px) и квадратная кнопка выхода (44px) в ряд не помещаются
+     в свёрнутую колонку — та же проблема, что и у .brand, то же решение. */
+  .collapsed .user { flex-direction: column; gap: 8px; }
 }
 
-.collapsed .item { justify-content: center; padding: 0; }
-.collapsed .brand { flex-direction: column; gap: 8px; }
+/* На узком экране сайдбар уходит из потока и выезжает поверх контента. */
+@media (max-width: 1100px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: calc(var(--z-overlay) + 1);
+    width: var(--sidebar-w);
+    transform: translateX(-100%);
+    transition: transform var(--dur-slow) var(--spring);
+  }
 
-/* Аватар (34px) и квадратная кнопка выхода (44px) в ряд не помещаются
-   в свёрнутую колонку — та же проблема, что и у .brand, то же решение. */
-.collapsed .user { flex-direction: column; gap: 8px; }
+  .drawerOpen { transform: none; }
+
+  /* В drawer сворачивание бессмысленно. */
+  .collapseButton { display: none; }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: rgba(var(--scrim), 0.32);
+  }
+}
+
+@media (min-width: 1101px) {
+  .scrim { display: none; }
+}
