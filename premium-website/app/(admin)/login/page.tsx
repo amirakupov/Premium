@@ -1,8 +1,10 @@
 "use client";
-import { useState } from "react";
+
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 import type { LoginRequest } from "@/lib/types";
+import { useCursorGlow } from "../admin/components/ui/useCursorGlow";
+import styles from "./login.module.css";
 
 async function login(payload: LoginRequest): Promise<boolean> {
     const response = await fetch("/api/login", {
@@ -21,6 +23,7 @@ async function login(payload: LoginRequest): Promise<boolean> {
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { ref, glowProps } = useCursorGlow<HTMLDivElement>();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [err, setErr] = useState("");
@@ -47,30 +50,55 @@ function LoginForm() {
     };
 
     return (
-        <main style={{ padding: 24 }}>
-            <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, maxWidth: 280 }}>
-                <label htmlFor="username">Логин</label>
-                <input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoComplete="username"
-                    required
-                />
-                <label htmlFor="password">Пароль</label>
-                <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="current-password"
-                    required
-                />
-                <button type="submit" disabled={submitting}>
-                    {submitting ? "..." : "Войти"}
-                </button>
-                {err ? <div role="alert">{err}</div> : null}
-            </form>
+        <main className={styles.screen}>
+            <div
+                ref={ref}
+                className={`${styles.card} ${err ? styles.cardError : ""}`}
+                {...glowProps}
+            >
+                <span aria-hidden="true" className={styles.glow} />
+
+                <header className={styles.head}>
+                    <span aria-hidden="true" className={styles.logo}>П</span>
+                    <h1 className={styles.title}>Вход в админку</h1>
+                    <p className={styles.subtitle}>Клиника неврологии «Премиум»</p>
+                </header>
+
+                <form onSubmit={onSubmit} className={styles.form}>
+                    <div className={styles.field}>
+                        <label className={styles.label} htmlFor="username">Логин</label>
+                        <input
+                            id="username"
+                            className={styles.input}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            autoComplete="username"
+                            aria-invalid={err ? true : undefined}
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label} htmlFor="password">Пароль</label>
+                        <input
+                            id="password"
+                            type="password"
+                            className={styles.input}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
+                            aria-invalid={err ? true : undefined}
+                            required
+                        />
+                    </div>
+
+                    {err ? <p role="alert" className={styles.error}>{err}</p> : null}
+
+                    <button type="submit" className={styles.submit} disabled={submitting}>
+                        {submitting ? "Проверяем…" : "Войти"}
+                    </button>
+                </form>
+            </div>
         </main>
     );
 }
