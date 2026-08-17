@@ -153,7 +153,7 @@ export default function EegPage() {
       </section>
 
       <div className={styles.ctaRow}>
-        <a href={CLINIC.phoneHref} className="btn btn--brass">
+        <a href={CLINIC.phoneHref} className="btn btn--primary">
           Записаться на ЭЭГ
         </a>
       </div>

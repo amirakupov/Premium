@@ -19,11 +19,15 @@
   --on-dark: #eaf1fb;          /* основной текст на тёмном */
   --on-dark-soft: #a7bcda;     /* вторичный текст на тёмном, тонирован от синего */
 
-  /* вторичный акцент — сохраняем имена *brass* как псевдонимы синей семьи,
-     чтобы существующие ссылки продолжали работать */
-  --brass: #1d4ed8;            /* насыщенный синий для мелкого акцента на светлом */
-  --brass-fill: #2563eb;       /* синяя заливка CTA, текст на ней — белый */
-  --brass-bright: #6aa8f5;     /* светло-голубой акцент на тёмном грунте */
+  /* Вторичный акцент. Канонические имена — *accent*; *brass* остались
+     псевдонимами, потому что на них ссылается ~25 модулей витрины и админки.
+     Латунью здесь давно ничего не пахнет: все три значения синие. */
+  --accent: #1d4ed8;           /* насыщенный синий для мелкого акцента на светлом */
+  --accent-fill: #2563eb;      /* синяя заливка CTA, текст на ней — белый */
+  --accent-bright: #6aa8f5;    /* светло-голубой акцент на тёмном грунте */
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
 
   --scrim: 18, 41, 77;         /* тёмно-синий для оверлеев (rgb-тройка) */
 
@@ -157,9 +161,15 @@ html[data-a11y="1"] {
   --brand-tint: #ffffff;
   --on-dark: #ffffff;
   --on-dark-soft: #e8f0fb;
-  --brass: #0b3fb0;
-  --brass-fill: #0b3fb0;
-  --brass-bright: #9cc4ff;
+  /* Псевдонимы переобъявляются в каждом блоке: `--brass: var(--accent)`
+     подставляется там, где объявлено, а не у потомка, — переопределения
+     одного `--accent` было бы недостаточно. */
+  --accent: #0b3fb0;
+  --accent-fill: #0b3fb0;
+  --accent-bright: #9cc4ff;
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
   --scrim: 8, 24, 58;
   --border: rgba(0, 0, 0, 0.35);
   --focus: 5px;
@@ -237,9 +247,12 @@ html[data-a11y="1"] {
   --on-dark: #ffeef6;
   --on-dark-soft: #e6b9cf;     /* ~9:1 на сливовом грунте */
 
-  --brass: #c2185b;
-  --brass-fill: #c2185b;
-  --brass-bright: #ffb3d1;     /* буква аватара на сливовом */
+  --accent: #c2185b;
+  --accent-fill: #c2185b;
+  --accent-bright: #ffb3d1;    /* буква аватара на сливовом */
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
 
   --scrim: 61, 10, 44;         /* сливовый для скримов (rgb-тройка) */
 
@@ -307,9 +320,12 @@ html[data-a11y="1"] .admin-skin {
   --brand-tint: #ffffff;
   --on-dark: #ffffff;
   --on-dark-soft: #ffe4f0;
-  --brass: #a1004b;
-  --brass-fill: #a1004b;
-  --brass-bright: #ffd0e4;
+  --accent: #a1004b;
+  --accent-fill: #a1004b;
+  --accent-bright: #ffd0e4;
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
   --border: rgba(0, 0, 0, 0.35);
   --glass-dark-bg: #3d0a2c;
   --glass-sheen: none;
@@ -525,13 +541,13 @@ h1, h2, h3 {
 }
 
 /* Первичная — синее стекло, белый текст, стеклянный блик. */
-.btn--brass {
+.btn--primary {
   background: var(--glass-primary);
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--glass-sheen), 0 14px 30px -12px rgba(37, 99, 235, 0.6);
 }
-.btn--brass:hover {
+.btn--primary:hover {
   background: linear-gradient(180deg, rgba(96, 145, 250, 0.94), rgba(37, 99, 235, 0.96));
   box-shadow: var(--glass-sheen), 0 20px 40px -12px rgba(37, 99, 235, 0.7);
 }

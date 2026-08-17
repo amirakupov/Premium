@@ -25,7 +25,7 @@ const NeuronScene = dynamic(() => import('./NeuronScene'), {
                 Диагностика и терапия заболеваний центральной и периферической нервной
                 системы — доказательными и щадящими методами.
             </p>
-            <a href="/contacts" className="btn btn--brass">
+            <a href="/contacts" className="btn btn--primary">
                 Записаться на приём
             </a>
         </div>
