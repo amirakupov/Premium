@@ -1,0 +1,27 @@
+.eeg {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  height: 48px;
+  color: var(--brass-bright);
+}
+
+.trace {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: eegDraw 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+@keyframes eegDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* если анимации выключены глобально, линия должна быть видима */
+@media (prefers-reduced-motion: reduce) {
+  .trace {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}

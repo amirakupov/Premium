@@ -1,4 +1,4 @@
-import Hero from '@/app/(site)/components/Hero';
+import NeuronHero from '@/app/(site)/components/NeuronHero';
 import Quote from '@/app/(site)/components/Quote';
 import Services from '@/app/(site)/components/Services';
 import ClinicFotos from '@/app/(site)/components/ClinicFotos';
@@ -14,7 +14,7 @@ export default async function HomePage() {
 
     return (
         <HomeShell>
-            <Hero />
+            <NeuronHero />
             <Quote />
             <Services services={services.slice(0, 9)} />
             <ClinicFotos />
