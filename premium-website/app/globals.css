@@ -210,6 +210,143 @@ html[data-a11y="1"] {
     --glass-dark-bg-nav: #12294d;
   }
 }
+/* ── Скин админки: розовая палитра ──────────────────────────────────
+   Витрина остаётся синей. Розовое живёт только под .admin-skin, который
+   надевает группа (admin) на /admin и /login — PRODUCT.md пинит палитру
+   для публичного сайта и сам же выносит админку за охват редизайна.
+   Здесь переопределяются только токены; ни один компонент админки не
+   правится — они целиком собраны на var(--…), и это тот случай, ради
+   которого дисциплина токенов и держалась.
+   Не тронуты намеренно:
+   — --danger и --success: это статусы, а не бренд. Красный кирпич
+     (#b3261e) заметно темнее и желтее розового (#c2185b), поэтому
+     ошибка не сливается с акцентом; плюс бейджи всегда подписаны словом,
+     так что смысл не держится на одном цвете;
+   — белые альфы стекла (--glass-bg, --glass-border, --glass-gloss,
+     --pill-fill, --glow-soft): они нейтральны и работают на любом грунте. */
+.admin-skin {
+  --paper: #fff5fa;            /* блёкло-розовый фон страницы */
+  --ink: #2b0f22;              /* основной текст, сливово-чёрный */
+  --ink-soft: #6b4257;         /* вторичный текст, ~8:1 на белом */
+
+  --brand: #c2185b;            /* розовый акцент, 6:1 на белом — годен для текста */
+  --brand-deep: #3d0a2c;       /* сливовый грунт сайдбара и аватара */
+  --brand-line: #5c1240;
+  --brand-tint: #fde6f0;       /* бледно-розовая подложка на светлом */
+
+  --on-dark: #ffeef6;
+  --on-dark-soft: #e6b9cf;     /* ~9:1 на сливовом грунте */
+
+  --brass: #c2185b;
+  --brass-fill: #c2185b;
+  --brass-bright: #ffb3d1;     /* буква аватара на сливовом */
+
+  --scrim: 61, 10, 44;         /* сливовый для скримов (rgb-тройка) */
+
+  --border: rgba(43, 15, 34, 0.12);
+  --shadow-soft: 0 14px 34px -14px rgba(61, 10, 44, 0.22);
+  --shadow-lift: 0 24px 54px -20px rgba(61, 10, 44, 0.3);
+
+  /* Стекло: белила и блики те же, «толщина» и тень перекрашены из
+     тёмно-синего в сливовый — иначе на розовом грунте кромка холодит. */
+  --glass-tint: rgba(255, 214, 233, 0.3);
+  --glass-dark-bg: rgba(61, 10, 44, 0.5);
+  --glass-sheen:
+    inset 1.5px 2px 1.5px -1.5px rgba(255, 255, 255, 1),
+    inset -1.5px -2px 1.5px -1.5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1.5px 14px -7px rgba(61, 10, 44, 0.3),
+    inset 0 -10px 22px -20px rgba(61, 10, 44, 0.45);
+  --glass-shadow:
+    0 26px 56px -24px rgba(61, 10, 44, 0.45),
+    0 4px 14px -6px rgba(61, 10, 44, 0.18);
+  --glass-primary: linear-gradient(180deg, rgba(240, 98, 146, 0.92), rgba(194, 24, 91, 0.94));
+
+  --glass-row-hover: rgba(253, 230, 240, 0.9);
+  --row-line: 0 1px 0 rgba(43, 15, 34, 0.06);
+  --glass-dark-bg-nav: rgba(61, 10, 44, 0.82);
+  --ring-brand: 0 0 0 3px rgba(194, 24, 91, 0.24);
+  --shimmer: linear-gradient(90deg,
+    rgba(43, 15, 34, 0.07) 0%,
+    rgba(43, 15, 34, 0.13) 40%,
+    rgba(43, 15, 34, 0.07) 80%);
+}
+
+/* Свои обои под стеклом. Глобальные (body::before) остаются синими —
+   перекрасить их из вложенного слоя нельзя, а розовое стекло над синими
+   пятнами выглядит грязным. Поэтому админка кладёт собственный слой
+   поверх глобального: та же двухчастотная структура (зерно + пятна),
+   тот же z-index, но розовая. Это единственное отклонение от решения 3
+   плана — и причина у него именно в скине, а не в дубле градиента. */
+.admin-skin::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, rgba(43, 15, 34, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
+    radial-gradient(circle 520px at 10% 4%, rgba(244, 114, 182, 0.42) 0%, rgba(244, 114, 182, 0.24) 48%, rgba(244, 114, 182, 0) 74%),
+    radial-gradient(circle 460px at 92% 10%, rgba(236, 72, 153, 0.34) 0%, rgba(236, 72, 153, 0.18) 46%, rgba(236, 72, 153, 0) 73%),
+    radial-gradient(circle 400px at 74% 44%, rgba(217, 70, 239, 0.26) 0%, rgba(217, 70, 239, 0.14) 44%, rgba(217, 70, 239, 0) 72%),
+    radial-gradient(circle 480px at 6% 62%, rgba(251, 146, 190, 0.4) 0%, rgba(251, 146, 190, 0.2) 46%, rgba(251, 146, 190, 0) 73%),
+    radial-gradient(circle 540px at 56% 96%, rgba(244, 63, 148, 0.3) 0%, rgba(244, 63, 148, 0.18) 46%, rgba(244, 63, 148, 0) 72%),
+    linear-gradient(165deg, #ffe9f3 0%, #fff6fa 46%, #ffe4f0 100%);
+}
+
+/* Режим для слабовидящих: розовое остаётся, прозрачность и пятна уходят.
+   Селектор специфичнее общего html[data-a11y="1"], поэтому перекрывает
+   его синий — иначе админка в этом режиме синела бы. */
+html[data-a11y="1"] .admin-skin {
+  --paper: #ffffff;
+  --ink: #000000;
+  --ink-soft: #3b1a2b;
+  --brand: #a1004b;            /* 8:1 на белом */
+  --brand-deep: #3d0a2c;
+  --brand-line: #3d0a2c;
+  --brand-tint: #ffffff;
+  --on-dark: #ffffff;
+  --on-dark-soft: #ffe4f0;
+  --brass: #a1004b;
+  --brass-fill: #a1004b;
+  --brass-bright: #ffd0e4;
+  --border: rgba(0, 0, 0, 0.35);
+  --glass-dark-bg: #3d0a2c;
+  --glass-sheen: none;
+  --glass-shadow: none;
+  --glass-primary: #a1004b;
+  --glass-row-hover: #ffeaf4;
+  --glass-dark-bg-nav: #3d0a2c;
+  --pill-fill: #a1004b;
+  --ring-brand: 0 0 0 3px #a1004b;
+  --row-line: 0 1px 0 rgba(0, 0, 0, 0.35);
+  --shimmer: linear-gradient(90deg, #f6e3ec 0%, #ecd0dd 40%, #f6e3ec 80%);
+  --glow-soft: transparent;
+}
+
+html[data-a11y="1"] .admin-skin::before {
+  display: none;
+}
+
+/* «Меньше прозрачности»: блок самодостаточен — гасит все стеклянные
+   токены, которые задаёт скин, а не полагается на порядок с :root. */
+@media (prefers-reduced-transparency: reduce) {
+  .admin-skin {
+    --glass-blur: none;
+    --glass-bg: #ffffff;
+    --glass-bg-strong: #ffffff;
+    --glass-border: rgba(43, 15, 34, 0.16);
+    --glass-tint: #ffeaf4;
+    --glass-dark-bg: #3d0a2c;
+    --glass-sheen: none;
+    --glass-gloss: none;
+    --glass-shadow: none;
+    --glass-primary: linear-gradient(180deg, #e0457f, #c2185b);
+    --glass-row-hover: #ffeaf4;
+    --glass-dark-bg-nav: #3d0a2c;
+  }
+}
+
 html[data-a11y="1"] body {
   font-size: 20px;
 }
