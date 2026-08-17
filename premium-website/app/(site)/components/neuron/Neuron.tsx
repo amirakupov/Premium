@@ -7,39 +7,43 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import type { BloomEffect } from 'postprocessing';
 import * as THREE from 'three';
 
-import { BLOOM, CAMERA, EEG, FOG, LIGHT, NEURON, SIGNAL, SOMA } from './params';
+import { BLOOM, CAMERA, CHOREO, EEG, FOG, LIGHT, NEURON, SOMA } from './params';
 import type { TierProfile } from './perf';
 import { createSceneState, resolveSceneState } from './sceneScript';
 import { useScrollDirector } from './useScrollDirector';
-import { clamp01, damp, easeOut, lerp, mulberry32 } from './utils';
+import { clamp01, damp, easeOut, lerp } from './utils';
+import { createSignalSystem } from './signals';
+import { createMicroEvents } from './events';
 import { growNeuron } from './geometry/growNeuron';
 import { buildDendriteGeometry } from './geometry/dendrites';
-import { buildSignalPaths, samplePath } from './geometry/signalPaths';
+import { buildSignalPaths } from './geometry/signalPaths';
 import { buildEegGeometry } from './geometry/eeg';
-import { createSignalGeometry, createSignalMaterial } from './materials/signal';
+import { buildElectrodeGeometry } from './geometry/electrodes';
+import {
+    buildLinkGeometry,
+    buildNeighbourGeometry,
+    buildNeighbourLayout,
+} from './geometry/neighbours';
+import { createSignalMaterial } from './materials/signal';
 import { createAuraMaterial } from './materials/aura';
 import { createEegMaterial } from './materials/eeg';
+import { createElectrodeMaterial } from './materials/electrodes';
+import { createLinkMaterial } from './materials/link';
 import {
     createCoreMaterial,
     createDendriteMaterial,
     createMembraneMaterial,
 } from './materials/tissue';
 
-/* Модульный scratch: в useFrame нельзя аллоцировать. В v1 `placeSignals`
-   создавал new THREE.Vector3() каждый кадр — это десятки тысяч объектов в
-   минуту и лишняя работа сборщику мусора ровно в тот момент, когда нужен
-   ровный кадр. */
-const scratch = new THREE.Vector3();
-
 const BREATH_RATE = (Math.PI * 2) / SOMA.BREATH_PERIOD;
 
-type SignalState = {
-    /** индекс пути «сома → кончик» */
-    path: number;
-    /** позиция головы импульса на пути, 0…1 */
-    phase: number;
-    /** личная скорость: без разброса залп выглядит машинным */
-    speed: number;
+/** Насколько выражен каждый режим главы прямо сейчас. Всё сглажено. */
+type Gains = {
+    collect: number;
+    faltering: number;
+    scan: number;
+    network: number;
+    sync: number;
 };
 
 export default function Neuron({
@@ -55,10 +59,17 @@ export default function Neuron({
     const groupRef = useRef<THREE.Group>(null);
     const membraneRef = useRef<THREE.Mesh>(null);
     const coreRef = useRef<THREE.Mesh>(null);
+    const neighboursRef = useRef<THREE.InstancedMesh>(null);
     const bloomRef = useRef<BloomEffect>(null);
     const parallax = useRef(new THREE.Vector2());
-    /** сглаженный сбор импульсов к соме: включается режимом `converge` */
-    const gather = useRef(0);
+    const intro = useRef(0);
+    const gains = useRef<Gains>({
+        collect: 0,
+        faltering: 0,
+        scan: 0,
+        network: 0,
+        sync: 0,
+    });
 
     const state = useMemo(() => createSceneState(), []);
 
@@ -72,17 +83,35 @@ export default function Neuron({
         const membrane = createMembraneMaterial(profile);
         const coreMaterial = createCoreMaterial();
         const auraMaterial = createAuraMaterial();
-        const signalGeometry = createSignalGeometry(profile.signalCount);
+
+        const signals = createSignalSystem(profile.signalCount, signalPaths, NEURON.SEED + 1);
         const signalMaterial = createSignalMaterial();
+
+        const electrodeGeometry = buildElectrodeGeometry(morphology.paths, NEURON.SEED + 17);
+        const electrodeMaterial = createElectrodeMaterial();
+
+        // На низком тире сети нет вообще — ни инстансов, ни связей.
+        const hasNetwork = profile.neighbours > 0;
+        const neighbourGeometry = hasNetwork ? buildNeighbourGeometry() : null;
+        const neighbourLayout = hasNetwork
+            ? buildNeighbourLayout(profile.neighbours, NEURON.SEED + 23)
+            : null;
+        const neighbourMaterial = hasNetwork
+            ? new THREE.MeshStandardMaterial({
+                  vertexColors: true,
+                  roughness: 0.9,
+                  metalness: 0,
+                  transparent: true,
+                  opacity: 0,
+              })
+            : null;
+        const linkGeometry = neighbourLayout ? buildLinkGeometry(neighbourLayout.centers) : null;
+        const linkMaterial = hasNetwork ? createLinkMaterial() : null;
+
         const eegGeometry = buildEegGeometry();
         const eegMaterial = createEegMaterial();
 
-        const rand = mulberry32(NEURON.SEED + 1);
-        const signals: SignalState[] = Array.from({ length: profile.signalCount }, () => ({
-            path: Math.floor(rand() * signalPaths.length),
-            phase: rand(),
-            speed: lerp(SIGNAL.SPEED_MIN, SIGNAL.SPEED_MAX, rand()),
-        }));
+        const events = createMicroEvents(NEURON.SEED + 41);
 
         return {
             dendrites,
@@ -92,12 +121,18 @@ export default function Neuron({
             membraneOpacity: membrane.material.opacity,
             coreMaterial,
             auraMaterial,
-            signalGeometry,
-            signalMaterial,
-            signalPaths,
             signals,
+            signalMaterial,
+            electrodeGeometry,
+            electrodeMaterial,
+            neighbourGeometry,
+            neighbourLayout,
+            neighbourMaterial,
+            linkGeometry,
+            linkMaterial,
             eegGeometry,
             eegMaterial,
+            events,
         };
     }, [profile]);
 
@@ -110,63 +145,35 @@ export default function Neuron({
             built.membrane.material.dispose();
             built.coreMaterial.dispose();
             built.auraMaterial.dispose();
-            built.signalGeometry.dispose();
+            built.signals.dispose();
             built.signalMaterial.dispose();
+            built.electrodeGeometry.dispose();
+            built.electrodeMaterial.dispose();
+            built.neighbourGeometry?.dispose();
+            built.neighbourMaterial?.dispose();
+            built.linkGeometry?.dispose();
+            built.linkMaterial?.dispose();
             built.eegGeometry.dispose();
             built.eegMaterial.dispose();
         },
         [built],
     );
 
-    /**
-     * Раскладывает импульсы по путям.
-     * `collect` (0…1) стягивает все импульсы к соме — это финальный сбор:
-     * вместо разворота направления параметр t интерполируется к нулю, поэтому
-     * импульсы приходят к ядру одновременно и без рывка.
-     */
-    const placeSignals = (intensity: number, collect: number, load: number) => {
-        const geometry = built.signalGeometry;
-        const positions = geometry.attributes.position.array as Float32Array;
-        const bright = geometry.attributes.aBright.array as Float32Array;
-        const total = built.signals.length;
-        // Загрузка главы гасит лишние импульсы, а не пересобирает буфер:
-        // размер геометрии фиксирован профилем тира.
-        const active = Math.round(load * total);
-
-        for (let s = 0; s < total; s += 1) {
-            const signal = built.signals[s];
-            const flat = built.signalPaths[signal.path];
-            const head = signal.phase;
-            const alive = s < active ? 1 : 0;
-
-            for (let k = 0; k < SIGNAL.TRAIL; k += 1) {
-                const raw = head - k * SIGNAL.TRAIL_GAP;
-                const t = clamp01(lerp(raw, 0, collect));
-                samplePath(flat, t, scratch);
-
-                const index = s * SIGNAL.TRAIL + k;
-                positions[index * 3] = scratch.x;
-                positions[index * 3 + 1] = scratch.y;
-                positions[index * 3 + 2] = scratch.z;
-
-                // огибающая sin(t·π): импульс разгорается в пути и гаснет у кончика
-                const envelope = Math.sin(clamp01(t) * Math.PI);
-                const tail = 1 - k / SIGNAL.TRAIL;
-                // на сборе импульсы не гаснут у сомы, а наоборот наливаются
-                const arrival = lerp(envelope, 1, collect);
-                bright[index] =
-                    raw < 0 && collect < 0.02 ? 0 : arrival * tail * tail * intensity * alive;
-            }
-        }
-
-        geometry.attributes.position.needsUpdate = true;
-        geometry.attributes.aBright.needsUpdate = true;
-    };
+    /* — Раскладка соседей ставится один раз: она не анимируется, меняется
+         только их непрозрачность — */
+    useLayoutEffect(() => {
+        const mesh = neighboursRef.current;
+        const layout = built.neighbourLayout;
+        if (!mesh || !layout) return;
+        layout.matrices.forEach((matrix, i) => mesh.setMatrixAt(i, matrix));
+        mesh.instanceMatrix.needsUpdate = true;
+    }, [built]);
 
     /** Единая раскладка кадра по состоянию сцены — и для анимации, и для статики. */
     const applyState = (time: number) => {
         const group = groupRef.current;
         if (!group) return;
+        const g = gains.current;
 
         // Камера: положение и точка взгляда приходят из таблицы глав, параллакс
         // мыши добавляется поверх — он живёт независимо от сценария.
@@ -197,9 +204,23 @@ export default function Neuron({
             Math.max(0.001, state.neuronScale * lerp(1, 0.12, easeOut(dissolve)) * (1 + flash * 0.22)),
         );
 
+        /* Прорастание: ветви прочерчиваются от сомы к кончикам. Идёт по времени
+           с момента монтирования, а глава может только ограничить результат. */
+        const grown = easeOut(clamp01(intro.current / CHOREO.INTRO_DURATION));
         built.dendrite.material.opacity = alive;
         built.dendrite.uniforms.uTime.value = time;
-        built.dendrite.uniforms.uGrow.value = state.grow;
+        built.dendrite.uniforms.uGrow.value = Math.min(grown, state.grow);
+
+        /* Сканирующая волна: идёт снизу вверх по всему дереву, между проходами
+           пауза. Вне главы «Диагностика» усиление нулевое, и полосы не видно. */
+        const cycle = (time % CHOREO.SCAN_CYCLE) / CHOREO.SCAN_CYCLE;
+        built.dendrite.uniforms.uScan.value =
+            cycle < CHOREO.SCAN_SWEEP ? -0.2 + 1.4 * (cycle / CHOREO.SCAN_SWEEP) : 1.4;
+        built.dendrite.uniforms.uScanGain.value = g.scan;
+
+        // Сбой проводимости: одна ветка мелко дрожит.
+        built.dendrite.uniforms.uJitter.value = g.faltering;
+        built.dendrite.uniforms.uJitterBranch.value = CHOREO.JITTER_AT;
 
         // Дыхание сомы: медленное, период SOMA.BREATH_PERIOD. В покое именно оно
         // отличает живой объект от модели.
@@ -220,8 +241,21 @@ export default function Neuron({
 
         built.signalMaterial.uniforms.uColor.value.copy(state.signalColor);
         built.signalMaterial.uniforms.uCore.value.copy(state.signalCore);
-        const intensity = lerp(0.7, 1.25, state.signalLoad) * alive + flash * 0.5;
-        placeSignals(intensity, gather.current, state.signalLoad);
+
+        /* Электроды видны в «Диагностике» в полную силу и приглушённо — пока
+           держится слой данных, иначе вспышка одиночного синапса из
+           микрособытий разгоралась бы в пустоте. */
+        built.electrodeMaterial.uniforms.uOpacity.value =
+            Math.max(g.scan, g.network * 0.5, g.sync * 0.35) * alive;
+        built.electrodeMaterial.uniforms.uTime.value = time;
+        built.electrodeMaterial.uniforms.uFlash.value = built.events.synapse;
+        built.electrodeMaterial.uniforms.uFlashId.value = built.events.synapseId;
+
+        if (built.neighbourMaterial) built.neighbourMaterial.opacity = g.network * 0.85;
+        if (built.linkMaterial) {
+            built.linkMaterial.uniforms.uOpacity.value = g.network;
+            built.linkMaterial.uniforms.uTime.value = time;
+        }
 
         // Линия ЭЭГ прочерчивается в последней главе.
         built.eegMaterial.uniforms.uProgress.value = easeOut(state.eeg) * 1.02;
@@ -234,6 +268,17 @@ export default function Neuron({
     useLayoutEffect(() => {
         if (!reduced) return;
         resolveSceneState(0, state);
+        // прорастание уже завершено: анимации выключены, показываем результат
+        intro.current = CHOREO.INTRO_DURATION;
+        built.signals.frame(0, {
+            load: state.signalLoad,
+            speed: 0,
+            velocity: 0,
+            faltering: 0,
+            sync: 0,
+            collect: 0,
+            intensity: lerp(0.7, 1.25, state.signalLoad),
+        });
         applyState(0);
         invalidate();
         // applyState читает только рефы и константы, пересборка эффекта не нужна
@@ -245,6 +290,8 @@ export default function Neuron({
         // Кадр может быть сколь угодно длинным (переключили таб, залип поток) —
         // без ограничения демпферы получают огромный dt и всё дёргается.
         const dt = Math.min(delta, 1 / 20);
+        const time = frame.clock.elapsedTime;
+        intro.current += dt;
 
         // Параллакс мыши: догоняем указатель, а не прыгаем за ним.
         parallax.current.x = damp(parallax.current.x, frame.pointer.x, 3.2, dt);
@@ -253,25 +300,31 @@ export default function Neuron({
         director.step(dt);
         resolveSceneState(director.p, state);
 
-        // Сбор к соме — величина инерционная: режим главы переключается
-        // мгновенно, а импульсы должны стянуться плавно.
-        gather.current = damp(
-            gather.current,
-            state.signalMode === 'converge' ? 1 : 0,
-            2.2,
-            dt,
-        );
+        /* Режим главы переключается мгновенно, а поведение должно въезжать
+           плавно: каждый режим держит свой сглаженный вес. */
+        const g = gains.current;
+        const mode = state.signalMode;
+        const L = CHOREO.GAIN_LAMBDA;
+        g.collect = damp(g.collect, mode === 'converge' ? 1 : 0, 2.2, dt);
+        g.faltering = damp(g.faltering, mode === 'faltering' ? 1 : 0, L, dt);
+        g.scan = damp(g.scan, mode === 'scan' ? 1 : 0, L, dt);
+        g.network = damp(g.network, mode === 'jump' ? 1 : 0, 1.2, dt);
+        g.sync = damp(g.sync, mode === 'sync' ? 1 : 0, 1, dt);
 
-        // Реактивность к скорости скролла: единственная связь «рука
-        // пользователя → сцена». При остановке множитель сам вернётся к 1.
-        const boost = 1 + director.velocity * SIGNAL.VELOCITY_BOOST;
-        const speed = state.signalSpeed * boost;
-        for (let s = 0; s < built.signals.length; s += 1) {
-            const signal = built.signals[s];
-            signal.phase = (signal.phase + signal.speed * speed * dt) % 1;
-        }
+        built.events.update(dt, (duration) => built.signals.burst(duration));
 
-        applyState(frame.clock.elapsedTime);
+        const alive = 1 - state.dissolve;
+        built.signals.frame(dt, {
+            load: state.signalLoad,
+            speed: state.signalSpeed,
+            velocity: director.velocity,
+            faltering: g.faltering,
+            sync: g.sync,
+            collect: g.collect,
+            intensity: lerp(0.7, 1.25, state.signalLoad) * alive + state.flash * 0.5,
+        });
+
+        applyState(time);
     });
 
     return (
@@ -349,10 +402,32 @@ export default function Neuron({
                 </mesh>
 
                 <points
-                    geometry={built.signalGeometry}
+                    geometry={built.signals.geometry}
                     material={built.signalMaterial}
                     frustumCulled={false}
                 />
+
+                {/* Слой данных: метки-электроды на кончиках дендритов. */}
+                <points
+                    geometry={built.electrodeGeometry}
+                    material={built.electrodeMaterial}
+                    frustumCulled={false}
+                />
+
+                {/* Сеть: соседние клетки одним инстансом и связи к соме. */}
+                {built.neighbourGeometry && built.neighbourMaterial && built.neighbourLayout && (
+                    <instancedMesh
+                        ref={neighboursRef}
+                        args={[
+                            built.neighbourGeometry,
+                            built.neighbourMaterial,
+                            built.neighbourLayout.matrices.length,
+                        ]}
+                    />
+                )}
+                {built.linkGeometry && built.linkMaterial && (
+                    <lineSegments geometry={built.linkGeometry} material={built.linkMaterial} />
+                )}
             </group>
 
             <mesh
