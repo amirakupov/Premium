@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import ToastProvider from "./components/ui/ToastProvider";
 import AdminDataProvider from "./components/data/AdminDataProvider";
 import AdminUiProvider, { useAdminUi } from "./components/shell/AdminUiProvider";
+import HotkeyLayer from "./components/shell/HotkeyLayer";
 import Sidebar from "./components/shell/Sidebar";
 import Topbar from "./components/shell/Topbar";
 import styles from "./layout.module.css";
@@ -28,6 +29,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         <Sidebar />
                         <Content>{children}</Content>
                     </div>
+                    <HotkeyLayer />
                 </AdminUiProvider>
             </AdminDataProvider>
         </ToastProvider>

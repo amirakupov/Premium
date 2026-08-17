@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Doctor, DoctorPayload } from "@/lib/types";
 import { clearDraft, isDirty, loadDraft, saveDraft } from "@/lib/admin/draft";
 import {
@@ -46,7 +46,7 @@ export default function DoctorSheet({
 }) {
     const { push } = useToast();
     const { setSave } = useAdminData();
-    const { setFormSubmit, setModalOpen } = useAdminUi();
+    const { setFormSubmit, modalOpen, setModalOpen } = useAdminUi();
     const draftId = doctor ? doctor.id : "new";
     const initial = useMemo(() => (doctor ? toPayload(doctor) : EMPTY), [doctor]);
 
@@ -96,6 +96,16 @@ export default function DoctorSheet({
         return () => setFormSubmit(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, form]);
+
+    // Esc гасит флаг в контексте — модалка закрывается следом. Реагируем
+    // на переход true → false: в коммите, где модалка открылась, флаг
+    // контекста ещё false, и сравнение «просто по флагу» закрыло бы её
+    // сразу после открытия.
+    const modalWasOpen = useRef(false);
+    useEffect(() => {
+        if (modalWasOpen.current && !modalOpen) setConfirmClose(false);
+        modalWasOpen.current = modalOpen;
+    }, [modalOpen]);
 
     function requestClose() {
         if (dirty) {

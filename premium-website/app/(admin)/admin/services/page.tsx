@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ServicePayload } from "@/lib/types";
 import ServiceSheet from "../components/ServiceSheet";
@@ -13,7 +13,7 @@ type SheetState = { mode: "create" } | { mode: "edit"; id: number } | null;
 
 function ServicesScreen() {
     const { services, loading, refresh, createService, patchService } = useAdminData();
-    const { query, setQuery, setSheetOpen } = useAdminUi();
+    const { query, setQuery, sheetOpen, setSheetOpen } = useAdminUi();
     const params = useSearchParams();
     const [sheet, setSheet] = useState<SheetState>(null);
 
@@ -26,6 +26,17 @@ function ServicesScreen() {
     useEffect(() => {
         setSheetOpen(sheet !== null);
     }, [sheet, setSheetOpen]);
+
+    // Esc сбрасывает флаг в контексте — панель закрывается следом.
+    // Ловим именно переход true → false: в том коммите, где панель
+    // открылась, sheetOpen ещё false (эффект выше только что назначил
+    // его на следующий рендер), и сравнение «панель есть, а флага нет»
+    // закрыло бы её сразу после открытия.
+    const wasOpen = useRef(false);
+    useEffect(() => {
+        if (wasOpen.current && !sheetOpen) setSheet(null);
+        wasOpen.current = sheetOpen;
+    }, [sheetOpen]);
 
     // Фильтр принадлежит разделу: уходя, сбрасываем.
     useEffect(() => () => setQuery(""), [setQuery]);
