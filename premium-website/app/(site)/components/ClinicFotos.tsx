@@ -1,9 +1,4 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './ClinicFotos.module.css';
 
 const photos: string[] = [
@@ -19,57 +14,42 @@ const photos: string[] = [
   '/clinic/clinic9.jpg',
 ];
 
+/**
+ * Галерея клиники.
+ *
+ * Раньше компонент был клиентским только ради одного gsap.fromTo на слайдах.
+ * Теперь появление слайдов и параллакс фотографий ведёт общий SectionMotion, а
+ * галерея вернулась в серверные компоненты: разметка целиком попадает в HTML, и
+ * из клиентского бандла ушёл ещё один модуль.
+ *
+ * `id="clinic-photos"` — якорь главы «Кульминация: сбор», см. neuron/sceneScript.ts.
+ */
 export default function ClinicFotos() {
-  const slidesRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      const slides = slidesRef.current?.querySelectorAll(`.${styles.slide}`);
-      slides?.forEach((slide) => {
-        gsap.fromTo(
-          slide,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            scrollTrigger: {
-              trigger: slide,
-              start: 'top 70%',
-              end: 'bottom 50%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-      });
-    }, slidesRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section id="clinic-photos" className={styles.carousel}>
-      <h2 className={styles.heading}>Как выглядит клиника</h2>
+      <h2 className={styles.heading} data-reveal="heading">Как выглядит клиника</h2>
       <p className={styles.subheading}>
         Мы используем самое современное и качественное оборудование в связке с
         приятным интерьером для вашего комфорта
       </p>
 
-      <div className={styles.slides} ref={slidesRef}>
+      <div className={styles.slides} data-reveal-group>
         {photos.map((src, index) => (
-          <div className={styles.slide} key={src}>
+          <div className={styles.slide} data-reveal="card" key={src}>
             <div className={styles.slideMedia}>
-              <Image
-                src={src}
-                alt={`Интерьер и оборудование клиники — фото ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 90vw, 45vw"
-                style={{ objectFit: 'cover' }}
-                className={styles.image}
-              />
+              {/* Обёртка нужна параллаксу: двигать сам <Image> нельзя, на нём
+                  висит ховерный transform. Слой выше рамки по высоте, поэтому
+                  при сдвиге не открывается пустой край. */}
+              <div className={styles.parallaxLayer} data-parallax>
+                <Image
+                  src={src}
+                  alt={`Интерьер и оборудование клиники — фото ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 90vw, 45vw"
+                  style={{ objectFit: 'cover' }}
+                  className={styles.image}
+                />
+              </div>
             </div>
           </div>
         ))}

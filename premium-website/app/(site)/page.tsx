@@ -6,6 +6,7 @@ import Services from '@/app/(site)/components/Services';
 import ClinicFotos from '@/app/(site)/components/ClinicFotos';
 import Doctors from '@/app/(site)/components/Doctors';
 import HomeShell from '@/app/(site)/components/HomeShell';
+import SectionMotion from '@/app/(site)/components/SectionMotion';
 import { listAllDoctors, listAllServices } from '@/lib/cms';
 
 /**
@@ -34,6 +35,8 @@ export default async function HomePage() {
         <HomeShell>
             {/* Единственный Canvas на страницу: фиксированный слой за всем контентом. */}
             <NeuronCanvasMount />
+            {/* Анимации секций: один клиентский модуль, секции остаются серверными. */}
+            <SectionMotion />
             <NeuronHero />
             <SymptomAct />
             <DiagnosticsAct />

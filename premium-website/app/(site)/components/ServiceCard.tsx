@@ -6,7 +6,7 @@ import type { Service } from '@/lib/types';
 
 export default function ServiceCard({ service }: { service: Service }) {
   return (
-    <article className={styles.card}>
+    <article className={styles.card} data-reveal="card">
       <div className={styles.imageContainer}>
         <Image
           src={service.imageSrc}

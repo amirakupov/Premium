@@ -7,12 +7,12 @@ export default function Doctors({ doctors }: { doctors: Doctor[] }) {
   return (
     <section id="doctors" className={styles.doctorsSection}>
       <div className={styles.headerContainer}>
-        <h2 className={styles.heading}>Наши специалисты</h2>
+        <h2 className={styles.heading} data-reveal="heading">Наши специалисты</h2>
         <Link href="/doctors" className={styles.viewAllLink}>
           Все врачи клиники
         </Link>
       </div>
-      <div className={styles.gridWrapper}>
+      <div className={styles.gridWrapper} data-reveal-group>
         {doctors.map((doc) => (
           <DoctorCard
             key={doc.id}

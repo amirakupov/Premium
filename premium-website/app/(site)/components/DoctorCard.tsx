@@ -20,6 +20,7 @@ export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardP
   return (
     <div
       className={styles.cardContainer}
+      data-reveal="card-tilt"
       onClick={handleFlip}
       role="button"
       tabIndex={0}

@@ -15,7 +15,9 @@ export function SymptomAct() {
     return (
         <section id="symptom" className={`${styles.act} ${styles.actEnd}`}>
             <div className={styles.inner}>
-                <h2 className={styles.title}>Каждый симптом — это сигнал</h2>
+                <h2 className={styles.title} data-reveal="heading">
+                    Каждый симптом — это сигнал
+                </h2>
                 <p className={styles.text}>
                     Головная боль, головокружение, онемение — не случайность, а
                     нарушение проводимости. Мы находим, где сигнал теряется, и
@@ -43,10 +45,15 @@ export function DiagnosticsAct() {
     return (
         <section id="diagnostics" className={`${styles.act} ${styles.actCenter}`}>
             <div className={styles.inner}>
-                <h2 className={styles.title}>Сигнал доходит до цели</h2>
+                <h2 className={styles.title} data-reveal="heading">
+                    Сигнал доходит до цели
+                </h2>
                 <p className={styles.text}>
-                    За 3 года — более 10 000 пациентов. ЭЭГ, УЗДГ и осмотр невролога
-                    в один визит.
+                    За 3 года — более{' '}
+                    {/* Цифра-факт: SectionMotion прокручивает её счётчиком при входе
+                        во вьюпорт и по завершении возвращает исходный текст дословно. */}
+                    <span data-count="10000">10 000</span> пациентов. ЭЭГ, УЗДГ и осмотр
+                    невролога в один визит.
                 </p>
                 {/* Статичная фирменная линия — её видят только те, у кого отключены
                     анимации: для них сцена стоит на первой главе и 3D-финал не
