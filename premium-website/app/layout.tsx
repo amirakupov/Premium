@@ -81,7 +81,15 @@ finish review, the verdict, and DESIGN.md.
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="ru" className={`${golos.variable} ${prata.variable}`}>
+        /* suppressHydrationWarning: a11yInitScript ниже ставит data-a11y на
+           <html> ДО гидрации, чтобы страница не мигала обычной версией. Это
+           намеренное расхождение серверной разметки с клиентской, и React
+           должен знать, что оно ожидаемое. */
+        <html
+            lang="ru"
+            className={`${golos.variable} ${prata.variable}`}
+            suppressHydrationWarning
+        >
         <head>
             <script dangerouslySetInnerHTML={{ __html: a11yInitScript }} />
             <script

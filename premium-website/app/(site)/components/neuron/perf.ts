@@ -19,6 +19,13 @@ export type TierProfile = {
     tier: Tier;
     /** верхняя граница device pixel ratio */
     dpr: number;
+    /**
+     * Потолок кадров в секунду для сцены. Сцена декоративная и живёт под всей
+     * страницей; рисовать её чаще, чем нужно глазу, — значит отбирать кадры у
+     * скролла и у стеклянных карточек, которые перекомпоновывают размытие на
+     * каждом изменении фона под ними.
+     */
+    fps: number;
     /** глубина рекурсии ветвления: +1 примерно утраивает число веток */
     branchDepth: number;
     /** одновременных импульсов */
@@ -53,6 +60,7 @@ export const TIERS: Record<Tier, TierProfile> = {
     low: {
         tier: 'low',
         dpr: 1,
+        fps: 30,
         branchDepth: 2,
         signalCount: 12,
         neighbours: 0,
@@ -65,20 +73,32 @@ export const TIERS: Record<Tier, TierProfile> = {
     },
     mid: {
         tier: 'mid',
-        dpr: 1.5,
+        /* Ниже, чем в таблице ТЗ (1.5): та таблица писалась под канвас размером
+           с хиро, а этот — во весь вьюпорт и под ним ещё десятки стеклянных
+           карточек. Пиксели здесь дороже, чем казалось. */
+        dpr: 1.25,
+        fps: 40,
         branchDepth: 3,
         signalCount: 28,
         neighbours: 4,
-        ssao: true,
+        /* SSAO требует NormalPass — это ещё один полный проход рендера сцены.
+           То же с transmission в мембране: three рисует сцену в отдельный буфер.
+           На среднем тире два лишних полноэкранных прохода не оправданы, там
+           остаются только блум, виньетка и зерно. */
+        ssao: false,
         dof: false,
         bloomMipmap: true,
         branchMaterial: 'shader',
-        somaTransmission: true,
+        somaTransmission: false,
         pageGlass: true,
     },
     high: {
         tier: 'high',
-        dpr: 2,
+        /* 2.0 на полноэкранном канвасе с четырьмя проходами — это 4-5 млн
+           пикселей на кадр несколько раз. Сцена мягкая и с зерном, разницы
+           между 1.5 и 2.0 на ней практически не видно. */
+        dpr: 1.5,
+        fps: 60,
         branchDepth: 3,
         signalCount: 48,
         neighbours: 12,

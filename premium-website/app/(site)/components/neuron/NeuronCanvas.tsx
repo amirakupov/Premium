@@ -8,6 +8,7 @@ import { detectTier, downshift, TIERS, type Tier } from './perf';
 import { SCENE_SCRIPT } from './sceneScript';
 import Neuron from './Neuron';
 import PerformanceGuard from './PerformanceGuard';
+import FrameDriver from './FrameDriver';
 import styles from './NeuronCanvas.module.css';
 
 /**
@@ -73,7 +74,10 @@ export default function NeuronCanvas() {
             <Canvas
                 className={styles.canvas}
                 dpr={[1, profile.dpr]}
-                frameloop={reduced ? 'demand' : hidden ? 'never' : 'always'}
+                /* Всегда 'demand': такт задаёт FrameDriver с потолком по тиру,
+                   а не монитор пользователя. При скрытой вкладке драйвер не
+                   монтируется вовсе, и сцена не жжёт GPU в фоне. */
+                frameloop="demand"
                 gl={{
                     antialias: false,
                     // alpha обязателен: сквозь сцену читаются «обои» страницы,
@@ -103,7 +107,8 @@ export default function NeuronCanvas() {
                 }}
             >
                 <Neuron profile={profile} reduced={reduced} />
-                {guarded ? <PerformanceGuard onDowngrade={onDowngrade} /> : null}
+                {!reduced && !hidden ? <FrameDriver fps={profile.fps} /> : null}
+                {guarded && !hidden ? <PerformanceGuard onDowngrade={onDowngrade} /> : null}
             </Canvas>
         </div>
     );

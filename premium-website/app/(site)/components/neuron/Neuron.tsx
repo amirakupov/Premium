@@ -86,7 +86,10 @@ export default function Neuron({
     /* Цвет фона строкой пересобирается только когда он реально изменился:
        getHexString() на каждом кадре — это мусор в горячем цикле. */
     const backgroundHex = useRef({ packed: -1, css: '#eaf1ff' });
-    const intro = useRef(0);
+    /* Своё время, а не frame.clock: THREE.Clock объявлен устаревшим в three
+       0.185, а при frameloop 'demand' полагаться на внутренние часы рендерера
+       и не нужно — мы сами знаем, сколько прошло. */
+    const elapsed = useRef(0);
     const gains = useRef<Gains>({
         collect: 0,
         faltering: 0,
@@ -236,7 +239,7 @@ export default function Neuron({
 
         /* Прорастание: ветви прочерчиваются от сомы к кончикам. Идёт по времени
            с момента монтирования, а глава может только ограничить результат. */
-        const grown = easeOut(clamp01(intro.current / CHOREO.INTRO_DURATION));
+        const grown = easeOut(clamp01(elapsed.current / CHOREO.INTRO_DURATION));
         built.dendrite.material.opacity = alive;
         built.dendrite.uniforms.uTime.value = time;
         built.dendrite.uniforms.uGrow.value = Math.min(grown, state.grow);
@@ -327,7 +330,7 @@ export default function Neuron({
         if (!reduced) return;
         resolveSceneState(0, state);
         // прорастание уже завершено: анимации выключены, показываем результат
-        intro.current = CHOREO.INTRO_DURATION;
+        elapsed.current = CHOREO.INTRO_DURATION;
         built.signals.frame(0, {
             load: state.signalLoad,
             speed: 0,
@@ -348,8 +351,8 @@ export default function Neuron({
         // Кадр может быть сколь угодно длинным (переключили таб, залип поток) —
         // без ограничения демпферы получают огромный dt и всё дёргается.
         const dt = Math.min(delta, 1 / 20);
-        const time = frame.clock.elapsedTime;
-        intro.current += dt;
+        elapsed.current += dt;
+        const time = elapsed.current;
 
         // Параллакс мыши: догоняем указатель, а не прыгаем за ним.
         parallax.current.x = damp(parallax.current.x, frame.pointer.x, 3.2, dt);

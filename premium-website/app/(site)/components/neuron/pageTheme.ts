@@ -44,9 +44,17 @@ import { clamp01, smoothstep } from './utils';
  * активная краска перестаёт давать 4.5:1. Всё вместе проверяется скриптом
  * docs/neuron-v2/contrast.py по всей длине шкалы, а не в трёх точках.
  *
- * Стоимость: запись переменной на :root инвалидирует стили всего документа.
- * Поэтому непрерывные значения квантуются, а группа поверхностей пишется только
- * когда действительно изменилась.
+ * ── СТОИМОСТЬ ЗАПИСИ ──
+ *
+ * Запись переменной на :root инвалидирует стили ВСЕГО документа, а на главной
+ * десятки элементов с backdrop-filter, и каждый после этого пересобирает
+ * размытие. Делать это на каждом кадре — самая дорогая строчка во всей сцене.
+ * Поэтому:
+ *   — значения квантуются;
+ *   — непрерывные (цвет фона и «темнота») пишутся не чаще MIN_WRITE_INTERVAL:
+ *     переход медленный, десяти шагов в секунду ему достаточно;
+ *   — ступень и полоса пишутся немедленно: это читаемость текста, её
+ *     откладывать нельзя.
  */
 
 type Rgba = [number, number, number, number];
@@ -174,6 +182,9 @@ const SWAP_LUMINANCE = 0.22;
 const BAND_LIGHT_EDGE = [0.62, 0.5] as const;
 const BAND_DARK_EDGE = [0.04, 0.07] as const;
 
+/** мс между записями непрерывных значений */
+const MIN_WRITE_INTERVAL = 90;
+
 export type PageTheme = {
     /**
      * `css` — цвет фона строкой (#rrggbb); `lum` — его линейная яркость;
@@ -198,6 +209,7 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
     let lastSwap = -1;
     let lastBand = -1;
     let lastBackground = '';
+    let lastWriteAt = Number.NEGATIVE_INFINITY;
     let a11y = root?.dataset.a11y === '1';
 
     const reset = () => {
@@ -212,6 +224,7 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
         lastSwap = -1;
         lastBand = -1;
         lastBackground = '';
+        lastWriteAt = Number.NEGATIVE_INFINITY;
     };
 
     /* Режим для слабовидящих переключается на живой странице, поэтому за
@@ -249,6 +262,11 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
                 return;
             }
             const surfacesChanged = swap !== lastSwap || band !== lastBand;
+            /* Ступень и полоса — читаемость, их нельзя откладывать. Цвет фона —
+               атмосфера, он ждёт своей очереди. */
+            const now = performance.now();
+            if (!surfacesChanged && now - lastWriteAt < MIN_WRITE_INTERVAL) return;
+            lastWriteAt = now;
             lastDark = quantizedDark;
             lastSwap = swap;
             lastBand = band;
