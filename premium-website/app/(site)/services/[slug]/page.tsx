@@ -49,7 +49,7 @@ export default async function ServiceDetailPage({ params }: Params) {
           <h2 className={styles.sectionHeader}>Подробное описание</h2>
           <p className={styles.longDescription}>{service.longDescription}</p>
 
-          <Link href="/contacts" className={`btn btn--brass ${styles.bookButton}`}>
+          <Link href="/contacts" className={`btn btn--primary ${styles.bookButton}`}>
             Записаться
           </Link>
         </div>

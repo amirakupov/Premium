@@ -3,9 +3,9 @@ import styles from './Quote.module.css';
 
 export default function Quote() {
   return (
-    <section className={styles.container}>
+    <section id="quote" className={styles.container}>
       <blockquote className={styles.quote}>
-        <h2 className={styles.heading}>
+        <h2 className={styles.heading} data-reveal="heading">
           Мы стоим на страже здоровья вашей нервной системы
         </h2>
 

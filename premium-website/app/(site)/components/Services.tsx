@@ -5,15 +5,15 @@ import type { Service } from '@/lib/types';
 
 export default function Services({ services }: { services: Service[] }) {
   return (
-    <section className={styles.servicesSection}>
+    <section id="services" className={styles.servicesSection}>
       <div className={styles.headerContainer}>
-        <h2 className={styles.heading}>Мы предлагаем</h2>
+        <h2 className={styles.heading} data-reveal="heading">Мы предлагаем</h2>
         <Link href="/services" className={styles.viewAllLink}>
           Все услуги и цены
         </Link>
       </div>
 
-      <div className={styles.servicesContainer}>
+      <div className={styles.servicesContainer} data-reveal-group>
         {services.map((service) => (
           <ServiceCard key={service.id} service={service} />
         ))}

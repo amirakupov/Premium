@@ -1,0 +1,75 @@
+/**
+ * Первый экран нарратива.
+ *
+ * В v1 разметку строил drei <ScrollControls>: секция держала внутри себя
+ * собственный контейнер прокрутки, и высоты приходилось считать от .stage, а не
+ * от вьюпорта. Теперь скролл нативный, сцена лежит фиксированным слоем за всей
+ * страницей, а это — обычная секция обычной высоты.
+ */
+
+.stage {
+  /* Один экран минус парящая капсула шапки. svh — чтобы адресная строка
+     мобильного не дёргала раскладку. */
+  min-height: calc(100svh - var(--header-h) - 24px);
+  /* ниже этого текст начинает наезжать на нейрон */
+  --stage-min: 560px;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: var(--container);
+  margin: 0 auto clamp(48px, 6vw, 88px);
+  padding: clamp(24px, 4vh, 56px) var(--gutter) clamp(32px, 6vh, 72px);
+  color: var(--ink);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.kicker {
+  margin: 0 0 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.title {
+  margin: 0 0 0.6em;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  line-height: 1.14;
+  color: var(--ink);
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.accent {
+  color: var(--brand);
+}
+
+.lede {
+  margin: 0 0 2rem;
+  font-size: clamp(1.02rem, 1.5vw, 1.15rem);
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+@media (max-width: 900px) {
+  .title {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .lede {
+    max-width: 100%;
+  }
+}

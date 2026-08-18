@@ -19,13 +19,39 @@
   --on-dark: #eaf1fb;          /* основной текст на тёмном */
   --on-dark-soft: #a7bcda;     /* вторичный текст на тёмном, тонирован от синего */
 
-  /* вторичный акцент — сохраняем имена *brass* как псевдонимы синей семьи,
-     чтобы существующие ссылки продолжали работать */
-  --brass: #1d4ed8;            /* насыщенный синий для мелкого акцента на светлом */
-  --brass-fill: #2563eb;       /* синяя заливка CTA, текст на ней — белый */
-  --brass-bright: #6aa8f5;     /* светло-голубой акцент на тёмном грунте */
+  /* Вторичный акцент. Канонические имена — *accent*; *brass* остались
+     псевдонимами, потому что на них ссылается ~25 модулей витрины и админки.
+     Латунью здесь давно ничего не пахнет: все три значения синие. */
+  --accent: #1d4ed8;           /* насыщенный синий для мелкого акцента на светлом */
+  --accent-fill: #2563eb;      /* синяя заливка CTA, текст на ней — белый */
+  --accent-bright: #6aa8f5;    /* светло-голубой акцент на тёмном грунте */
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
 
   --scrim: 18, 41, 77;         /* тёмно-синий для оверлеев (rgb-тройка) */
+
+  /* ── Переход фона по ходу скролла ───────────────────────────────── */
+  /* Значения по умолчанию = светлая страница. Сцена нейрона переписывает
+     --page-bg и --scene-dark (плюс токены текста и стекла) прямо на
+     documentElement; см. components/neuron/pageTheme.ts. Ни один компонент об
+     этом не знает — они собраны на var(--…), и это тот случай, ради которого
+     дисциплина токенов и держалась. */
+  --page-bg: #eaf1ff;          /* грунт страницы; на тёмных главах уходит в navy */
+  --scene-dark: 0;             /* 0 — светло, 1 — тёмная точка нарратива */
+
+  /* Плотная плашка (оборот карточки врача). Единственное место в модулях
+     секций, где стоял почти непрозрачный белый: на тёмном отрезке он читался
+     бы белым листом посреди тёмной страницы. */
+  --plate-a: rgba(255, 255, 255, 0.92);
+  --plate-b: rgba(233, 242, 255, 0.88);
+
+  /* Подложка под корпусным текстом, который лежит прямо на фоне страницы.
+     В покое её нет вовсе; она проявляется только в середине перехода фона,
+     когда сам фон становится мутно-средним и контраста не хватает ни тёмной
+     краске, ни светлой. Ведёт её сцена (pageTheme.ts). */
+  --panel-bg: rgba(255, 255, 255, 0);
+  --panel-filter: none;
 
   --border: rgba(15, 31, 56, 0.12);
   --shadow-soft: 0 14px 34px -14px rgba(18, 42, 77, 0.20);
@@ -103,6 +129,44 @@
   --line: 1.55;
   --letter: 0;
   --focus: 3px;
+
+  /* ── Админка: плотный рабочий интерфейс ─────────────────────────── */
+  /* Радиусы витрины (22/30px) слишком крупные для плотного грида —
+     у админки своя, более мелкая шкала. */
+  --radius-md: 18px;       /* стеклянные контейнеры плотного интерфейса */
+  --radius-sm: 12px;       /* поля, кнопки, чипы */
+  --radius-xs: 8px;        /* ячейка инлайн-правки, мелкие теги */
+  --row-h: 52px;           /* высота строки дата-грида */
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 72px;
+  --topbar-h: 64px;
+
+  --danger: #b3261e;             /* деструктивное действие и ошибка поля */
+  --danger-tint: #fdeceb;        /* подложка ошибки на светлом */
+  --danger-line: rgba(179, 38, 30, 0.32);
+  --danger-soft: rgba(179, 38, 30, 0.28);  /* ховер кнопки выхода на тёмном */
+  --success: #0f7a52;            /* статус «сохранено» */
+  --success-tint: #e4f6ee;
+
+  /* Ховер строки без blur: строк в списке могут быть сотни, и
+     backdrop-filter на каждой убивает скролл. */
+  --glass-row-hover: rgba(230, 240, 253, 0.9);
+  --row-line: 0 1px 0 rgba(15, 31, 56, 0.05);  /* волосяная линия под строкой */
+  /* Сайдбар плотнее общего тёмного стекла: под ним едет контент. */
+  --glass-dark-bg-nav: rgba(12, 30, 58, 0.8);
+  --pill-fill: rgba(255, 255, 255, 0.16);      /* активная пилюля сайдбара */
+  /* Кольца фокуса и ошибки — тенью, а не outline: не сдвигают геометрию поля. */
+  --ring-brand: 0 0 0 3px rgba(37, 99, 235, 0.24);
+  --ring-danger: 0 0 0 3px rgba(179, 38, 30, 0.16);
+  --shimmer: linear-gradient(90deg,
+    rgba(15, 31, 56, 0.07) 0%,
+    rgba(15, 31, 56, 0.13) 40%,
+    rgba(15, 31, 56, 0.07) 80%);               /* бегущая полоса скелетона */
+  --glow-soft: rgba(255, 255, 255, 0.4);       /* блик, идущий за курсором */
+
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 420ms;
 }
 
 html[data-a11y="1"] {
@@ -119,9 +183,24 @@ html[data-a11y="1"] {
   --brand-tint: #ffffff;
   --on-dark: #ffffff;
   --on-dark-soft: #e8f0fb;
-  --brass: #0b3fb0;
-  --brass-fill: #0b3fb0;
-  --brass-bright: #9cc4ff;
+  /* Псевдонимы переобъявляются в каждом блоке: `--brass: var(--accent)`
+     подставляется там, где объявлено, а не у потомка, — переопределения
+     одного `--accent` было бы недостаточно. */
+  --accent: #0b3fb0;
+  --accent-fill: #0b3fb0;
+  --accent-bright: #9cc4ff;
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
+  /* Режим доступности: страница не темнеет вообще, плашки сплошные.
+     Инлайновые переменные сцены снимаются в pageTheme при включении режима,
+     поэтому этот блок не приходится защищать от них !important-ом. */
+  --page-bg: #ffffff;
+  --scene-dark: 0;
+  --plate-a: #ffffff;
+  --plate-b: #ffffff;
+  --panel-bg: transparent;
+  --panel-filter: none;
   --scrim: 8, 24, 58;
   --border: rgba(0, 0, 0, 0.35);
   --focus: 5px;
@@ -138,6 +217,37 @@ html[data-a11y="1"] {
   --glass-gloss: none;
   --glass-shadow: none;
   --glass-primary: #0b3fb0;
+
+  /* админка: сплошные поверхности, максимальный контраст */
+  --danger: #8c1d16;
+  --danger-tint: #ffffff;
+  --danger-line: #8c1d16;
+  --danger-soft: #8c1d16;
+  --success: #0a5c3d;
+  --success-tint: #ffffff;
+  --glass-row-hover: #eef4fd;
+  --glass-dark-bg-nav: #08183a;
+  --pill-fill: #0b3fb0;
+  --ring-brand: 0 0 0 3px #0b3fb0;
+  --ring-danger: 0 0 0 3px #8c1d16;
+  --row-line: 0 1px 0 rgba(0, 0, 0, 0.35);
+  --shimmer: linear-gradient(90deg, #e8eef8 0%, #d6e2f4 40%, #e8eef8 80%);
+  --glow-soft: transparent;
+}
+
+/**
+ * Низкий тир сцены. Атрибут ставит NeuronCanvas по результату детекта железа
+ * (и после одностороннего дауншифта, если реальное время кадра оказалось хуже
+ * ожидаемого).
+ *
+ * Гасится именно размытие: под карточками едет анимированный canvas, и
+ * backdrop-filter на десятках элементов означает перекомпозицию всего вьюпорта
+ * на каждом кадре — это дороже самой сцены. Заливка и блики остаются, поэтому
+ * материал карточки читается, просто не преломляет.
+ */
+html[data-scene-tier="low"] {
+  --glass-blur: none;
+  --panel-filter: none;
 }
 
 /* Уважаем системную настройку «меньше прозрачности» — сплошные поверхности. */
@@ -152,8 +262,153 @@ html[data-a11y="1"] {
     --glass-sheen: none;
     --glass-gloss: none;
     --glass-primary: linear-gradient(180deg, #3b76f0, #1d4ed8);
+    --glass-row-hover: #eef4fd;
+    --glass-dark-bg-nav: #12294d;
   }
 }
+/* ── Скин админки: розовая палитра ──────────────────────────────────
+   Витрина остаётся синей. Розовое живёт только под .admin-skin, который
+   надевает группа (admin) на /admin и /login — PRODUCT.md пинит палитру
+   для публичного сайта и сам же выносит админку за охват редизайна.
+   Здесь переопределяются только токены; ни один компонент админки не
+   правится — они целиком собраны на var(--…), и это тот случай, ради
+   которого дисциплина токенов и держалась.
+   Не тронуты намеренно:
+   — --danger и --success: это статусы, а не бренд. Красный кирпич
+     (#b3261e) заметно темнее и желтее розового (#c2185b), поэтому
+     ошибка не сливается с акцентом; плюс бейджи всегда подписаны словом,
+     так что смысл не держится на одном цвете;
+   — белые альфы стекла (--glass-bg, --glass-border, --glass-gloss,
+     --pill-fill, --glow-soft): они нейтральны и работают на любом грунте. */
+.admin-skin {
+  --paper: #fff5fa;            /* блёкло-розовый фон страницы */
+  --ink: #2b0f22;              /* основной текст, сливово-чёрный */
+  --ink-soft: #6b4257;         /* вторичный текст, ~8:1 на белом */
+
+  --brand: #c2185b;            /* розовый акцент, 6:1 на белом — годен для текста */
+  --brand-deep: #3d0a2c;       /* сливовый грунт сайдбара и аватара */
+  --brand-line: #5c1240;
+  --brand-tint: #fde6f0;       /* бледно-розовая подложка на светлом */
+
+  --on-dark: #ffeef6;
+  --on-dark-soft: #e6b9cf;     /* ~9:1 на сливовом грунте */
+
+  --accent: #c2185b;
+  --accent-fill: #c2185b;
+  --accent-bright: #ffb3d1;    /* буква аватара на сливовом */
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
+
+  --scrim: 61, 10, 44;         /* сливовый для скримов (rgb-тройка) */
+
+  --border: rgba(43, 15, 34, 0.12);
+  --shadow-soft: 0 14px 34px -14px rgba(61, 10, 44, 0.22);
+  --shadow-lift: 0 24px 54px -20px rgba(61, 10, 44, 0.3);
+
+  /* Стекло: белила и блики те же, «толщина» и тень перекрашены из
+     тёмно-синего в сливовый — иначе на розовом грунте кромка холодит. */
+  --glass-tint: rgba(255, 214, 233, 0.3);
+  --glass-dark-bg: rgba(61, 10, 44, 0.5);
+  --glass-sheen:
+    inset 1.5px 2px 1.5px -1.5px rgba(255, 255, 255, 1),
+    inset -1.5px -2px 1.5px -1.5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1.5px 14px -7px rgba(61, 10, 44, 0.3),
+    inset 0 -10px 22px -20px rgba(61, 10, 44, 0.45);
+  --glass-shadow:
+    0 26px 56px -24px rgba(61, 10, 44, 0.45),
+    0 4px 14px -6px rgba(61, 10, 44, 0.18);
+  --glass-primary: linear-gradient(180deg, rgba(240, 98, 146, 0.92), rgba(194, 24, 91, 0.94));
+
+  --glass-row-hover: rgba(253, 230, 240, 0.9);
+  --row-line: 0 1px 0 rgba(43, 15, 34, 0.06);
+  --glass-dark-bg-nav: rgba(61, 10, 44, 0.82);
+  --ring-brand: 0 0 0 3px rgba(194, 24, 91, 0.24);
+  --shimmer: linear-gradient(90deg,
+    rgba(43, 15, 34, 0.07) 0%,
+    rgba(43, 15, 34, 0.13) 40%,
+    rgba(43, 15, 34, 0.07) 80%);
+}
+
+/* Свои обои под стеклом. Глобальные (body::before) остаются синими —
+   перекрасить их из вложенного слоя нельзя, а розовое стекло над синими
+   пятнами выглядит грязным. Поэтому админка кладёт собственный слой
+   поверх глобального: та же двухчастотная структура (зерно + пятна),
+   тот же z-index, но розовая. Это единственное отклонение от решения 3
+   плана — и причина у него именно в скине, а не в дубле градиента. */
+.admin-skin::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, rgba(43, 15, 34, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
+    radial-gradient(circle 520px at 10% 4%, rgba(244, 114, 182, 0.42) 0%, rgba(244, 114, 182, 0.24) 48%, rgba(244, 114, 182, 0) 74%),
+    radial-gradient(circle 460px at 92% 10%, rgba(236, 72, 153, 0.34) 0%, rgba(236, 72, 153, 0.18) 46%, rgba(236, 72, 153, 0) 73%),
+    radial-gradient(circle 400px at 74% 44%, rgba(217, 70, 239, 0.26) 0%, rgba(217, 70, 239, 0.14) 44%, rgba(217, 70, 239, 0) 72%),
+    radial-gradient(circle 480px at 6% 62%, rgba(251, 146, 190, 0.4) 0%, rgba(251, 146, 190, 0.2) 46%, rgba(251, 146, 190, 0) 73%),
+    radial-gradient(circle 540px at 56% 96%, rgba(244, 63, 148, 0.3) 0%, rgba(244, 63, 148, 0.18) 46%, rgba(244, 63, 148, 0) 72%),
+    linear-gradient(165deg, #ffe9f3 0%, #fff6fa 46%, #ffe4f0 100%);
+}
+
+/* Режим для слабовидящих: розовое остаётся, прозрачность и пятна уходят.
+   Селектор специфичнее общего html[data-a11y="1"], поэтому перекрывает
+   его синий — иначе админка в этом режиме синела бы. */
+html[data-a11y="1"] .admin-skin {
+  --paper: #ffffff;
+  --ink: #000000;
+  --ink-soft: #3b1a2b;
+  --brand: #a1004b;            /* 8:1 на белом */
+  --brand-deep: #3d0a2c;
+  --brand-line: #3d0a2c;
+  --brand-tint: #ffffff;
+  --on-dark: #ffffff;
+  --on-dark-soft: #ffe4f0;
+  --accent: #a1004b;
+  --accent-fill: #a1004b;
+  --accent-bright: #ffd0e4;
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
+  --border: rgba(0, 0, 0, 0.35);
+  --glass-dark-bg: #3d0a2c;
+  --glass-sheen: none;
+  --glass-shadow: none;
+  --glass-primary: #a1004b;
+  --glass-row-hover: #ffeaf4;
+  --glass-dark-bg-nav: #3d0a2c;
+  --pill-fill: #a1004b;
+  --ring-brand: 0 0 0 3px #a1004b;
+  --row-line: 0 1px 0 rgba(0, 0, 0, 0.35);
+  --shimmer: linear-gradient(90deg, #f6e3ec 0%, #ecd0dd 40%, #f6e3ec 80%);
+  --glow-soft: transparent;
+}
+
+html[data-a11y="1"] .admin-skin::before {
+  display: none;
+}
+
+/* «Меньше прозрачности»: блок самодостаточен — гасит все стеклянные
+   токены, которые задаёт скин, а не полагается на порядок с :root. */
+@media (prefers-reduced-transparency: reduce) {
+  .admin-skin {
+    --glass-blur: none;
+    --glass-bg: #ffffff;
+    --glass-bg-strong: #ffffff;
+    --glass-border: rgba(43, 15, 34, 0.16);
+    --glass-tint: #ffeaf4;
+    --glass-dark-bg: #3d0a2c;
+    --glass-sheen: none;
+    --glass-gloss: none;
+    --glass-shadow: none;
+    --glass-primary: linear-gradient(180deg, #e0457f, #c2185b);
+    --glass-row-hover: #ffeaf4;
+    --glass-dark-bg-nav: #3d0a2c;
+  }
+}
+
 html[data-a11y="1"] body {
   font-size: 20px;
 }
@@ -185,7 +440,8 @@ body {
   margin: 0;
   line-height: var(--line);
   letter-spacing: var(--letter);
-  background: #eaf1ff;
+  /* грунт страницы: сцена ведёт его от светлого к тёмному и обратно */
+  background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -206,6 +462,9 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* На тёмных главах светлые обои уходят, и стеклу остаётся преломлять саму
+     сцену — нейрон и есть фактура тёмного отрезка. */
+  opacity: calc(1 - var(--scene-dark));
   background:
     radial-gradient(circle at center, rgba(15, 31, 56, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
     radial-gradient(circle 520px at 10% 4%, rgba(37, 99, 235, 0.36) 0%, rgba(37, 99, 235, 0.22) 48%, rgba(37, 99, 235, 0) 74%),
@@ -246,6 +505,12 @@ h1, h2, h3 {
 .site-main {
   /* капсула шапки парит с отступом 12px — плюс воздух под ней */
   padding-top: calc(var(--header-h) + 24px);
+  /* z-index здесь НЕ ставим намеренно. Соблазн поднять контент над сценой
+     стоит дорого: main стал бы контекстом наложения, и всё внутри него —
+     прелоадер (--z-overlay: 200) в первую очередь — оказалось бы прижато под
+     шапку (--z-header: 100). Сцена уходит вниз сама (z-index: -1 на своём
+     слое), и порядок снизу вверх получается тот же:
+     обои body::before → сцена → контент → шапка → баннеры. */
 }
 
 .a11y-row {
@@ -332,13 +597,13 @@ h1, h2, h3 {
 }
 
 /* Первичная — синее стекло, белый текст, стеклянный блик. */
-.btn--brass {
+.btn--primary {
   background: var(--glass-primary);
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--glass-sheen), 0 14px 30px -12px rgba(37, 99, 235, 0.6);
 }
-.btn--brass:hover {
+.btn--primary:hover {
   background: linear-gradient(180deg, rgba(96, 145, 250, 0.94), rgba(37, 99, 235, 0.96));
   box-shadow: var(--glass-sheen), 0 20px 40px -12px rgba(37, 99, 235, 0.7);
 }

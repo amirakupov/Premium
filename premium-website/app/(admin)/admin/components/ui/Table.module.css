@@ -1,0 +1,165 @@
+/* Лёгкое стекло на контейнере — и ни на чём внутри. */
+.shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+.shellHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.shellTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.shellActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.body {
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 12px;
+  padding: 4px 12px;
+}
+
+.headButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-fast) ease;
+}
+
+.headButton:hover { color: var(--brand); }
+.headActive { color: var(--brand); }
+
+.arrow {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 12px;
+  align-items: center;
+  min-height: var(--row-h);
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--row-line);
+  overflow: hidden;
+  animation: rowIn 320ms var(--spring);
+  transition:
+    background var(--dur-fast) ease,
+    transform var(--dur) var(--spring);
+}
+
+.row:hover {
+  background: var(--glass-row-hover);
+  transform: translateX(2px);
+}
+
+/* Строка с незавершённым запросом. */
+.rowMuted { opacity: 0.62; }
+
+/* Соседние строки расступаются за счёт max-height, а не прыгают. */
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.995); max-height: 0; }
+  to { opacity: 1; transform: none; max-height: 200px; }
+}
+
+.cell {
+  min-width: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.success { background: var(--success-tint); color: var(--success); }
+.danger { background: var(--danger-tint); color: var(--danger); }
+.brand { background: var(--brand-tint); color: var(--brand); }
+
+/* ── Хром шапки: счётчик, чип фильтра, подпись несортируемой колонки ── */
+
+.counter {
+  font-weight: 400;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.columnLabel {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* На узком экране строка разбирается в карточку: колонки становятся строками. */
+@media (max-width: 820px) {
+  .head { display: none; }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .row:hover { transform: none; }
+
+  .cell { min-height: 44px; display: flex; align-items: center; }
+}

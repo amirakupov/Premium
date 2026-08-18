@@ -119,7 +119,7 @@ export default function ContactForm() {
 
         <button
           type="submit"
-          className={`btn btn--brass ${styles.submit}`}
+          className={`btn btn--primary ${styles.submit}`}
           disabled={status === 'sending'}
         >
           {status === 'sending' ? 'Отправляем…' : 'Отправить'}

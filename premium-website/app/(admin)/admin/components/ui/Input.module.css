@@ -1,0 +1,75 @@
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.star {
+  margin-left: 3px;
+  color: var(--danger);
+}
+
+/* Поле — лёгкое стекло: под ним обои, поэтому оно не выглядит серой плашкой.
+   backdrop-filter допустим — полей в форме единицы, не сотни. */
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition:
+    border-color var(--dur-fast) ease,
+    background var(--dur-fast) ease,
+    box-shadow var(--dur) ease;
+}
+
+.input::placeholder {
+  color: var(--ink-soft);
+}
+
+/* Кольцо тенью, а не outline: геометрия поля не сдвигается. */
+.input:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-sheen), var(--ring-brand);
+}
+
+.invalid,
+.invalid:focus {
+  border-color: var(--danger);
+  background: var(--danger-tint);
+  box-shadow: var(--glass-sheen), var(--ring-danger);
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+  animation: shake var(--dur-slow) var(--spring);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  30%, 70% { transform: translateX(3px); }
+  50% { transform: translateX(-4px); }
+}

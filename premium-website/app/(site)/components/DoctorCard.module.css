@@ -45,9 +45,7 @@
    размывающее, а плотное: иначе био легло бы прямо на «обои». */
 .cardFace:nth-child(2) {
   transform: rotateY(180deg);
-  background: linear-gradient(160deg,
-    rgba(255, 255, 255, 0.92),
-    rgba(233, 242, 255, 0.88));
+  background: linear-gradient(160deg, var(--plate-a), var(--plate-b));
   border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;

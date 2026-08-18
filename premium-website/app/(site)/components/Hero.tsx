@@ -22,7 +22,7 @@ export default function Hero() {
                     </p>
 
                     <div className={styles.actions}>
-                        <Link href="/contacts" className="btn btn--brass">
+                        <Link href="/contacts" className="btn btn--primary">
                             Записаться на приём
                         </Link>
                         <Link href="/services" className="btn btn--ghost">

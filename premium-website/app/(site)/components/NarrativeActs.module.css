@@ -1,0 +1,122 @@
+/**
+ * Нарративные экраны. Высота — экран, чтобы сцене было где отыграть главу и
+ * чтобы у текста был воздух; но это `min-height`, а не `height`: длинная
+ * строка на узком экране должна раздвигать секцию, а не обрезаться.
+ */
+.act {
+  position: relative;
+  min-height: calc(100svh - var(--header-h));
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(48px, 9vh, 96px) var(--gutter);
+}
+
+/* Сцена в этой главе уводит нейрон влево (см. sceneScript, глава «Симптом»),
+   поэтому текст уходит вправо и не спорит с ним за место. */
+.actEnd {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.actEnd .inner {
+  align-items: flex-end;
+}
+
+/* Глава «Диагностика»: камера внутри кроны, кадр занят целиком — текст по центру. */
+.actCenter {
+  justify-content: center;
+  text-align: center;
+}
+
+.actCenter .inner {
+  align-items: center;
+}
+
+/**
+ * Корпусный текст этих двух экранов — единственный на странице, который лежит
+ * прямо на фоне и попадает в середину перехода светлого в тёмное. Там фон
+ * мутно-средний, и контраста не хватает ни тёмной краске, ни светлой (см.
+ * neuron/pageTheme.ts). Поэтому под текстом проявляется стеклянная подложка:
+ * в покое её не видно вовсе (--panel-bg прозрачен, --panel-filter: none),
+ * максимум приходится ровно на мутную середину.
+ */
+.inner {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(18px, 2.4vw, 30px);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  -webkit-backdrop-filter: var(--panel-filter);
+  backdrop-filter: var(--panel-filter);
+}
+
+.title {
+  margin: 0 0 0.5em;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.16;
+  color: var(--ink);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.text {
+  margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+
+/* Воздух под финальную главу: линия ЭЭГ прочерчивается здесь. Ровно столько,
+   чтобы прочерчивание успело пройти целиком до появления футера. */
+.outro {
+  height: 62svh;
+  min-height: 380px;
+}
+
+.staticEeg {
+  display: none;
+}
+
+/* Анимаций нет — финала сцены тоже: держать под него пустой экран незачем. */
+@media (prefers-reduced-motion: reduce) {
+  .outro {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staticEeg {
+    display: block;
+    margin: 1.75rem auto 0;
+  }
+}
+
+@media (max-width: 900px) {
+  /* На узком экране нейрон занимает весь кадр — текст спорить с ним не может,
+     поэтому все экраны выравниваются одинаково по левому краю. */
+  .actEnd,
+  .actCenter {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .actEnd .inner,
+  .actCenter .inner {
+    align-items: flex-start;
+  }
+
+  .title {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .text {
+    max-width: 100%;
+  }
+}

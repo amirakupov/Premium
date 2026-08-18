@@ -1,0 +1,161 @@
+.screen {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px;
+  background: transparent;
+}
+
+.card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  gap: 22px;
+  width: 420px;
+  max-width: 100%;
+  padding: 32px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--glass-shadow);
+}
+
+/* Статичный блик поверхности. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--glass-gloss);
+  pointer-events: none;
+}
+
+/* Подвижный блик: центр берётся из --mx/--my. */
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    var(--glow-soft),
+    transparent 70%
+  );
+}
+
+.cardError { animation: shake 340ms var(--spring); }
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  30%, 70% { transform: translateX(3px); }
+  50% { transform: translateX(-4px); }
+}
+
+.head {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 6px;
+  border-radius: 13px;
+  background: var(--glass-primary);
+  box-shadow: var(--glass-sheen);
+  color: var(--surface);
+  font-family: var(--font-head);
+  font-size: 20px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.form {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  gap: 14px;
+}
+
+.field { display: grid; gap: 6px; }
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  box-shadow: var(--glass-sheen);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  transition: border-color var(--dur-fast) ease, box-shadow var(--dur) ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: var(--glass-sheen), var(--ring-brand);
+}
+
+.error {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-sm);
+  background: var(--danger-tint);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.submit {
+  height: 48px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--glass-primary);
+  box-shadow: var(--glass-sheen), var(--shadow-soft);
+  color: var(--surface);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--dur) var(--spring), box-shadow var(--dur) ease;
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-sheen), var(--shadow-lift);
+}
+
+.submit:active:not(:disabled) { transform: scale(0.97); }
+
+.submit:disabled { opacity: 0.6; cursor: not-allowed; }

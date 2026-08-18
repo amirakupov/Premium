@@ -66,6 +66,13 @@
     0 10px 26px -14px rgba(18, 42, 77, 0.55);
 }
 
+/* Слой параллакса. Выше рамки на 7 % сверху и снизу — этот запас и уезжает при
+   прокрутке, поэтому пустого края не открывается. Двигает его SectionMotion. */
+.parallaxLayer {
+  position: absolute;
+  inset: -7% 0;
+}
+
 .image {
   transition: transform 0.4s ease;
 }
