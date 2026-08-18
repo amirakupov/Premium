@@ -187,7 +187,12 @@ export type PageTheme = {
     dispose: () => void;
 };
 
-export function createPageTheme(enabled: boolean): PageTheme {
+/**
+ * `glass: false` — низкий тир: размытие на странице выключено целиком
+ * (см. globals.css, html[data-scene-tier="low"]). Инлайновый стиль победил бы
+ * тот CSS-блок, поэтому фильтр подложки здесь просто не пишется.
+ */
+export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
     const root = typeof document === 'undefined' ? null : document.documentElement;
     let lastDark = -1;
     let lastSwap = -1;
@@ -264,7 +269,7 @@ export function createPageTheme(enabled: boolean): PageTheme {
                вне полосы фильтр гасится целиком, а не в blur(0). */
             root.style.setProperty(
                 '--panel-filter',
-                band < 0.02 ? 'none' : `blur(${Math.round(band * 18)}px) saturate(150%)`,
+                !glass || band < 0.02 ? 'none' : `blur(${Math.round(band * 18)}px) saturate(150%)`,
             );
 
             /* Блики стекла живут не цветом, а альфой белого: на тёмном грунте их
