@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { lerp } from './utils';
+import { darknessOf, lerp, luminanceOf } from './utils';
 
 /**
  * ─────────────────────── РЕЖИССЁРСКИЙ СЦЕНАРИЙ ───────────────────────
@@ -182,6 +182,10 @@ export type SceneState = {
     cameraLookAt: THREE.Vector3;
     fov: number;
     background: THREE.Color;
+    /** 0…1 — производная от фона: насколько страница должна быть «тёмной» */
+    dark: number;
+    /** линейная яркость фона: по ней считаются переброс токенов и опасная полоса */
+    lum: number;
     neuronPos: THREE.Vector3;
     neuronRot: THREE.Euler;
     neuronScale: number;
@@ -208,6 +212,8 @@ export function createSceneState(): SceneState {
         cameraLookAt: new THREE.Vector3(),
         fov: 45,
         background: new THREE.Color(),
+        dark: 0,
+        lum: 1,
         neuronPos: new THREE.Vector3(),
         neuronRot: new THREE.Euler(),
         neuronScale: 1,
@@ -249,6 +255,10 @@ export function resolveSceneState(p: number, out: SceneState): SceneState {
     lerpVec3(out.cameraLookAt, a.camera.lookAt, b.camera.lookAt, t);
     out.fov = lerp(a.camera.fov, b.camera.fov, t);
     out.background.copy(BACKGROUNDS[i]).lerp(BACKGROUNDS[i + 1], t);
+    // «Темнота» не хранится в таблице, а считается из самого цвета — так у
+    // перехода остаётся один источник правды.
+    out.dark = darknessOf(out.background.r, out.background.g, out.background.b);
+    out.lum = luminanceOf(out.background.r, out.background.g, out.background.b);
 
     lerpVec3(out.neuronPos, a.neuron.position, b.neuron.position, t);
     out.neuronRot.set(

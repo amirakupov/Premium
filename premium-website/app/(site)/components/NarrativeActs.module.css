@@ -35,9 +35,22 @@
   align-items: center;
 }
 
+/**
+ * Корпусный текст этих двух экранов — единственный на странице, который лежит
+ * прямо на фоне и попадает в середину перехода светлого в тёмное. Там фон
+ * мутно-средний, и контраста не хватает ни тёмной краске, ни светлой (см.
+ * neuron/pageTheme.ts). Поэтому под текстом проявляется стеклянная подложка:
+ * в покое её не видно вовсе (--panel-bg прозрачен, --panel-filter: none),
+ * максимум приходится ровно на мутную середину.
+ */
 .inner {
   display: flex;
   flex-direction: column;
+  padding: clamp(18px, 2.4vw, 30px);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  -webkit-backdrop-filter: var(--panel-filter);
+  backdrop-filter: var(--panel-filter);
 }
 
 .title {

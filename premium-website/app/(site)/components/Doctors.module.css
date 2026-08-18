@@ -11,6 +11,17 @@
   gap: 1.5rem;
   flex-wrap: wrap;
   margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  /* Эта секция — единственная из содержательных, что попадает в середину
+     обратного перехода фона (тёмное → светлое, между главами «Кульминация» и
+     «Выход»). Ссылка «Все врачи клиники» лежит прямо на фоне, а синий #2563eb
+     держит 4.5:1 только на самом светлом грунте. Поэтому в мутной середине под
+     заголовком проявляется та же подложка, что под нарративными экранами; вне
+     полосы её нет вовсе. См. neuron/pageTheme.ts и docs/neuron-v2/contrast.py. */
+  padding: clamp(10px, 1.4vw, 18px) clamp(12px, 1.6vw, 20px);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  -webkit-backdrop-filter: var(--panel-filter);
+  backdrop-filter: var(--panel-filter);
 }
 
 .heading {

@@ -3,8 +3,21 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import type { BloomEffect } from 'postprocessing';
+import {
+    Bloom,
+    DepthOfField,
+    EffectComposer,
+    Noise,
+    SSAO,
+    Vignette,
+} from '@react-three/postprocessing';
+import type {
+    BloomEffect,
+    DepthOfFieldEffect,
+    NoiseEffect,
+    SSAOEffect,
+    VignetteEffect,
+} from 'postprocessing';
 import * as THREE from 'three';
 
 import { BLOOM, CAMERA, CHOREO, EEG, FOG, LIGHT, NEURON, SOMA } from './params';
@@ -12,6 +25,7 @@ import type { TierProfile } from './perf';
 import { createSceneState, resolveSceneState } from './sceneScript';
 import { useScrollDirector } from './useScrollDirector';
 import { clamp01, damp, easeOut, lerp } from './utils';
+import { createPageTheme } from './pageTheme';
 import { createSignalSystem } from './signals';
 import { createMicroEvents } from './events';
 import { growNeuron } from './geometry/growNeuron';
@@ -54,14 +68,24 @@ export default function Neuron({
     reduced: boolean;
 }) {
     const director = useScrollDirector(!reduced);
-    const { camera, invalidate } = useThree();
+    const { camera, scene, invalidate } = useThree();
 
     const groupRef = useRef<THREE.Group>(null);
     const membraneRef = useRef<THREE.Mesh>(null);
     const coreRef = useRef<THREE.Mesh>(null);
     const neighboursRef = useRef<THREE.InstancedMesh>(null);
     const bloomRef = useRef<BloomEffect>(null);
+    const ssaoRef = useRef<SSAOEffect>(null);
+    const dofRef = useRef<DepthOfFieldEffect>(null);
+    const vignetteRef = useRef<VignetteEffect>(null);
+    const noiseRef = useRef<NoiseEffect>(null);
     const parallax = useRef(new THREE.Vector2());
+    /* Точка фокуса глубины резкости: DoF держит на неё ссылку, поэтому вектор
+       создаётся один раз и дальше только мутируется. */
+    const focus = useRef(new THREE.Vector3());
+    /* Цвет фона строкой пересобирается только когда он реально изменился:
+       getHexString() на каждом кадре — это мусор в горячем цикле. */
+    const backgroundHex = useRef({ packed: -1, css: '#eaf1ff' });
     const intro = useRef(0);
     const gains = useRef<Gains>({
         collect: 0,
@@ -72,6 +96,9 @@ export default function Neuron({
     });
 
     const state = useMemo(() => createSceneState(), []);
+    /* Переход фона выключен при reduced-motion: страница остаётся светлой. */
+    const theme = useMemo(() => createPageTheme(!reduced), [reduced]);
+    useEffect(() => () => theme.dispose(), [theme]);
 
     /* — Геометрия и материалы: строятся один раз на профиль тира — */
     const built = useMemo(() => {
@@ -261,7 +288,35 @@ export default function Neuron({
         built.eegMaterial.uniforms.uProgress.value = easeOut(state.eeg) * 1.02;
         built.eegMaterial.uniforms.uOpacity.value = clamp01(state.eeg * 8);
 
+        /* ── Фон: один источник правды ──
+           Цвет главы уходит одновременно в туман сцены и в CSS-переменные
+           страницы. Туман обязан совпадать с фоном страницы — иначе дальние
+           ветки растворяются не в тот цвет, и глубина читается как грязь. */
+        const fog = scene.fog;
+        if (fog) fog.color.copy(state.background);
+
+        const packed = state.background.getHex();
+        if (packed !== backgroundHex.current.packed) {
+            backgroundHex.current.packed = packed;
+            backgroundHex.current.css = `#${state.background.getHexString()}`;
+        }
+        theme.apply(backgroundHex.current.css, state.lum, state.dark);
+
+        /* ── Постпроцессинг ──
+           Все эффекты, кроме блума, регулируются через blendMode.opacity: это
+           стабильная часть API postprocessing, одинаковая у SSAO, виньетки и
+           зерна. Возиться с внутренними материалами каждого эффекта не нужно. */
         if (bloomRef.current) bloomRef.current.intensity = state.bloom;
+        if (ssaoRef.current) ssaoRef.current.blendMode.opacity.value = state.ao;
+        if (vignetteRef.current) vignetteRef.current.blendMode.opacity.value = state.vignette;
+        if (noiseRef.current) noiseRef.current.blendMode.opacity.value = state.grain;
+        if (dofRef.current) {
+            // Фокус держится на самом нейроне: в главе с пролётом внутри кроны
+            // он уезжает вместе с камерой, а ветки у объектива уходят в бокэ.
+            focus.current.copy(state.neuronPos);
+            dofRef.current.target = focus.current;
+            dofRef.current.bokehScale = state.dof * 6;
+        }
     };
 
     /* — Статичный кадр для prefers-reduced-motion: раскладываем один раз — */
@@ -436,7 +491,42 @@ export default function Neuron({
                 position={[0, EEG.Y, 0]}
             />
 
-            <EffectComposer multisampling={0} enableNormalPass={false}>
+            {/* Порядок важен и он не случаен:
+                SSAO   — контактное затенение в развилках; на светлом фоне это
+                         главный источник объёма, важнее блума
+                DoF    — фокус на нейроне, бокэ на дальних ветках
+                Bloom  — работает всерьёз только на тёмном отрезке, поэтому его
+                         интенсивность ведёт таблица глав
+                Vignette — слабая, фактически только на тёмном
+                Noise  — обязателен: спасает градиенты фона от бандинга на
+                         8-битных панелях
+
+                Хроматической аберрации и глитча нет намеренно: это против
+                интонации медицинского бренда.
+
+                SSAO требует NormalPass — это отдельный проход рендера сцены,
+                поэтому на низком тире выключены оба. */}
+            <EffectComposer multisampling={0} enableNormalPass={profile.ssao}>
+                {profile.ssao ? (
+                    <SSAO
+                        ref={ssaoRef}
+                        intensity={22}
+                        radius={0.12}
+                        luminanceInfluence={0.6}
+                        worldDistanceThreshold={12}
+                        worldDistanceFalloff={4}
+                        worldProximityThreshold={1.4}
+                        worldProximityFalloff={0.4}
+                    />
+                ) : null}
+                {profile.dof ? (
+                    <DepthOfField
+                        ref={dofRef}
+                        worldFocusRange={4.5}
+                        bokehScale={0}
+                        resolutionScale={0.5}
+                    />
+                ) : null}
                 <Bloom
                     ref={bloomRef}
                     intensity={0.35}
@@ -445,6 +535,8 @@ export default function Neuron({
                     radius={BLOOM.RADIUS}
                     mipmapBlur={profile.bloomMipmap}
                 />
+                <Vignette ref={vignetteRef} offset={0.32} darkness={0.7} />
+                <Noise ref={noiseRef} premultiply />
             </EffectComposer>
         </>
     );

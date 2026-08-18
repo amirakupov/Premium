@@ -27,6 +27,36 @@ export const easeOut = (t: number) => 1 - (1 - t) ** 3;
 export const damp = (current: number, target: number, lambda: number, dt: number) =>
     current + (target - current) * (1 - Math.exp(-lambda * dt));
 
+export const smoothstep = (edge0: number, edge1: number, x: number) => {
+    const t = clamp01((x - edge0) / (edge1 - edge0));
+    return t * t * (3 - 2 * t);
+};
+
+/**
+ * Насколько «темён» цвет фона: 0 — светло, 1 — тёмная точка нарратива.
+ *
+ * На входе линейные компоненты (three держит цвета в линейном пространстве).
+ * Светлота берётся гамма-скорректированной: по линейной яркости середина
+ * перехода получалась бы почти чёрной, и токены текста переключались бы рывком
+ * в самом начале. Порог подобран так, что токены слегка опережают фон — текст
+ * успевает стать светлым до того, как фон потемнеет по-настоящему.
+ *
+ * Это единственный источник правды о «темноте»: отдельного поля в таблице глав
+ * нет намеренно, темнота — свойство самого цвета.
+ */
+export function darknessOf(r: number, g: number, b: number) {
+    return 1 - smoothstep(0.25, 0.75, Math.pow(clamp01(luminanceOf(r, g, b)), 1 / 2.2));
+}
+
+/**
+ * Линейная относительная яркость. По ней pageTheme решает, на какой стороне
+ * находится пара «текст + поверхность» и насколько мы внутри опасной полосы:
+ * это ровно та величина, которой оперирует формула контраста WCAG.
+ */
+export function luminanceOf(r: number, g: number, b: number) {
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
 /** Равномерное распределение направлений по сфере (спираль Фибоначчи). */
 export function sphereDir(i: number, n: number) {
     const y = 1 - (i / Math.max(1, n - 1)) * 2;
