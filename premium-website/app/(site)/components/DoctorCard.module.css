@@ -27,6 +27,9 @@
   backface-visibility: hidden;
   border-radius: var(--radius);
   overflow: hidden;
+  /* Подложка под фото: если в CMS у врача нет снимка, лицевая сторона
+     остаётся плотной плашкой, а не дырой с парящей подписью. */
+  background: var(--brand-tint);
   box-shadow: var(--glass-sheen), var(--glass-shadow);
 }
 

@@ -32,14 +32,16 @@ export default async function ServiceDetailPage({ params }: Params) {
     <main className={styles.container}>
       <div className={styles.detailWrapper}>
         <div className={styles.imageWrapper}>
-          <Image
-            src={service.imageSrc}
-            alt={service.serviceName}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            style={{ objectFit: 'cover' }}
-            className={styles.image}
-          />
+          {service.imageSrc ? (
+            <Image
+              src={service.imageSrc}
+              alt={service.serviceName}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              style={{ objectFit: 'cover' }}
+              className={styles.image}
+            />
+          ) : null}
         </div>
         <div className={styles.textWrapper}>
           <h1 className={styles.title}>{service.serviceName}</h1>

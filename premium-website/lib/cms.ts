@@ -1,3 +1,4 @@
+import { normalizeImageSrc } from "./image";
 import type { Doctor, Service } from "./types";
 
 const BACKEND_URL = process.env.BACKEND_URL;
@@ -28,10 +29,12 @@ async function fetchCms(path: string): Promise<unknown> {
 
 export async function listAllServices(): Promise<Service[]> {
     const json = await fetchCms("/api/cms/services");
-    return Array.isArray(json) ? (json as Service[]) : [];
+    if (!Array.isArray(json)) return [];
+    return (json as Service[]).map((s) => ({ ...s, imageSrc: normalizeImageSrc(s.imageSrc) }));
 }
 
 export async function listAllDoctors(): Promise<Doctor[]> {
     const json = await fetchCms("/api/cms/doctors");
-    return Array.isArray(json) ? (json as Doctor[]) : [];
+    if (!Array.isArray(json)) return [];
+    return (json as Doctor[]).map((d) => ({ ...d, imgSrc: normalizeImageSrc(d.imgSrc) }));
 }
