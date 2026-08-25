@@ -3,13 +3,15 @@
 import type { ReactNode } from "react";
 import { FiX } from "react-icons/fi";
 import Button from "./Button";
+import Portal from "./Portal";
 import { useFocusTrap } from "./useFocusTrap";
 import styles from "./Sheet.module.css";
 
 /**
  * Выезжающая панель справа. Список под ней остаётся на месте —
  * форма не уводит со страницы, а уходит в глубину: блюр и лёгкий отъезд
- * содержимого делает .sheetOpen в layout.module.css.
+ * содержимого делает .recessed в layout.module.css. Панель обязана жить
+ * в портале: иначе тот же блюр накрыл бы и её саму.
  */
 export default function Sheet({
     open,
@@ -28,7 +30,7 @@ export default function Sheet({
     if (!open) return null;
 
     return (
-        <>
+        <Portal>
             <div className={styles.scrim} onClick={onClose} aria-hidden="true" />
             <div
                 ref={trapRef}
@@ -51,6 +53,6 @@ export default function Sheet({
                 <div className={styles.body}>{children}</div>
                 {footer ? <footer className={styles.foot}>{footer}</footer> : null}
             </div>
-        </>
+        </Portal>
     );
 }
