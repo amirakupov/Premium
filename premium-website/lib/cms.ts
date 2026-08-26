@@ -1,5 +1,5 @@
 import { normalizeImageSrc } from "./image";
-import type { Doctor, Service } from "./types";
+import type { BlogPost, Doctor, Service } from "./types";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
@@ -37,4 +37,19 @@ export async function listAllDoctors(): Promise<Doctor[]> {
     const json = await fetchCms("/api/cms/doctors");
     if (!Array.isArray(json)) return [];
     return (json as Doctor[]).map((d) => ({ ...d, imgSrc: normalizeImageSrc(d.imgSrc) }));
+}
+
+/** Опубликованные посты, свежие сверху. Черновики бекенд анонимам не отдаёт. */
+export async function listBlogPosts(): Promise<BlogPost[]> {
+    const json = await fetchCms("/api/cms/blog");
+    if (!Array.isArray(json)) return [];
+    return (json as BlogPost[])
+        .filter((post) => post.status === "PUBLISHED")
+        .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+    const json = await fetchCms(`/api/cms/blog/${encodeURIComponent(slug)}`);
+    if (!json || typeof json !== "object") return null;
+    return json as BlogPost;
 }
