@@ -61,6 +61,11 @@ const INLINE_ALIAS: Record<string, "strong" | "em" | "code"> = {
 
 const SAFE_SCHEMES = ["https:", "http:", "mailto:", "tel:"];
 
+/** Заголовок блока вопросов — по промпту бекенда это всегда «Частые вопросы». */
+const FAQ_HEADING = /частые\s+вопросы|вопросы\s+и\s+ответы|^faq$/i;
+
+const WORDS_PER_MINUTE = 180;
+
 function isElement(node: Node): node is HTMLElement {
     return node.nodeType === NodeType.ELEMENT_NODE;
 }
@@ -240,11 +245,67 @@ function blockText(block: Block): string {
     return inlineToText(block.content);
 }
 
+/** Пары «h3 + блоки до следующего h3» из раздела вопросов. */
+function toFaq(blocks: Block[]): FaqItem[] {
+    const items: FaqItem[] = [];
+    for (const block of blocks) {
+        if (block.kind === "h3") {
+            items.push({ question: inlineToText(block.content), answer: [] });
+            continue;
+        }
+        const current = items[items.length - 1];
+        if (current) current.answer.push(block);
+    }
+    return items.filter((item) => item.question);
+}
+
 export function parseArticle(bodyHtml: string): Article {
     const tokens = tokenize(parse(bodyHtml ?? "").childNodes);
-    const intro = tokens.filter((t): t is Extract<Token, { kind: "block" }> => t.kind === "block")
-        .map((t) => t.block);
-    const plainText = intro.map(blockText).join(" ").trim();
 
-    return { lead: null, intro, sections: [], faq: [], plainText, readingMinutes: 1 };
+    const before: Block[] = [];
+    const raw: { heading: string; blocks: Block[] }[] = [];
+    for (const token of tokens) {
+        if (token.kind === "h2") {
+            raw.push({ heading: token.heading, blocks: [] });
+            continue;
+        }
+        if (raw.length) raw[raw.length - 1].blocks.push(token.block);
+        else before.push(token.block);
+    }
+
+    // Лид — первый абзац вступления: по промпту бекенда это прямой ответ на
+    // вопрос темы, и на странице он идёт крупным кеглем.
+    //
+    // Исключение — вырожденный body без единого h2 и с единственным блоком:
+    // это не лид, а весь текст статьи, и набирать его лидовым кеглем нельзя.
+    const degenerate = before.length === 1 && raw.length === 0;
+    const leadIndex = degenerate ? -1 : before.findIndex((block) => block.kind === "p");
+    const leadBlock = leadIndex >= 0 ? before[leadIndex] : null;
+    const lead = leadBlock && leadBlock.kind === "p" ? leadBlock.content : null;
+    const intro = leadIndex >= 0 ? before.filter((_, i) => i !== leadIndex) : before;
+
+    const faqIndex = raw.findIndex((section) => FAQ_HEADING.test(section.heading));
+    const faq = faqIndex >= 0 ? toFaq(raw[faqIndex].blocks) : [];
+    // Нумерация после выемки FAQ, иначе id в оглавлении разъедутся с якорями.
+    const sections: Section[] = raw
+        .filter((_, index) => index !== faqIndex)
+        .map((section, index) => ({ id: `s${index + 1}`, heading: section.heading, blocks: section.blocks }));
+
+    const parts: string[] = [];
+    if (lead) parts.push(inlineToText(lead));
+    intro.forEach((block) => parts.push(blockText(block)));
+    sections.forEach((section) => {
+        parts.push(section.heading);
+        section.blocks.forEach((block) => parts.push(blockText(block)));
+    });
+    faq.forEach((item) => {
+        parts.push(item.question);
+        item.answer.forEach((block) => parts.push(blockText(block)));
+    });
+
+    const plainText = collapse(parts.join(" ")).trim();
+    const words = plainText ? plainText.split(" ").length : 0;
+    const readingMinutes = Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+
+    return { lead, intro, sections, faq, plainText, readingMinutes };
 }
