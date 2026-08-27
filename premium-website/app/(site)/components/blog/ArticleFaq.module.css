@@ -1,0 +1,61 @@
+.faq { margin-top: clamp(40px, 6vw, 72px); }
+
+.heading {
+  margin: 0 0 0.8em;
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  line-height: 1.2;
+  scroll-margin-top: 96px;
+}
+
+.item {
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen);
+}
+
+.question {
+  padding: 16px 18px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Своя стрелка вместо системного треугольника — он ломает выравнивание. */
+.question::-webkit-details-marker { display: none; }
+
+.question::after {
+  content: "＋";
+  float: right;
+  margin-left: 12px;
+  color: var(--brand);
+  transition: transform 0.25s var(--spring);
+}
+
+.item[open] .question::after { content: "－"; }
+
+.body {
+  padding: 0 18px 16px;
+  color: var(--ink-soft);
+}
+
+.answer {
+  margin: 0 0 0.8em;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.list {
+  margin: 0 0 0.8em;
+  padding-left: 1.2em;
+  font-size: 1rem;
+  line-height: 1.7;
+}
