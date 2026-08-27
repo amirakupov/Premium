@@ -18,6 +18,7 @@ export const SITE_URL =
 export const NAV_LINKS = [
     { href: "/services", label: "Услуги" },
     { href: "/doctors", label: "Врачи" },
+    { href: "/blog", label: "Блог" },
     { href: "/eeg", label: "ЭЭГ" },
     { href: "/contacts", label: "Контакты" },
     { href: "/#address", label: "Адрес" },
