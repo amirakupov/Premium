@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     const article = parseArticle(post.body);
     const description =
         post.metaDescription?.trim() || article.plainText.slice(0, DESCRIPTION_LIMIT);
-    const art = pickArt(post, article.sections.length);
+    const art = pickArt(post);
 
     return {
         title: post.title,
@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: Params) {
     if (!post) notFound();
 
     const article = parseArticle(post.body);
-    const art = pickArt(post, article.sections.length);
+    const art = pickArt(post);
     const date = formatArticleDate(post.createdAt);
     const url = `${SITE_URL}/blog/${post.slug}`;
 
@@ -127,7 +127,7 @@ export default async function BlogPostPage({ params }: Params) {
             </header>
 
             <div className={styles.layout}>
-                <ArticleBody article={article} inlineImages={art.inline} />
+                <ArticleBody article={article} />
                 <ArticleToc sections={article.sections} hasFaq={article.faq.length > 0} />
             </div>
 

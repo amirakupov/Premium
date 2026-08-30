@@ -103,25 +103,3 @@
   background: var(--brand-tint);
   font-size: 0.95em;
 }
-
-/* Врезка выходит за меру текста: иначе фото на 68ch читается как марка. */
-.figure {
-  margin: clamp(24px, 4vw, 40px) 0;
-  width: 100%;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow-soft);
-}
-
-.figureImage {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-@media (min-width: 1000px) {
-  .figure {
-    width: calc(100% + 8vw);
-    margin-left: -4vw;
-  }
-}

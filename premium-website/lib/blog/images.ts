@@ -2,8 +2,12 @@ import type { BlogPost } from "@/lib/types";
 
 /**
  * Картинок в данных нет: на бекенде img намеренно вырезан из Safelist, а поля
- * обложки у поста не существует. Поэтому иллюстрацию подбирает витрина — из
+ * обложки у поста не существует. Поэтому обложку подбирает витрина — из
  * уже снятых фото клиники и услуг, по теме статьи.
+ *
+ * Иллюстрируется только обложка. Врезки по ходу текста здесь были и убраны:
+ * тематического правила для них нет, в текст попадал случайный интерьер
+ * клиники — картинка, которой нечего сказать по теме абзаца.
  *
  * Альт описывает то, что НА ФОТО, а не заголовок статьи: снимок процедурного
  * кабинета не является изображением мигрени, и подпись заголовком была бы
@@ -84,26 +88,13 @@ function hash(value: string): number {
 export interface ArticleArt {
     cover: string;
     coverAlt: string;
-    /** Врезки по ходу текста: первая после 2-й секции, вторая после 5-й. */
-    inline: string[];
 }
 
-export function pickArt(post: BlogPost, sectionCount: number): ArticleArt {
+export function pickArt(post: BlogPost): ArticleArt {
     const haystack = `${post.title} ${post.keywords ?? ""} ${post.slug}`.toLowerCase();
     const rule = RULES.find((item) => item.test.test(haystack));
+    if (rule) return { cover: rule.asset, coverAlt: rule.alt };
+
     const seed = hash(post.slug);
-
-    const cover = rule ? rule.asset : CLINIC_POOL[seed % CLINIC_POOL.length];
-    const coverAlt = rule ? rule.alt : CLINIC_ALT;
-
-    const pool = CLINIC_POOL.filter((asset) => asset !== cover);
-    const count = sectionCount >= 6 ? 2 : sectionCount >= 3 ? 1 : 0;
-    const inline: string[] = [];
-    for (let i = 0; i < count; i++) {
-        inline.push(pool[(seed + i * 7) % pool.length]);
-    }
-
-    return { cover, coverAlt, inline };
+    return { cover: CLINIC_POOL[seed % CLINIC_POOL.length], coverAlt: CLINIC_ALT };
 }
-
-export const INLINE_ALT = CLINIC_ALT;

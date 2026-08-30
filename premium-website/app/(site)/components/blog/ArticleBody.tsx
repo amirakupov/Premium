@@ -1,6 +1,4 @@
-import Image from "next/image";
 import EegLine from "@/app/(site)/components/EegLine";
-import { INLINE_ALT } from "@/lib/blog/images";
 import type { Article, Block, Inline } from "@/lib/blog/article";
 import ArticleFaq from "./ArticleFaq";
 import styles from "./ArticleBody.module.css";
@@ -77,16 +75,7 @@ function Blocks({ blocks }: { blocks: Block[] }) {
     );
 }
 
-/** Врезка после 2-й секции, вторая — после 5-й: индексы 1 и 4 при счёте с нуля. */
-const INLINE_AFTER = [1, 4];
-
-export default function ArticleBody({
-    article,
-    inlineImages,
-}: {
-    article: Article;
-    inlineImages: string[];
-}) {
+export default function ArticleBody({ article }: { article: Article }) {
     return (
         <div className={styles.prose}>
             {article.lead ? (
@@ -95,29 +84,13 @@ export default function ArticleBody({
 
             <Blocks blocks={article.intro} />
 
-            {article.sections.map((section, index) => {
-                const imageIndex = INLINE_AFTER.indexOf(index);
-                const image = imageIndex >= 0 ? inlineImages[imageIndex] : undefined;
-                return (
-                    <section key={section.id} className={styles.section}>
-                        <EegLine className={styles.divider} />
-                        <h2 id={section.id} className={styles.heading}>{section.heading}</h2>
-                        <Blocks blocks={section.blocks} />
-                        {image ? (
-                            <figure className={styles.figure}>
-                                <Image
-                                    src={image}
-                                    alt={INLINE_ALT}
-                                    width={1280}
-                                    height={853}
-                                    sizes="(max-width: 900px) 92vw, 720px"
-                                    className={styles.figureImage}
-                                />
-                            </figure>
-                        ) : null}
-                    </section>
-                );
-            })}
+            {article.sections.map((section) => (
+                <section key={section.id} className={styles.section}>
+                    <EegLine className={styles.divider} />
+                    <h2 id={section.id} className={styles.heading}>{section.heading}</h2>
+                    <Blocks blocks={section.blocks} />
+                </section>
+            ))}
 
             <ArticleFaq items={article.faq} />
         </div>

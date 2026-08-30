@@ -11,7 +11,7 @@ import styles from "./BlogCard.module.css";
  * как каталог, а не как блог.
  */
 export default function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
-    const art = pickArt(post, 0);
+    const art = pickArt(post);
     const date = formatArticleDate(post.createdAt);
 
     return (
