@@ -1,4 +1,5 @@
-import type { Doctor, Service } from "./types";
+import { normalizeImageSrc } from "./image";
+import type { BlogPost, Doctor, Service } from "./types";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
@@ -28,10 +29,27 @@ async function fetchCms(path: string): Promise<unknown> {
 
 export async function listAllServices(): Promise<Service[]> {
     const json = await fetchCms("/api/cms/services");
-    return Array.isArray(json) ? (json as Service[]) : [];
+    if (!Array.isArray(json)) return [];
+    return (json as Service[]).map((s) => ({ ...s, imageSrc: normalizeImageSrc(s.imageSrc) }));
 }
 
 export async function listAllDoctors(): Promise<Doctor[]> {
     const json = await fetchCms("/api/cms/doctors");
-    return Array.isArray(json) ? (json as Doctor[]) : [];
+    if (!Array.isArray(json)) return [];
+    return (json as Doctor[]).map((d) => ({ ...d, imgSrc: normalizeImageSrc(d.imgSrc) }));
+}
+
+/** Опубликованные посты, свежие сверху. Черновики бекенд анонимам не отдаёт. */
+export async function listBlogPosts(): Promise<BlogPost[]> {
+    const json = await fetchCms("/api/cms/blog");
+    if (!Array.isArray(json)) return [];
+    return (json as BlogPost[])
+        .filter((post) => post.status === "PUBLISHED")
+        .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+    const json = await fetchCms(`/api/cms/blog/${encodeURIComponent(slug)}`);
+    if (!json || typeof json !== "object") return null;
+    return json as BlogPost;
 }

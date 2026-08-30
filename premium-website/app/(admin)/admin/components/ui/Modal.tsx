@@ -3,6 +3,7 @@
 import { useId } from "react";
 import { FiAlertTriangle } from "react-icons/fi";
 import Button from "./Button";
+import Portal from "./Portal";
 import { useFocusTrap } from "./useFocusTrap";
 import styles from "./Modal.module.css";
 
@@ -29,7 +30,7 @@ export default function Modal({
     if (!open) return null;
 
     return (
-        <>
+        <Portal>
             <div className={styles.scrim} onClick={onCancel} aria-hidden="true" />
             <div className={styles.wrap}>
                 <div
@@ -52,6 +53,6 @@ export default function Modal({
                     </div>
                 </div>
             </div>
-        </>
+        </Portal>
     );
 }

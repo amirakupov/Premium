@@ -1,0 +1,105 @@
+/* Мера 68ch — не украшение: на строке длиннее глаз теряет начало следующей. */
+.prose {
+  max-width: 68ch;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: clamp(1.0625rem, 1.3vw, 1.125rem);
+  line-height: 1.75;
+}
+
+/* Лид набран основным цветом, а не --ink-soft: по промпту бекенда это прямой
+   ответ на вопрос темы, то есть главное предложение статьи. Гасить нельзя. */
+.lead {
+  margin: 0 0 1.6em;
+  font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.paragraph { margin: 0 0 1.15em; }
+
+.section { margin-top: clamp(36px, 5vw, 60px); }
+
+.divider {
+  display: block;
+  width: 140px;
+  height: 22px;
+  margin-bottom: 14px;
+  color: var(--brand);
+  opacity: 0.55;
+}
+
+.heading {
+  margin: 0 0 0.6em;
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  line-height: 1.2;
+  /* Якорь оглавления не должен уезжать под липкую шапку. */
+  scroll-margin-top: 96px;
+}
+
+.subheading {
+  margin: 1.6em 0 0.5em;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.list,
+.orderedList {
+  margin: 0 0 1.15em;
+  padding: 0;
+  list-style: none;
+  counter-reset: item;
+}
+
+.listItem {
+  position: relative;
+  padding-left: 1.6em;
+  margin-bottom: 0.5em;
+}
+
+.list .listItem::before {
+  content: "";
+  position: absolute;
+  left: 0.45em;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.orderedList .listItem {
+  counter-increment: item;
+}
+
+.orderedList .listItem::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-head);
+  color: var(--brand);
+}
+
+.quote {
+  margin: 1.5em 0;
+  padding-left: 1.2em;
+  border-left: 2px solid var(--brand);
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+}
+
+.link {
+  color: var(--brand);
+  text-underline-offset: 3px;
+}
+
+.code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  background: var(--brand-tint);
+  font-size: 0.95em;
+}

@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { normalizeImageSrc } from "@/lib/image";
 import type { Doctor, DoctorPayload, Service, ServicePayload } from "@/lib/types";
 
 const BACKEND_URL = process.env.BACKEND_URL!;
@@ -33,9 +34,14 @@ async function cmsRequest<T>(
     return (await r.json().catch(() => null)) as T | null;
 }
 
+/**
+ * Битую ссылку на фото гасим и в админке: строка получит бейдж «Нет фото»,
+ * то есть редактор увидит, что запись надо починить, вместо падения таблицы.
+ */
 export async function actionListAllServices(): Promise<Service[]> {
     const list = await cmsRequest<Service[]>("/api/cms/services");
-    return Array.isArray(list) ? list : [];
+    if (!Array.isArray(list)) return [];
+    return list.map((s) => ({ ...s, imageSrc: normalizeImageSrc(s.imageSrc) }));
 }
 
 export async function actionCreateService(payload: ServicePayload) {
@@ -48,7 +54,8 @@ export async function actionPatchService(id: number, payload: Partial<ServicePay
 
 export async function actionListAllDoctors(): Promise<Doctor[]> {
     const list = await cmsRequest<Doctor[]>("/api/cms/doctors");
-    return Array.isArray(list) ? list : [];
+    if (!Array.isArray(list)) return [];
+    return list.map((d) => ({ ...d, imgSrc: normalizeImageSrc(d.imgSrc) }));
 }
 
 export async function actionCreateDoctor(payload: DoctorPayload) {

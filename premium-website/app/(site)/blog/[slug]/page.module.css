@@ -1,0 +1,95 @@
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 40px) var(--gutter) var(--section-y);
+  color: var(--ink);
+}
+
+.hero { margin-bottom: clamp(28px, 5vw, 48px); }
+
+.cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--brand-tint);
+  box-shadow: var(--shadow-lift);
+}
+
+.coverImage { object-fit: cover; }
+
+.heroText { padding: 20px 4px 0; }
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  max-width: 22ch;
+}
+
+.meta {
+  margin: 14px 0 0;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* От 900px заголовок ложится на фото: там места хватает и снимок работает
+   подложкой. Ниже — фото сверху, текст под ним. */
+@media (min-width: 900px) {
+  .hero { position: relative; isolation: isolate; }
+  .cover { aspect-ratio: 21 / 9; }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(8, 24, 58, 0.82) 0%,
+      rgba(8, 24, 58, 0.45) 42%,
+      rgba(8, 24, 58, 0) 78%
+    );
+  }
+  .heroText {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    padding: 0 clamp(24px, 4vw, 48px) clamp(24px, 4vw, 44px);
+  }
+  .title { color: var(--on-dark); max-width: 26ch; }
+  .meta { color: var(--on-dark-soft); }
+}
+
+.layout { display: block; }
+
+@media (min-width: 1100px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  max-width: 68ch;
+  margin-top: clamp(40px, 6vw, 72px);
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.disclaimer {
+  flex: 1 1 280px;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}

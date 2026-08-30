@@ -1,0 +1,37 @@
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) var(--section-y);
+  color: var(--ink);
+}
+
+.head {
+  max-width: 62ch;
+  margin-bottom: clamp(28px, 5vw, 48px);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0.75rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.grid {
+  display: grid;
+  gap: clamp(16px, 2.4vw, 26px);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.empty {
+  padding: clamp(28px, 6vw, 56px) 0;
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+}

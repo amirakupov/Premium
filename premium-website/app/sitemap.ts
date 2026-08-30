@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { listAllServices } from "@/lib/cms";
+import { listAllServices, listBlogPosts } from "@/lib/cms";
 import { SITE_URL } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -7,6 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "",
         "/services",
         "/doctors",
+        "/blog",
         "/eeg",
         "/contacts",
         "/documents",
@@ -24,5 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
     }));
 
-    return [...staticPages, ...servicePages];
+    const posts = await listBlogPosts();
+    const blogPages: MetadataRoute.Sitemap = posts.map((post) => ({
+        url: `${SITE_URL}/blog/${post.slug}`,
+        changeFrequency: "monthly",
+        priority: 0.6,
+    }));
+
+    return [...staticPages, ...servicePages, ...blogPages];
 }

@@ -7,14 +7,18 @@ import type { Service } from '@/lib/types';
 export default function ServiceCard({ service }: { service: Service }) {
   return (
     <article className={styles.card} data-reveal="card">
+      {/* Без фото контейнер остаётся тонированной плашкой: карточка с ценой
+          и описанием полезна и без картинки, ронять из-за неё нечего. */}
       <div className={styles.imageContainer}>
-        <Image
-          src={service.imageSrc}
-          alt={service.serviceName}
-          fill
-          sizes="(max-width: 768px) 80vw, 360px"
-          className={styles.image}
-        />
+        {service.imageSrc ? (
+          <Image
+            src={service.imageSrc}
+            alt={service.serviceName}
+            fill
+            sizes="(max-width: 768px) 80vw, 360px"
+            className={styles.image}
+          />
+        ) : null}
       </div>
 
       <div className={styles.descriptionContainer}>

@@ -29,3 +29,21 @@ export interface LoginRequest {
     username: string;
     password: string;
 }
+
+/**
+ * Пост блога. Зеркало BlogPostResponseDto бекенда: поля sourceTopic в DTO
+ * нет, поэтому тему статьи на фронте приходится выводить из title/keywords.
+ */
+export interface BlogPost {
+    id: number;
+    slug: string;
+    title: string;
+    /** Санитизированный на бекенде HTML: h2, h3, p, ul, ol, li, strong, em, a. */
+    body: string;
+    metaDescription: string | null;
+    keywords: string | null;
+    status: "DRAFT" | "PUBLISHED";
+    aiGenerated: boolean;
+    createdAt: string;
+    updatedAt: string;
+}

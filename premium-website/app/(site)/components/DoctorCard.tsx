@@ -35,13 +35,15 @@ export default function DoctorCard({ imgSrc, name, specialty, bio }: DoctorCardP
     >
       <div className={`${styles.cardInner} ${flipped ? styles.flipped : ''}`}>
         <div className={styles.cardFace} aria-hidden={flipped}>
-          <Image
-            src={imgSrc}
-            alt={name}
-            fill
-            sizes="285px"
-            className={styles.image}
-          />
+          {imgSrc ? (
+            <Image
+              src={imgSrc}
+              alt={name}
+              fill
+              sizes="285px"
+              className={styles.image}
+            />
+          ) : null}
           <div className={styles.overlay}>
             <div className={styles.info}>
               <h3 className={styles.name}>{name}</h3>
