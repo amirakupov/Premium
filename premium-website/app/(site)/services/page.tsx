@@ -3,6 +3,10 @@ import ServiceCard from '@/app/(site)/components/ServiceCard';
 import styles from './page.module.css';
 import { listAllServices } from '@/lib/cms';
 
+// Услуги приходят из CMS — на билде бэкенда нет, пререндер дал бы пустой
+// список. Подробнее: app/(site)/doctors/page.tsx.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Услуги и цены',
   description:

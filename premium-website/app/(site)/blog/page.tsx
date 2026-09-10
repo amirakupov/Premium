@@ -4,6 +4,10 @@ import { CLINIC } from "@/lib/constants";
 import BlogCard from "@/app/(site)/components/blog/BlogCard";
 import styles from "./page.module.css";
 
+// Посты приходят из CMS — на билде бэкенда нет, пререндер дал бы пустой
+// список. Подробнее: app/(site)/doctors/page.tsx.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Блог",
     description: `Статьи о неврологии от врачей ${CLINIC.name}: симптомы, обследования и лечение.`,
