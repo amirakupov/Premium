@@ -9,6 +9,10 @@ import HomeShell from '@/app/(site)/components/HomeShell';
 import SectionMotion from '@/app/(site)/components/SectionMotion';
 import { listAllDoctors, listAllServices } from '@/lib/cms';
 
+// Блоки услуг и врачей на главной приходят из CMS — на билде бэкенда нет,
+// пререндер дал бы пустые секции. Подробнее: app/(site)/doctors/page.tsx.
+export const dynamic = 'force-dynamic';
+
 /**
  * Порядок секций здесь — это порядок глав сцены. Каждая глава привязана к
  * DOM-якорю секции (см. components/neuron/sceneScript.ts):

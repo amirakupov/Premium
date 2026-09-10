@@ -3,6 +3,11 @@ import DoctorCard from '@/app/(site)/components/DoctorCard';
 import styles from './page.module.css';
 import { listAllDoctors } from '@/lib/cms';
 
+// Список врачей живёт в CMS. Без этого страница пререндерилась бы на этапе
+// `next build`, где бэкенда нет (см. lib/cms.ts) — и в прод уезжал бы пустой
+// HTML, вмороженный навсегда. Рендерим на запрос; сам ответ CMS кэшируется.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Наши врачи',
   description:
