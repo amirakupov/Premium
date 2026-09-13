@@ -27,7 +27,13 @@ import { chapterIndex, createSceneState, resolveSceneState } from './sceneScript
 import { useScrollDirector } from './useScrollDirector';
 import { clamp01, damp, easeInOut, easeOut, lerp, range, smoothstep } from './utils';
 import { createPageTheme } from './pageTheme';
-import { FINALE_FALLBACK, measureFinaleBox, type FinaleBox } from './finaleFrame';
+import {
+    GRID_W,
+    finaleFrame,
+    measureFinaleBox,
+    sameBox,
+    type FinaleBox,
+} from './finaleFrame';
 import { createSignalSystem } from './signals';
 import { createMicroEvents } from './events';
 import { growNeuron } from './geometry/growNeuron';
@@ -60,9 +66,6 @@ import {
 
 const BREATH_RATE = (Math.PI * 2) / SOMA.BREATH_PERIOD;
 const PEN_PULSE_RATE = (Math.PI * 2) / FINALE.PEN_PULSE_PERIOD;
-/** Видимая высота на плоскости диаграммы: от соотношения сторон не зависит. */
-const FINALE_VISIBLE_H = 2 * FINALE.CAMERA_Z * Math.tan((FINALE.FOV * Math.PI) / 360);
-const GRID_W = EEG.WIDTH + FINALE.GRID_PAD_X * 2;
 /**
  * Ниже этой главы прочерченность сбрасывается. Монотонность нужна внутри
  * финала — при повторном заходе эффект обязан отыграться заново.
@@ -270,12 +273,22 @@ export default function Neuron({
      *
      * Куда именно ставить диаграмму, решает не сцена, а CSS: коробка `.rig`
      * лежит в потоке под текстом расплаты, и сцена читает её прямоугольник
-     * (finaleFrame.ts). Пересчёт — на resize, повороте экрана, загрузке шрифтов
-     * и изменении размеров самой секции, то есть ровно тогда, когда раскладка
+     * (finaleFrame.ts) — в CSS-пикселях, и в пикселях же приводит к канвасу.
+     * Пересчёт — на resize, повороте экрана, загрузке шрифтов и изменении
+     * размеров самой секции, то есть ровно тогда, когда раскладка
      * действительно поехала.
+     *
+     * Замер идёт прямо в rAF-колбэке, а не через счётчик в состоянии: адресная
+     * строка мобильного браузера выдаёт resize пачками во время скролла, и
+     * ре-рендер компонента сцены на каждый из них был бы лишней работой.
+     * Состояние меняется только если коробка реально сдвинулась (sameBox —
+     * четверть пикселя); иначе React получает тот же объект и не рендерит.
      */
-    const [box, setBox] = useState<FinaleBox>(FINALE_FALLBACK);
-    const [layoutTick, setLayoutTick] = useState(0);
+    const [box, setBox] = useState<FinaleBox | null>(null);
+    const remeasure = () => {
+        const next = measureFinaleBox();
+        setBox((prev) => (sameBox(prev, next) ? prev : next));
+    };
 
     useEffect(() => {
         if (reduced) return;
@@ -284,7 +297,7 @@ export default function Neuron({
             if (raf) return;
             raf = requestAnimationFrame(() => {
                 raf = 0;
-                setLayoutTick((v) => v + 1);
+                remeasure();
             });
         };
         window.addEventListener('resize', schedule);
@@ -306,47 +319,22 @@ export default function Neuron({
             window.removeEventListener('load', schedule);
             observer.disconnect();
         };
+        // remeasure читает только DOM и пишет состояние, зависимостей у неё нет
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reduced]);
 
+    /* Канвас сменил размер (R3F меряет его своим ResizeObserver) — раскладка
+       страницы к этому моменту уже другая, перемеряем и коробку. Обычно это
+       тот же resize, что выше, и замер тогда возвращает тот же объект. */
     useLayoutEffect(() => {
-        const next = measureFinaleBox();
-        setBox((prev) =>
-            Math.abs(prev.cx - next.cx) < 1e-4 &&
-            Math.abs(prev.cy - next.cy) < 1e-4 &&
-            Math.abs(prev.w - next.w) < 1e-4
-                ? prev
-                : next,
-        );
-    }, [layoutTick, size.width, size.height]);
+        remeasure();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [size.width, size.height]);
 
-    const frame = useMemo(() => {
-        const worldPerPx = FINALE_VISIBLE_H / Math.max(1, size.height);
-        const visibleW = FINALE_VISIBLE_H * (size.width / Math.max(1, size.height));
-        const scale = (box.w * size.width * worldPerPx) / GRID_W;
-
-        /* Экранная толщина ленты и шаг клетки тянутся обратно к своим целям:
-           честный масштаб на телефоне оставил бы ~1.8 px линии и ~8 px клетки,
-           то есть серый мазок вместо записи. Компенсация частичная — при полной
-           лента на узком экране выглядела бы верёвкой. */
-        const compensate = (world: number, targetPx: number) => {
-            const naturalPx = (world * scale) / worldPerPx;
-            const px = lerp(naturalPx, targetPx, FINALE.COMPENSATION);
-            return { world: (px * worldPerPx) / scale, px };
-        };
-        const thickness = compensate(EEG.THICKNESS, FINALE.THICKNESS_PX);
-        const gridStep = compensate(FINALE.GRID_STEP, FINALE.GRID_STEP_PX);
-
-        return {
-            scale,
-            x: (box.cx - 0.5) * visibleW,
-            y: (0.5 - box.cy) * FINALE_VISIBLE_H,
-            thickness: thickness.world,
-            gridStep: gridStep.world,
-            /* gl_PointSize задаётся в пикселях КАДРОВОГО БУФЕРА, а thickness.px
-               посчитан в CSS-пикселях — отсюда множитель на dpr. */
-            penPx: thickness.px * FINALE.PEN_SIZE * viewport.dpr,
-        };
-    }, [box, size.width, size.height, viewport.dpr]);
+    const frame = useMemo(
+        () => finaleFrame(box, size.width, size.height, viewport.dpr),
+        [box, size.width, size.height, viewport.dpr],
+    );
 
     /* Размеры, зависящие только от кадрирования, пишутся при его пересчёте, а
        не в useFrame: это буквально раз в resize. */
@@ -419,6 +407,7 @@ export default function Neuron({
                     ? {
                           x: eegGroupRef.current.position.x,
                           y: eegGroupRef.current.position.y,
+                          z: eegGroupRef.current.position.z,
                           scale: eegGroupRef.current.scale.x,
                       }
                     : null,
@@ -482,23 +471,36 @@ export default function Neuron({
            (#outro-draw); `handoff` — единый скаляр передачи: одна яркость
            затухает ровно тем же числом, которым нарастает другая. Двумя
            независимыми кривыми свет в кадре либо провалился бы между ними,
-           либо подскочил. */
+           либо подскочил. Окна — в params.FINALE, там же почему. */
         const collapse = clamp01(range(dissolve, 0.15, 1));
         /* Порог не на глаз: масштаб группы идёт как lerp(1, 0.015, easeOut(dissolve)),
-           и ниже 0.12 — то есть до состояния «точка» — он уходит примерно на
-           collapse ≈ 0.9. Передача заканчивается там же, а движение пера
-           начинается ещё чуть позже (FINALE.DRAW_START): сначала схлопывание,
-           потом запись, и ни в одном кадре в кадре нет двух светящихся точек. */
-        const handoff = smoothstep(0.78, 0.93, collapse);
+           и ниже 0.12 — то есть до состояния «точка» — он уходит на collapse ≈ 0.45.
+           К началу передачи (HANDOFF_START) нейрон уже точка и уже на месте
+           (FLIGHT_END), к её концу перо зажглось, а движение пера начинается ещё
+           чуть позже (DRAW_START): ни в одном кадре нет двух светящихся точек. */
+        const handoff = smoothstep(FINALE.HANDOFF_START, FINALE.HANDOFF_END, collapse);
+
+        /* Плоскость диаграммы держится на FINALE.CAMERA_Z ПЕРЕД КАМЕРОЙ, а не на
+           z = 0 мира. Камера едет от вспышки (z 5.6) к финальной оптике (8.6) весь
+           отрезок, а экранный прямоугольник диаграммы посчитан для расстояния
+           8.6: пока камера в пути, диаграмма на z = 0 была бы крупнее и ниже
+           расчётного, и нейрон летел бы в точку, где перо потом НЕ зажжётся
+           (docs/neuron-v5/baseline.md, 1.4). Фиксированное расстояние до камеры
+           снимает это без чтения раскладки и без пересчёта кадра: в трёх главах
+           финала камера стоит на 8.6, и это ровно z = 0, как раньше. Кадр
+           верен, пока камера смотрит вдоль оси с fov 45 — оба условия для глав
+           от вспышки и дальше проверяет lib/finale-frame.test.ts. */
+        const planeZ = state.cameraPos.z - FINALE.CAMERA_Z;
 
         /* Левый конец ленты в мировых координатах: туда стягивается нейрон.
-           Там же стоит калибровочный импульс, с которого начинается запись. */
+           Там же стоит калибровочный импульс, с которого начинается запись.
+           Полёт заканчивается к FLIGHT_END — до того, как начнётся передача. */
         built.eegPath.sample(0, penStart.current);
-        const toPen = easeInOut(collapse);
+        const toPen = easeInOut(range(collapse, 0, FINALE.FLIGHT_END));
         group.position.set(
             lerp(state.neuronPos.x, penStart.current.x * frame.scale + frame.x, toPen),
             lerp(state.neuronPos.y, penStart.current.y * frame.scale + frame.y, toPen),
-            lerp(state.neuronPos.z, 0, toPen),
+            lerp(state.neuronPos.z, planeZ, toPen),
         );
 
         /* 0.015, а не 0.12: нейрон обязан схлопнуться именно в ТОЧКУ — иначе в
@@ -590,7 +592,7 @@ export default function Neuron({
            только раскладка. */
         const eegGroup = eegGroupRef.current;
         if (eegGroup) {
-            eegGroup.position.set(frame.x, frame.y, 0);
+            eegGroup.position.set(frame.x, frame.y, planeZ);
             eegGroup.scale.setScalar(frame.scale);
         }
 
@@ -609,21 +611,31 @@ export default function Neuron({
         const visible = a11y.current ? 0 : 1;
         const rig = state.eegRig * visible;
 
+        /* Непрозрачность ленты ведётся тем же `handoff`, что и перо: чернила —
+           это след пера, и видны они ровно тогда, когда перо в руках прибора.
+           В v4 она зависела только от прочерченности, и на пути ВВЕРХ полностью
+           записанная лента висела поверх вернувшегося нейрона от #doctors до
+           #clinic-photos, а на p = 5 гасла скачком за один кадр вместе со сбросом
+           drawn (baseline.md, 1.2). Теперь на пути вверх лента гаснет там же, где
+           разгорается уголёк сомы — передача идёт в обратную сторону, — а сброс
+           drawn ниже climax-build случается при уже нулевой непрозрачности.
+           Монотонность прочерченности внутри прохода при этом не тронута. */
         built.eegMaterial.uniforms.uProgress.value = progress;
-        built.eegMaterial.uniforms.uOpacity.value = clamp01(drawn.current * 12) * visible;
+        built.eegMaterial.uniforms.uOpacity.value = handoff * clamp01(drawn.current * 12) * visible;
         built.eegMaterial.uniforms.uHeadHDR.value = EEG.HEAD_HDR * state.eegHead;
-
-        built.gridMaterial.uniforms.uProgress.value = progress;
-        built.gridMaterial.uniforms.uOpacity.value = rig * profile.gridInk;
 
         /* Перо — отдельный объект, а не градиент на хвосте ленты: у записи
            должен быть физический наконечник. Позиция берётся опросом той же
            кривой, без аллокаций. */
+        built.eegPath.sample(progress, penPoint.current);
         const pen = penRef.current;
-        if (pen) {
-            built.eegPath.sample(progress, penPoint.current);
-            pen.position.set(penPoint.current.x, penPoint.current.y, 0.02);
-        }
+        if (pen) pen.position.set(penPoint.current.x, penPoint.current.y, 0.02);
+
+        /* Сетке — положение пера в долях ШИРИНЫ квада, из той же точки кривой.
+           `progress` — доля длины дуги, и дуга набирается неравномерно; отдавать
+           её сетке значило бы светить бумагу мимо пера (materials/eeg.ts). */
+        built.gridMaterial.uniforms.uPenX.value = clamp01((penPoint.current.x + GRID_W / 2) / GRID_W);
+        built.gridMaterial.uniforms.uOpacity.value = rig * profile.gridInk;
         // не мигание, а дыхание прибора: прибор работает, а не «анимация кончилась»
         const pulse = 1 + FINALE.PEN_PULSE_AMP * Math.sin(time * PEN_PULSE_RATE);
         built.penMaterial.uniforms.uSize.value = frame.penPx * pulse;

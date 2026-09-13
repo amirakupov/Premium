@@ -114,7 +114,13 @@ const GRID_FRAG = /* glsl */ `
   uniform vec2 uSize;        // размер квада в локальных единицах
   uniform float uStep;       // шаг мелкой клетки
   uniform float uMajor;      // во сколько раз крупная клетка больше мелкой
-  uniform float uProgress;   // куда дошло перо, в долях ширины
+  /* Где стоит перо — в ДОЛЯХ ШИРИНЫ квада, то есть в той же параметризации,
+     что vUv.x. Это не uProgress ленты: тот — доля ДЛИНЫ ДУГИ (geometry/eeg.ts
+     кладёт в uv.x накопленную длину), а дуга вдвое длиннее ширины и набирается
+     неравномерно — каждая вертикаль калибровки и каждый пик QRS добавляют
+     длину, не сдвигая x. Сравнивать долю дуги с долей ширины — значит светить
+     бумагу то позади пера, то далеко впереди (docs/neuron-v5/baseline.md, 1.6). */
+  uniform float uPenX;
   uniform float uOpacity;
   uniform vec3 uColor;
   uniform float uRadius;     // скругление рамки, в локальных единицах
@@ -152,9 +158,12 @@ const GRID_FRAG = /* glsl */ `
        перед ним, а у законченной диаграммы освещён весь лист — это уже не
        процесс, а результат, и он обязан читаться целиком. */
     float band =
-        smoothstep(uProgress + 0.42, uProgress + 0.03, vUv.x) *
-        smoothstep(uProgress - 0.16, uProgress + 0.03, vUv.x);
-    float base = 0.4 + 0.47 * smoothstep(0.72, 1.0, uProgress);
+        smoothstep(uPenX + 0.42, uPenX + 0.03, vUv.x) *
+        smoothstep(uPenX - 0.16, uPenX + 0.03, vUv.x);
+    /* 0.95 — где по ширине квада заканчивается запись (правый край ленты плюс
+       GRID_PAD_X): у дописанной диаграммы база выходит на максимум ровно в
+       момент, когда перо встало, а не раньше. */
+    float base = 0.4 + 0.47 * smoothstep(0.72, 0.95, uPenX);
     float paper = min(1.0, base + 0.55 * band);
 
     /* Рамка кадра тем же скруглением, что у карточек сайта: она связывает
@@ -184,7 +193,7 @@ export function createEegGridMaterial() {
             },
             uStep: { value: FINALE.GRID_STEP },
             uMajor: { value: FINALE.GRID_MAJOR },
-            uProgress: { value: 0 },
+            uPenX: { value: 0 },
             uOpacity: { value: 0 },
             uColor: { value: new THREE.Color('#a7cbf7') },
             uRadius: { value: 0.26 },
