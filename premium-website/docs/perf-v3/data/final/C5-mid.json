@@ -1,0 +1,108 @@
+{
+  "cmd": "scroll",
+  "label": "C5-mid",
+  "url": "http://localhost:3000/?tier=mid",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T16:09:38.696Z",
+  "layersBefore": {
+    "count": 23,
+    "estBytesAtDpr1": 541111836,
+    "estMB": 516,
+    "big": 19
+  },
+  "frames": {
+    "frames": 601,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 17.3,
+    "p99": 17.6,
+    "max": 17.7,
+    "fps": 60.1,
+    "over16": 95,
+    "over33": 0,
+    "longTasksDuring": 0
+  },
+  "rendersPerSec": 1543.5,
+  "trace": {
+    "windowMs": 10025,
+    "mainBusyMs": 1203.3,
+    "mainBusyPct": 12,
+    "buckets": {
+      "script": 531.8,
+      "style": 177.3,
+      "layout": 119.2,
+      "paint": 159,
+      "composite": 58,
+      "other": 158
+    },
+    "bucketsPct": {
+      "script": 5.3,
+      "style": 1.8,
+      "layout": 1.2,
+      "paint": 1.6,
+      "composite": 0.6,
+      "other": 1.6
+    },
+    "gpuTaskMs": 1042.3,
+    "rasterMs": 56.4,
+    "longTasks": [],
+    "userMarks": [],
+    "topNames": [
+      [
+        "FunctionCall",
+        451.1
+      ],
+      [
+        "UpdateLayoutTree",
+        177.3
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        126.2
+      ],
+      [
+        "Paint",
+        85
+      ],
+      [
+        "Layerize",
+        63
+      ],
+      [
+        "Commit",
+        58
+      ],
+      [
+        "PrePaint",
+        53.8
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        36.1
+      ],
+      [
+        "Layout",
+        28.5
+      ],
+      [
+        "EventDispatch",
+        27.4
+      ],
+      [
+        "RunTask",
+        17.3
+      ],
+      [
+        "FireAnimationFrame",
+        14.3
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 59,
+    "estBytesAtDpr1": 788328240,
+    "estMB": 751.8,
+    "big": 54
+  }
+}

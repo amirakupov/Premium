@@ -1,0 +1,9 @@
+{
+  "cmd": "loadshot",
+  "label": "A-curtain-1200ms",
+  "url": "http://localhost:3000/",
+  "variant": "1200",
+  "cold": false,
+  "at": "2026-09-13T15:32:57.851Z",
+  "shotAtMs": 1200
+}

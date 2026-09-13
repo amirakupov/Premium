@@ -1,0 +1,8 @@
+{
+  "cmd": "shot",
+  "label": "F-services-high",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T16:21:12.764Z"
+}

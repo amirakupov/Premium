@@ -21,6 +21,14 @@ const backend = (() => {
 
 const nextConfig: NextConfig = {
     output: "standalone",
+    /* Измерительная обвязка perf-v3 (docs/perf-v3) включается сборкой с
+       NEXT_PUBLIC_PERF_HARNESS=1. Значение пинится явно, иначе при
+       неопределённой переменной Turbopack оставляет обращение к process.env в
+       рантайме, и отладочные ветки (window.__neuron и т.п.) не вырезаются из
+       прод-бандла, хотя и не выполняются. */
+    env: {
+        NEXT_PUBLIC_PERF_HARNESS: process.env.NEXT_PUBLIC_PERF_HARNESS ?? "0",
+    },
     experimental: {
         // Dropzone пропускает файлы до 5 МБ, а бэкенд — до 10 МБ, но сам файл
         // едет в server action, у которых дефолтный лимит тела 1 МБ:

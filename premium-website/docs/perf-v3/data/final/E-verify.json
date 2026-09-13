@@ -1,0 +1,66 @@
+{
+  "duringCurtain": {
+    "curtain": "1",
+    "overflow": "hidden",
+    "footerVis": "hidden",
+    "ariaBusy": "true",
+    "scrollable": true,
+    "cookieAttr": "set",
+    "bannerVisible": false
+  },
+  "scrollDuringCurtain": 800,
+  "afterCurtain": {
+    "curtain": "0",
+    "overflow": "visible",
+    "footerVis": "visible",
+    "ariaBusy": null
+  },
+  "anchors": "#hero:true #symptom:true #diagnostics:true #quote:true #services:true #clinic-photos:true #doctors:true #outro:true",
+  "cards": {
+    "services": 9,
+    "skeletons": 0,
+    "doctors": 4,
+    "doctorButtons": 8
+  },
+  "a11y": {
+    "skip": "#main",
+    "mainId": true,
+    "inertMenu": true,
+    "menuAriaHidden": "true",
+    "searchLabels": [
+      "Поиск по сайту",
+      "Поиск по сайту в меню"
+    ],
+    "a11yToggle": "Версия для слабовидящих"
+  },
+  "skipVisible": "1",
+  "flip": {
+    "expanded": "true",
+    "activeText": "Скрыть",
+    "backInert": 1
+  },
+  "mapBefore": {
+    "iframe": true
+  },
+  "err_// 5. E8: отклонить cookies → карта не г": "TypeError: Cannot read properties of undefined (reading 'click')\n    at <anonymous>:1:104",
+  "bannerOnRevisit": {
+    "attr": "set",
+    "bannerInDom": false,
+    "curtainFrames": 0
+  },
+  "mapAfterAccept": true,
+  "ariaCurrent": "/services",
+  "a11yLabel": {
+    "attr": "1",
+    "label": "Версия для слабовидящих",
+    "pressed": "false"
+  },
+  "reduced": {
+    "curtainFrames": 0,
+    "outroDisplay": "none",
+    "canvas": true,
+    "scrollBehavior": "smooth",
+    "pageBg": "rgb(234, 241, 255)"
+  },
+  "doctorsHtml": "<div class=\"Doctors-module__YVowvq__headerContainer\"><h2 class=\"Doctors-module__YVowvq__heading\" data-reveal=\"heading\" style=\"\">Наши специалисты</h2><a class=\"Doctors-module__YVowvq__viewAllLink\" href=\"/doctors\">Все врачи клиники</a></div><div class=\"Doctors-module__YVowvq__gridWrapper\" data-reveal-group=\"true\"><div class=\"DoctorCard-module__IDwUEa__cardContainer\" data-reveal=\"card-tilt\" style=\"\"><div class=\"DoctorCard-module__IDwUEa__cardInner \"><div class=\"DoctorCard-module__IDwUEa__cardFace\" aria-hidden=\"false\"><img alt=\"Азамат Р.\" loading=\"lazy\" decoding=\"async\" data-nimg=\"fill\" class=\"DoctorCard-module__IDwUEa__image\" style=\"position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent\" sizes=\"285px\" srcset=\"/_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fhero%2Ffounder.jpg&amp;w=384&amp;q=75 384w, /_next/ima"
+}

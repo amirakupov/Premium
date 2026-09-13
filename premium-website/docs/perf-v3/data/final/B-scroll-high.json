@@ -1,0 +1,116 @@
+{
+  "cmd": "scroll",
+  "label": "B-scroll-high",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:40:31.205Z",
+  "layersBefore": {
+    "count": 23,
+    "estBytesAtDpr1": 542705904,
+    "estMB": 517.6,
+    "big": 19
+  },
+  "frames": {
+    "frames": 598,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 17.4,
+    "p99": 17.6,
+    "max": 66.6,
+    "fps": 59.8,
+    "over16": 81,
+    "over33": 1,
+    "longTasksDuring": 0
+  },
+  "trace": {
+    "windowMs": 10028,
+    "mainBusyMs": 1226,
+    "mainBusyPct": 12.2,
+    "buckets": {
+      "script": 564.5,
+      "style": 151.7,
+      "layout": 121.7,
+      "paint": 153.3,
+      "composite": 56.5,
+      "other": 178.3
+    },
+    "bucketsPct": {
+      "script": 5.6,
+      "style": 1.5,
+      "layout": 1.2,
+      "paint": 1.5,
+      "composite": 0.6,
+      "other": 1.8
+    },
+    "gpuTaskMs": 1025.5,
+    "rasterMs": 61.3,
+    "longTasks": [],
+    "userMarks": [
+      {
+        "name": "neuron:build:start:mid",
+        "at": 1909.8
+      },
+      {
+        "name": "neuron:build:end:mid",
+        "at": 1935.4
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        469.4
+      ],
+      [
+        "UpdateLayoutTree",
+        151.7
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        141.9
+      ],
+      [
+        "Paint",
+        83.9
+      ],
+      [
+        "Layerize",
+        59.8
+      ],
+      [
+        "Commit",
+        56.5
+      ],
+      [
+        "PrePaint",
+        49.8
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        36.3
+      ],
+      [
+        "Layout",
+        32.7
+      ],
+      [
+        "EventDispatch",
+        31
+      ],
+      [
+        "RunTask",
+        18
+      ],
+      [
+        "RunMicrotasks",
+        14.3
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 59,
+    "estBytesAtDpr1": 789922308,
+    "estMB": 753.3,
+    "big": 54
+  }
+}
