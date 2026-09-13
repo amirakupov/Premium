@@ -59,6 +59,17 @@ export type TierProfile = {
     /** mipmapBlur даёт мягкий широкий ореол, но это лишний проход */
     bloomMipmap: boolean;
     /**
+     * Ширина собственного ореола вокруг пера финальной диаграммы.
+     *
+     * На mid/high свечение пера даёт блум: материал ленты и пера работают в HDR
+     * (значения выше единицы), ACES сжимает ядро в белое, композитор добирает
+     * ореол. На low композитора нет вовсе (`postprocessing: false`), то есть
+     * блума нет физически, и HDR-ядро там осталось бы просто яркой точкой.
+     * Поэтому перо рисует ореол само — шире и заметнее, чем там, где есть блум,
+     * иначе на low финал теряет ровно то, ради чего он сделан.
+     */
+    penHalo: number;
+    /**
      * physical — MeshPhysicalMaterial с transmission на ветвях; shader — тот же
      * материал без преломления (по стоимости примерно Standard).
      */
@@ -92,6 +103,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         clearcoat: 0,
         iridescence: 0,
         bloomMipmap: false,
+        penHalo: 0.85,
         branchMaterial: 'shader',
         somaTransmission: false,
         pageGlass: false,
@@ -116,6 +128,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         clearcoat: 0.55,
         iridescence: 0,
         bloomMipmap: true,
+        penHalo: 0.42,
         branchMaterial: 'shader',
         somaTransmission: false,
         pageGlass: true,
@@ -143,6 +156,7 @@ export const TIERS: Record<Tier, TierProfile> = {
            иризация 0.12 неотличима от нуля, а это отдельная ветка шейдера. */
         iridescence: 0,
         bloomMipmap: true,
+        penHalo: 0.36,
         branchMaterial: 'physical',
         somaTransmission: true,
         pageGlass: true,

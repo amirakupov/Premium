@@ -71,34 +71,245 @@
   max-width: 48ch;
 }
 
-/* Воздух под финальную главу: линия ЭЭГ прочерчивается здесь. Ровно столько,
-   чтобы прочерчивание успело пройти целиком до появления футера. */
+/**
+ * ────────────────────────────── ФИНАЛ ──────────────────────────────
+ *
+ * Три якоря под три главы сцены. Разгоны (`.outroDraw`, `.outroExit`) — это
+ * чистый воздух под хореографию: сцене нужно место, чтобы прочертить линию не
+ * рывком и чтобы у завершённой диаграммы был стоп-кадр.
+ *
+ * `.verdict` — единственная часть финала, у которой есть содержание, поэтому
+ * она видна ВСЕГДА: и при отключённых анимациях, и без WebGL, и в режиме для
+ * слабовидящих. Прятать текст и кнопку «Записаться» нельзя ни в одном режиме
+ * деградации — до этой задачи `.outro` скрывался целиком, и это было правильно
+ * ровно потому, что внутри не было ни слова.
+ */
 .outro {
-  height: 62svh;
-  min-height: 380px;
+  position: relative;
 }
 
+.outroDraw {
+  height: 90svh;
+  min-height: 420px;
+}
+
+.outroExit {
+  height: 50svh;
+  min-height: 260px;
+}
+
+/**
+ * Стоп-кадр.
+ *
+ * Секция выше вьюпорта, а всё её содержимое живёт в липкой коробке ровно в
+ * экран высотой. Это не украшение: 3D-диаграмма нарисована на слое
+ * `position: fixed; inset: 0` (NeuronCanvas.module.css) и во время этой главы
+ * стоит на месте, пока страница едет мимо. Липкая коробка — единственный способ
+ * дать DOM-слою ту же систему отсчёта, что и у сцены. Без неё метки уезжали бы
+ * вверх вместе со скроллом, а сетка оставалась бы на месте.
+ */
+.verdict {
+  position: relative;
+  min-height: 165svh;
+}
+
+.verdictSticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Содержимое по центру экрана, а не прижато под шапку: на телефоне текста
+     столько же, а вьюпорт вдвое выше — прижатое сверху оставляло бы под
+     диаграммой пустую половину экрана. Ширина диаграммы ограничена в том числе
+     по svh, поэтому в самый низкий экран группа влезает и центрирование не
+     выталкивает её за края. */
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--header-h) 0 clamp(16px, 4svh, 48px);
+}
+
+.verdictInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  padding: 0 var(--gutter);
+}
+
+.verdictTitle {
+  margin: 0 0 0.5em;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  line-height: 1.16;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.verdictText {
+  margin: 0 0 clamp(18px, 2.6svh, 30px);
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+.verdictCta {
+  align-self: flex-start;
+}
+
+/**
+ * ── Приборная обвязка ──
+ *
+ * Эта коробка — ЕДИНСТВЕННЫЙ источник правды о том, где на экране стоит
+ * диаграмма. Сцена не вычисляет её положение по своим числам, а читает
+ * `getBoundingClientRect()` этого элемента относительно липкой коробки — один
+ * раз на resize (Neuron.tsx, `useFinaleFrame`). Поэтому 3D-сетка и DOM-метки
+ * сходятся точно, а не «примерно», и раскладкой владеет CSS, которому она и
+ * положена.
+ *
+ * Первая попытка была другой: доли вьюпорта, продублированные числами в
+ * params.ts. Она не может быть верной сразу на двух пропорциях — на 16:9 кнопка
+ * налезала на рамку графика, на 9:19.5 между ними оставалась дыра в треть
+ * экрана. Здесь коробка просто лежит в потоке под текстом, и ни того, ни
+ * другого не бывает по построению.
+ *
+ * Ширина ограничена трижды: долей вьюпорта, абсолютным потолком (на широком
+ * мониторе лента не должна растягиваться в ниточку) и высотой — 116svh по
+ * ширине это ровно 42svh по высоте при пропорции 11.68:4.2. Без третьего
+ * ограничения на низком экране 4:3 диаграмма вылезала бы за нижний край.
+ */
+.rig {
+  position: relative;
+  width: min(92vw, 940px, 116svh);
+  aspect-ratio: 11.68 / 4.2;
+  margin-top: clamp(18px, 4svh, 56px);
+  pointer-events: none;
+}
+
+/* Метки отведений и калибровка лежат ВНУТРИ рамки графика, у самых её краёв:
+   снаружи им на узком экране просто нет места, а внутри они и стоят на всякой
+   настоящей записи. Контраст низкий намеренно — это контекст, а не содержание. */
+.leads,
+.calibration {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: clamp(0.44rem, 0.78vw, 0.68rem);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--on-dark-soft) 55%, transparent);
+}
+
+.leads {
+  left: 2.6%;
+  top: 10%;
+  bottom: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.calibration {
+  right: 2.6%;
+  bottom: 7%;
+  display: flex;
+  gap: clamp(6px, 1.4vw, 18px);
+}
+
+/**
+ * Статичная фирменная линия. В `.verdict` она не декор, а замена диаграммы:
+ * её видят те, для кого 3D-финала не существует вовсе. Поэтому ниже она
+ * включается ровно в тех же трёх режимах, в которых сворачиваются разгоны.
+ */
 .staticEeg {
   display: none;
 }
 
-/* Анимаций нет — финала сцены тоже: держать под него пустой экран незачем. */
+/* ── Деградация ──
+   Разгоны без сцены — пустота перед футером, их можно и нужно свернуть.
+   `.verdict` не сворачивается никогда: в нём текст и кнопка записи. */
 @media (prefers-reduced-motion: reduce) {
-  .outro {
+  .outroDraw,
+  .outroExit {
     display: none;
+  }
+
+  .verdict {
+    min-height: 0;
+  }
+
+  .verdictSticky {
+    position: static;
+    height: auto;
+    align-items: flex-start;
+    padding: clamp(48px, 9vh, 96px) 0;
+  }
+
+  /* Без сцены выравнивать нечего, а пустая коробка в потоке ломала бы отступы. */
+  .rig {
+    display: none;
+  }
+
+  .staticEeg {
+    display: block;
+    margin: 1.75rem auto 0;
   }
 }
 
 /* Сцены нет (WebGL недоступен или контекст потерян — NeuronCanvas ставит
-   html[data-scene="off"]): тот же пустой экран перед футером сворачивается. */
-:global(html[data-scene="off"]) .outro {
+   html[data-scene="off"]) и режим для слабовидящих (страница не темнеет вовсе,
+   см. pageTheme: HDR-свечение пера на белом не работает, и честнее показать
+   статичную линию, чем блёклую диаграмму). Оба случая ведут себя как
+   reduced-motion. */
+:global(html[data-scene="off"]) .outroDraw,
+:global(html[data-scene="off"]) .outroExit,
+:global(html[data-a11y="1"]) .outroDraw,
+:global(html[data-a11y="1"]) .outroExit {
   display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .staticEeg {
-    display: block;
-    margin: 1.75rem auto 0;
+:global(html[data-scene="off"]) .verdict,
+:global(html[data-a11y="1"]) .verdict {
+  min-height: 0;
+}
+
+:global(html[data-scene="off"]) .verdictSticky,
+:global(html[data-a11y="1"]) .verdictSticky {
+  position: static;
+  height: auto;
+  align-items: flex-start;
+  padding: clamp(48px, 9vh, 96px) 0;
+}
+
+:global(html[data-scene="off"]) .rig,
+:global(html[data-a11y="1"]) .rig {
+  display: none;
+}
+
+:global(html[data-scene="off"]) .staticEeg,
+:global(html[data-a11y="1"]) .staticEeg {
+  display: block;
+  margin: 1.75rem auto 0;
+}
+
+/* На узком экране диаграмма мельче, а текста столько же: стоп-кадру нужен
+   воздух, иначе кнопка упирается в рамку графика. */
+@media (max-width: 600px) {
+  .verdictText {
+    max-width: 100%;
+  }
+
+  .leads,
+  .calibration {
+    font-size: 0.44rem;
   }
 }
 

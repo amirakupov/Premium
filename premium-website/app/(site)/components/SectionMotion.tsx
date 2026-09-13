@@ -122,6 +122,72 @@ export default function SectionMotion() {
                 });
             });
 
+            /* Расплата финала.
+               Отдельный триггер, а не общий `data-reveal="heading"`, из-за
+               момента: общий срабатывает, когда заголовок только входит во
+               вьюпорт, а здесь текст обязан появиться ПОСЛЕ того, как сцена
+               дописала линию. Секция #outro-verdict выше экрана и её содержимое
+               липкое, поэтому отсчёт идёт от её верха, ушедшего за верх
+               вьюпорта: к этому моменту диаграмма уже завершена (окно
+               прочерчивания — neuron/params.ts, FINALE.DRAW_END).
+
+               Триггер висит на самой секции, а не на липкой коробке: у
+               приклеенного элемента позиция перестаёт зависеть от скролла, и
+               ScrollTrigger посчитал бы по ней ерунду. */
+            const verdict = document.querySelector<HTMLElement>('#outro-verdict');
+            if (verdict) {
+                const start = 'top top-=22%';
+                const heading = verdict.querySelector<HTMLElement>('[data-reveal="verdict-heading"]');
+                if (heading) {
+                    gsap.fromTo(
+                        heading,
+                        { clipPath: 'inset(0% 0% 100% 0%)', y: 14 },
+                        {
+                            clipPath: 'inset(0% 0% 0% 0%)',
+                            y: 0,
+                            duration: 0.9,
+                            ease: 'power3.out',
+                            clearProps: 'clipPath,transform',
+                            scrollTrigger: { trigger: verdict, start, once: true },
+                        },
+                    );
+                }
+                const rest = gsap.utils.toArray<HTMLElement>('[data-reveal="verdict"]', verdict);
+                if (rest.length) {
+                    gsap.fromTo(
+                        rest,
+                        { opacity: 0, y: 18 },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.8,
+                            ease: 'power3.out',
+                            stagger: 0.12,
+                            delay: 0.18,
+                            clearProps: 'transform,opacity',
+                            scrollTrigger: { trigger: verdict, start, once: true },
+                        },
+                    );
+                }
+                /* Приборная обвязка приходит вместе с расплатой и тем же
+                   движением — но позже и мягче: это контекст, а не содержание. */
+                const rig = verdict.querySelector<HTMLElement>('[data-reveal="rig"]');
+                if (rig) {
+                    gsap.fromTo(
+                        rig,
+                        { opacity: 0 },
+                        {
+                            opacity: 1,
+                            duration: 1.1,
+                            ease: 'power2.out',
+                            delay: 0.4,
+                            clearProps: 'opacity',
+                            scrollTrigger: { trigger: verdict, start, once: true },
+                        },
+                    );
+                }
+            }
+
             /* Параллакс фотографий внутри скруглённых рамок. Двигается
                обёртка, а не сам <Image>: на изображении висит ховерный
                transform, и инлайновый стиль от GSAP забрал бы его себе. */

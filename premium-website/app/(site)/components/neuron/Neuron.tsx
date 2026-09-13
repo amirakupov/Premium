@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import {
@@ -21,18 +21,19 @@ import type {
 } from 'postprocessing';
 import * as THREE from 'three';
 
-import { BLOOM, CAMERA, CHOREO, EEG, FOG, LIGHT, NEURON, SOMA } from './params';
+import { BLOOM, CAMERA, CHOREO, EEG, FINALE, FOG, LIGHT, NEURON, SOMA } from './params';
 import type { TierProfile } from './perf';
-import { createSceneState, resolveSceneState } from './sceneScript';
+import { chapterIndex, createSceneState, resolveSceneState } from './sceneScript';
 import { useScrollDirector } from './useScrollDirector';
-import { clamp01, damp, easeOut, lerp } from './utils';
+import { clamp01, damp, easeInOut, easeOut, lerp, range, smoothstep } from './utils';
 import { createPageTheme } from './pageTheme';
+import { FINALE_FALLBACK, measureFinaleBox, type FinaleBox } from './finaleFrame';
 import { createSignalSystem } from './signals';
 import { createMicroEvents } from './events';
 import { growNeuron } from './geometry/growNeuron';
 import { buildDendriteGeometry } from './geometry/dendrites';
 import { buildSignalPaths } from './geometry/signalPaths';
-import { buildEegGeometry } from './geometry/eeg';
+import { buildEeg } from './geometry/eeg';
 import { buildElectrodeGeometry } from './geometry/electrodes';
 import {
     buildLinkGeometry,
@@ -41,7 +42,12 @@ import {
 } from './geometry/neighbours';
 import { createSignalMaterial } from './materials/signal';
 import { createAuraMaterial } from './materials/aura';
-import { createEegMaterial } from './materials/eeg';
+import {
+    createEegGridMaterial,
+    createEegMaterial,
+    createEegPenGeometry,
+    createEegPenMaterial,
+} from './materials/eeg';
 import { createElectrodeMaterial } from './materials/electrodes';
 import { createLinkMaterial } from './materials/link';
 import {
@@ -53,6 +59,15 @@ import {
 } from './materials/tissue';
 
 const BREATH_RATE = (Math.PI * 2) / SOMA.BREATH_PERIOD;
+const PEN_PULSE_RATE = (Math.PI * 2) / FINALE.PEN_PULSE_PERIOD;
+/** Видимая высота на плоскости диаграммы: от соотношения сторон не зависит. */
+const FINALE_VISIBLE_H = 2 * FINALE.CAMERA_Z * Math.tan((FINALE.FOV * Math.PI) / 360);
+const GRID_W = EEG.WIDTH + FINALE.GRID_PAD_X * 2;
+/**
+ * Ниже этой главы прочерченность сбрасывается. Монотонность нужна внутри
+ * финала — при повторном заходе эффект обязан отыграться заново.
+ */
+const DRAW_RESET_BEFORE = chapterIndex('climax-build');
 
 /** Насколько выражен каждый режим главы прямо сейчас. Всё сглажено. */
 type Gains = {
@@ -74,7 +89,7 @@ export default function Neuron({
     smaa?: boolean;
 }) {
     const director = useScrollDirector(!reduced);
-    const { camera, scene, invalidate, gl } = useThree();
+    const { camera, scene, invalidate, gl, size, viewport } = useThree();
 
     const groupRef = useRef<THREE.Group>(null);
     const membraneRef = useRef<THREE.Mesh>(null);
@@ -108,6 +123,21 @@ export default function Neuron({
         network: 0,
         sync: 0,
     });
+    const eegGroupRef = useRef<THREE.Group>(null);
+    const penRef = useRef<THREE.Points>(null);
+    /* Прочерченность как МАКСИМУМ достигнутого, а не мгновенное значение:
+       самописец не всасывает чернила обратно в перо, а в конце страницы люди
+       скроллят вверх-вниз постоянно. */
+    const drawn = useRef(0);
+    /* Опрос кривой из кадра: векторы создаются один раз, как focus и parallax. */
+    const penPoint = useRef(new THREE.Vector2());
+    const penStart = useRef(new THREE.Vector2());
+    /* Медленный дрейф поворота копится сам, а не берётся как time * k: иначе
+       при включении стоп-кадра (Chapter.still) поворот прыгал бы. */
+    const drift = useRef(0);
+    /* Режим для слабовидящих переключается на живой странице (A11yToggle), а
+       3D-диаграмма в нём не показывается вовсе — см. ниже. */
+    const a11y = useRef(false);
 
     const state = useMemo(() => createSceneState(), []);
     /* Переход фона выключен при reduced-motion: страница остаётся светлой. */
@@ -153,8 +183,19 @@ export default function Neuron({
         const linkGeometry = neighbourLayout ? buildLinkGeometry(neighbourLayout.centers) : null;
         const linkMaterial = hasNetwork ? createLinkMaterial() : null;
 
-        const eegGeometry = buildEegGeometry();
+        /* Лента и таблица опроса кривой — из одного вызова: это буквально одни
+           и те же точки, разойтись им негде. */
+        const eeg = buildEeg();
         const eegMaterial = createEegMaterial();
+
+        /* Сетка — один квад с аналитическим шейдером, не инстансы линий и не
+           текстура. Чуть позади ленты по z, чтобы DoF мог мягко размыть её по
+           краям кадра. */
+        const gridGeometry = new THREE.PlaneGeometry(GRID_W, EEG.HEIGHT + FINALE.GRID_PAD_Y * 2);
+        const gridMaterial = createEegGridMaterial();
+
+        const penGeometry = createEegPenGeometry();
+        const penMaterial = createEegPenMaterial(profile.penHalo);
 
         const events = createMicroEvents(NEURON.SEED + 41);
         performance.mark(`neuron:build:end:${profile.tier}`);
@@ -176,8 +217,13 @@ export default function Neuron({
             neighbourMaterial,
             linkGeometry,
             linkMaterial,
-            eegGeometry,
+            eegGeometry: eeg.geometry,
+            eegPath: eeg.path,
             eegMaterial,
+            gridGeometry,
+            gridMaterial,
+            penGeometry,
+            penMaterial,
             events,
         };
     }, [profile]);
@@ -201,9 +247,136 @@ export default function Neuron({
             built.linkMaterial?.dispose();
             built.eegGeometry.dispose();
             built.eegMaterial.dispose();
+            built.gridGeometry.dispose();
+            built.gridMaterial.dispose();
+            built.penGeometry.dispose();
+            built.penMaterial.dispose();
         },
         [built],
     );
+
+    /**
+     * ── Кадрирование финала ──
+     *
+     * До этой задачи диаграмма стояла в мировых координатах фиксированного
+     * размера, и на телефоне в кадр влезала меньше трети ленты: при fov 45°
+     * видимая ВЫСОТА на плоскости диаграммы постоянна (≈ 7.12 единиц), а ширина
+     * = высота × aspect, то есть 12.7 на 16:9 и 3.3 на 9:19.5 при ленте
+     * шириной 11.
+     *
+     * Лечится масштабом ГРУППЫ, а не шириной ленты и не положением камеры:
+     * камерой владеет таблица глав, а масштаб — свойство объекта, и так проще
+     * ничего не сломать в хореографии.
+     *
+     * Куда именно ставить диаграмму, решает не сцена, а CSS: коробка `.rig`
+     * лежит в потоке под текстом расплаты, и сцена читает её прямоугольник
+     * (finaleFrame.ts). Пересчёт — на resize, повороте экрана, загрузке шрифтов
+     * и изменении размеров самой секции, то есть ровно тогда, когда раскладка
+     * действительно поехала.
+     */
+    const [box, setBox] = useState<FinaleBox>(FINALE_FALLBACK);
+    const [layoutTick, setLayoutTick] = useState(0);
+
+    useEffect(() => {
+        if (reduced) return;
+        let raf = 0;
+        const schedule = () => {
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+                raf = 0;
+                setLayoutTick((v) => v + 1);
+            });
+        };
+        window.addEventListener('resize', schedule);
+        window.addEventListener('orientationchange', schedule);
+        window.addEventListener('load', schedule);
+        document.fonts?.ready.then(schedule).catch(() => {});
+
+        /* Секция меняет высоту не только от вьюпорта: подгрузился шрифт —
+           переносы в абзаце другие, включили режим для слабовидящих — коробка
+           диаграммы вообще исчезла. Наблюдатель ловит и то и другое. */
+        const observer = new ResizeObserver(schedule);
+        const target = document.getElementById('outro-verdict');
+        if (target) observer.observe(target);
+
+        return () => {
+            if (raf) cancelAnimationFrame(raf);
+            window.removeEventListener('resize', schedule);
+            window.removeEventListener('orientationchange', schedule);
+            window.removeEventListener('load', schedule);
+            observer.disconnect();
+        };
+    }, [reduced]);
+
+    useLayoutEffect(() => {
+        const next = measureFinaleBox();
+        setBox((prev) =>
+            Math.abs(prev.cx - next.cx) < 1e-4 &&
+            Math.abs(prev.cy - next.cy) < 1e-4 &&
+            Math.abs(prev.w - next.w) < 1e-4
+                ? prev
+                : next,
+        );
+    }, [layoutTick, size.width, size.height]);
+
+    const frame = useMemo(() => {
+        const worldPerPx = FINALE_VISIBLE_H / Math.max(1, size.height);
+        const visibleW = FINALE_VISIBLE_H * (size.width / Math.max(1, size.height));
+        const scale = (box.w * size.width * worldPerPx) / GRID_W;
+
+        /* Экранная толщина ленты и шаг клетки тянутся обратно к своим целям:
+           честный масштаб на телефоне оставил бы ~1.8 px линии и ~8 px клетки,
+           то есть серый мазок вместо записи. Компенсация частичная — при полной
+           лента на узком экране выглядела бы верёвкой. */
+        const compensate = (world: number, targetPx: number) => {
+            const naturalPx = (world * scale) / worldPerPx;
+            const px = lerp(naturalPx, targetPx, FINALE.COMPENSATION);
+            return { world: (px * worldPerPx) / scale, px };
+        };
+        const thickness = compensate(EEG.THICKNESS, FINALE.THICKNESS_PX);
+        const gridStep = compensate(FINALE.GRID_STEP, FINALE.GRID_STEP_PX);
+
+        return {
+            scale,
+            x: (box.cx - 0.5) * visibleW,
+            y: (0.5 - box.cy) * FINALE_VISIBLE_H,
+            thickness: thickness.world,
+            gridStep: gridStep.world,
+            /* gl_PointSize задаётся в пикселях КАДРОВОГО БУФЕРА, а thickness.px
+               посчитан в CSS-пикселях — отсюда множитель на dpr. */
+            penPx: thickness.px * FINALE.PEN_SIZE * viewport.dpr,
+        };
+    }, [box, size.width, size.height, viewport.dpr]);
+
+    /* Размеры, зависящие только от кадрирования, пишутся при его пересчёте, а
+       не в useFrame: это буквально раз в resize. */
+    useLayoutEffect(() => {
+        built.eegMaterial.uniforms.uThickness.value = frame.thickness;
+        built.gridMaterial.uniforms.uStep.value = frame.gridStep;
+        invalidate();
+    }, [built, frame, invalidate]);
+
+    /**
+     * Режим для слабовидящих: страница в нём не темнеет вообще (pageTheme
+     * сбрасывает переменные), то есть финал играл бы на белом — а на белом не
+     * работает ни HDR-свечение пера, ни низкоконтрастная сетка, ни блум.
+     * Решение: 3D-диаграммы в этом режиме нет вовсе, вместо неё показывается
+     * статичный SVG-орнамент в #outro-verdict (NarrativeActs.module.css).
+     * Блёклая диаграмма была бы хуже честной линии.
+     */
+    useEffect(() => {
+        const root = document.documentElement;
+        const read = () => {
+            const next = root.dataset.a11y === '1';
+            if (next === a11y.current) return;
+            a11y.current = next;
+            invalidate();
+        };
+        read();
+        const observer = new MutationObserver(read);
+        observer.observe(root, { attributes: true, attributeFilter: ['data-a11y'] });
+        return () => observer.disconnect();
+    }, [invalidate]);
 
     /* Новый профиль — новые материалы в исходном состоянии. */
     useLayoutEffect(() => {
@@ -251,11 +424,17 @@ export default function Neuron({
         if (!group) return;
         const g = gains.current;
 
+        /* Насколько кадр «замер». В финале это не только интонация: параллакс
+           двигает КАМЕРУ, а экранный прямоугольник диаграммы посчитан от
+           неподвижного вьюпорта — уехала бы камера, и DOM-метки разъехались бы
+           с сеткой. */
+        const moving = 1 - state.still;
+
         // Камера: положение и точка взгляда приходят из таблицы глав, параллакс
         // мыши добавляется поверх — он живёт независимо от сценария.
         camera.position.set(
-            state.cameraPos.x + parallax.current.x * CAMERA.PARALLAX,
-            state.cameraPos.y + parallax.current.y * CAMERA.PARALLAX * 0.6,
+            state.cameraPos.x + parallax.current.x * CAMERA.PARALLAX * moving,
+            state.cameraPos.y + parallax.current.y * CAMERA.PARALLAX * 0.6 * moving,
             state.cameraPos.z,
         );
         camera.lookAt(state.cameraLookAt);
@@ -264,21 +443,51 @@ export default function Neuron({
             camera.updateProjectionMatrix();
         }
 
-        group.position.copy(state.neuronPos);
         // Медленный дрейф поверх поворота из таблицы: он не должен затирать
         // сценарий, иначе в главах не останется стоп-кадров.
         group.rotation.set(
-            state.neuronRot.x + parallax.current.y * CAMERA.TILT,
-            state.neuronRot.y + time * 0.02,
-            state.neuronRot.z + parallax.current.x * CAMERA.TILT * 0.4,
+            state.neuronRot.x + parallax.current.y * CAMERA.TILT * moving,
+            state.neuronRot.y + drift.current,
+            state.neuronRot.z + parallax.current.x * CAMERA.TILT * 0.4 * moving,
         );
 
         const dissolve = state.dissolve;
         const flash = state.flash;
         const alive = 1 - dissolve;
-        group.scale.setScalar(
-            Math.max(0.001, state.neuronScale * lerp(1, 0.12, easeOut(dissolve)) * (1 + flash * 0.22)),
+
+        /* ── Передача эстафеты: вспышка становится пером ──
+           Раньше нейрон растворялся на месте, а линия отдельно проявлялась
+           внизу кадра — зритель видел, что одно исчезло и появилось другое, а
+           весь смысл финала в том, что одно СТАЛО другим.
+
+           `collapse` — доля пути от вспышки (#doctors) до начала записи
+           (#outro-draw); `handoff` — единый скаляр передачи: одна яркость
+           затухает ровно тем же числом, которым нарастает другая. Двумя
+           независимыми кривыми свет в кадре либо провалился бы между ними,
+           либо подскочил. */
+        const collapse = clamp01(range(dissolve, 0.15, 1));
+        const handoff = smoothstep(0.55, 0.8, collapse);
+
+        /* Левый конец ленты в мировых координатах: туда стягивается нейрон.
+           Там же стоит калибровочный импульс, с которого начинается запись. */
+        built.eegPath.sample(0, penStart.current);
+        const toPen = easeInOut(collapse);
+        group.position.set(
+            lerp(state.neuronPos.x, penStart.current.x * frame.scale + frame.x, toPen),
+            lerp(state.neuronPos.y, penStart.current.y * frame.scale + frame.y, toPen),
+            lerp(state.neuronPos.z, 0, toPen),
         );
+
+        /* 0.015, а не 0.12: нейрон обязан схлопнуться именно в ТОЧКУ — иначе в
+           момент зажигания пера рядом с ним висит различимый комок. */
+        group.scale.setScalar(
+            Math.max(0.001, state.neuronScale * lerp(1, 0.015, easeOut(dissolve)) * (1 + flash * 0.22)),
+        );
+
+        /* Уголёк: пока сома схлопывается, её ядро не гаснет, а РАЗГОРАЕТСЯ —
+           это и есть будущее перо. Гаснет он только тогда, когда перо уже
+           зажглось (1 - handoff). */
+        const ember = collapse * collapse * (1 - handoff);
 
         /* Прорастание: ветви прочерчиваются от сомы к кончикам. Идёт по времени
            с момента монтирования, а глава может только ограничить результат. */
@@ -324,15 +533,16 @@ export default function Neuron({
         built.membrane.material.opacity = built.membraneOpacity * alive;
         // В кульминации сома разгорается изнутри: ядро → мембрана → вспышка.
         built.membrane.material.emissiveIntensity = flash * 2.4;
-        built.coreMaterial.emissiveIntensity = SOMA.CORE_GLOW + flash * 5;
-        built.coreMaterial.opacity = alive;
+        built.coreMaterial.emissiveIntensity = SOMA.CORE_GLOW + flash * 5 + ember * 6;
+        // ядро держится непрозрачным, пока перо не зажглось: гаснуть ему рано
+        built.coreMaterial.opacity = Math.max(alive, 1 - handoff);
 
         if (membraneRef.current) membraneRef.current.scale.setScalar(1 + flash * 1.6);
         if (coreRef.current) coreRef.current.rotation.y = time * SOMA.CORE_SPIN;
 
         /* Френель-ореол остался, но теперь он акцент поверх настоящего света, а
            не единственный источник объёма — отсюда вдвое меньшая база. */
-        built.auraMaterial.uniforms.uIntensity.value = (0.45 + flash * 5) * alive;
+        built.auraMaterial.uniforms.uIntensity.value = (0.45 + flash * 5) * alive + ember * 2.5;
 
         built.signalMaterial.uniforms.uColor.value.copy(state.signalColor);
         built.signalMaterial.uniforms.uCore.value.copy(state.signalCore);
@@ -352,9 +562,51 @@ export default function Neuron({
             built.linkMaterial.uniforms.uTime.value = time;
         }
 
-        // Линия ЭЭГ прочерчивается в последней главе.
-        built.eegMaterial.uniforms.uProgress.value = easeOut(state.eeg) * 1.02;
-        built.eegMaterial.uniforms.uOpacity.value = clamp01(state.eeg * 8);
+        /* ── Финальная диаграмма ──
+           Кадрирование посчитано вне кадра (useMemo по размеру канваса), здесь
+           только раскладка. */
+        const eegGroup = eegGroupRef.current;
+        if (eegGroup) {
+            eegGroup.position.set(frame.x, frame.y, 0);
+            eegGroup.scale.setScalar(frame.scale);
+        }
+
+        /* Монотонность прочерчивания. Раньше uProgress считался прямо из
+           позиции скролла, и прокрутка вверх СТИРАЛА уже записанное — чего
+           самописец не делает: чернила не всасываются обратно в перо. Держим
+           максимум достигнутого и сбрасываем только при заметном уходе вверх из
+           финала, чтобы при повторном спуске эффект отыгрался заново. */
+        const drawTarget = range(state.eegDraw, FINALE.DRAW_START, FINALE.DRAW_END);
+        if (director.p < DRAW_RESET_BEFORE) drawn.current = drawTarget;
+        else if (drawTarget > drawn.current) drawn.current = drawTarget;
+        // 1.02 — запас, чтобы последний пиксель ленты дописался гарантированно
+        const progress = drawn.current * 1.02;
+
+        // В режиме для слабовидящих 3D-диаграммы нет вовсе — вместо неё DOM-линия
+        const visible = a11y.current ? 0 : 1;
+        const rig = state.eegRig * visible;
+
+        built.eegMaterial.uniforms.uProgress.value = progress;
+        built.eegMaterial.uniforms.uOpacity.value = clamp01(drawn.current * 12) * visible;
+        built.eegMaterial.uniforms.uHeadHDR.value = EEG.HEAD_HDR * state.eegHead;
+
+        built.gridMaterial.uniforms.uProgress.value = progress;
+        built.gridMaterial.uniforms.uOpacity.value = rig;
+
+        /* Перо — отдельный объект, а не градиент на хвосте ленты: у записи
+           должен быть физический наконечник. Позиция берётся опросом той же
+           кривой, без аллокаций. */
+        const pen = penRef.current;
+        if (pen) {
+            built.eegPath.sample(progress, penPoint.current);
+            pen.position.set(penPoint.current.x, penPoint.current.y, 0.02);
+        }
+        // не мигание, а дыхание прибора: прибор работает, а не «анимация кончилась»
+        const pulse = 1 + FINALE.PEN_PULSE_AMP * Math.sin(time * PEN_PULSE_RATE);
+        built.penMaterial.uniforms.uSize.value = frame.penPx * pulse;
+        built.penMaterial.uniforms.uHDR.value = EEG.HEAD_HDR * state.eegHead;
+        built.penMaterial.uniforms.uOpacity.value =
+            handoff * clamp01(state.eegHead * 3) * visible;
 
         /* ── Фон: один источник правды ──
            Цвет главы уходит одновременно в туман сцены и в CSS-переменные
@@ -423,6 +675,10 @@ export default function Neuron({
 
         director.step(dt);
         resolveSceneState(director.p, state);
+
+        /* Дрейф поворота копится, а не берётся как time × k: иначе при входе в
+           стоп-кадр финала (Chapter.still) поворот прыгнул бы на накопленное. */
+        drift.current += dt * 0.02 * (1 - state.still);
 
         /* Режим главы переключается мгновенно, а поведение должно въезжать
            плавно: каждый режим держит свой сглаженный вес. */
@@ -554,11 +810,26 @@ export default function Neuron({
                 )}
             </group>
 
-            <mesh
-                geometry={built.eegGeometry}
-                material={built.eegMaterial}
-                position={[0, EEG.Y, 0]}
-            />
+            {/* Диаграмма одной группой: лента, сетка и перо масштабируются и
+                ставятся вместе — иначе кадрирование под соотношение сторон
+                развалило бы их взаимное положение. */}
+            <group ref={eegGroupRef}>
+                {/* Сетка чуть позади ленты по z: так DoF мягко размывает её по
+                    краям кадра, и «бумага» уходит за «чернила», а не спорит с
+                    ними за одну плоскость. */}
+                <mesh
+                    geometry={built.gridGeometry}
+                    material={built.gridMaterial}
+                    position={[0, 0, -0.06]}
+                />
+                <mesh geometry={built.eegGeometry} material={built.eegMaterial} />
+                <points
+                    ref={penRef}
+                    geometry={built.penGeometry}
+                    material={built.penMaterial}
+                    frustumCulled={false}
+                />
+            </group>
 
             {/* Порядок важен и он не случаен:
                 SSAO   — контактное затенение в развилках; на светлом фоне это
