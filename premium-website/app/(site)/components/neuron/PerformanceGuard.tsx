@@ -55,8 +55,13 @@ export default function PerformanceGuard({ onDowngrade }: { onDowngrade: () => v
         const view = scratch.current.subarray(0, size);
         view.sort();
         const median = view[size >> 1];
+        /* Быстрейшие кадры окна — частота обновления монитора. Бюджет не ниже
+           REFRESH_FACTOR × неё: на 30-герцовом дисплее интервал 33 мс — норма,
+           а не просадка (см. perf.ts, PERF.REFRESH_FACTOR). */
+        const refresh = view[Math.floor(size * 0.1)];
+        const budget = Math.max(PERF.BUDGET_MS, refresh * PERF.REFRESH_FACTOR);
 
-        if (median > PERF.BUDGET_MS) {
+        if (median > budget) {
             fired.current = true;
             onDowngrade();
         } else {

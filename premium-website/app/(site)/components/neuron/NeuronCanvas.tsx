@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CAMERA } from './params';
-import { detectTier, downshift, TIERS, type Tier } from './perf';
+import { detectTier, downshift, hasWebGL, TIERS, type Tier } from './perf';
 import { SCENE_SCRIPT } from './sceneScript';
 import Neuron from './Neuron';
 import PerformanceGuard from './PerformanceGuard';
@@ -26,6 +26,12 @@ import styles from './NeuronCanvas.module.css';
  *     снимаются в Neuron при размонтировании, фон возвращается в светлый);
  *   — вкладка не видна → рендер останавливается.
  */
+/* A/B-переключатели для замеров; вне сборки с харнесом всегда false. */
+function dbgFlag(name: string): boolean {
+    if (process.env.NEXT_PUBLIC_PERF_HARNESS !== '1' || typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).has(name);
+}
+
 export default function NeuronCanvas() {
     const reduced = useMemo(() => {
         if (typeof window === 'undefined') return false;
@@ -33,10 +39,35 @@ export default function NeuronCanvas() {
     }, []);
 
     const [tier, setTier] = useState<Tier>(() => detectTier());
-    const [lost, setLost] = useState(false);
+    /* antialias фиксируется при создании контекста и после дауншифта не
+       меняется, поэтому решается по стартовому тиру: нативный MSAA нужен только
+       там, где нет постпроцессинга (low) — с композитором он не работает. */
+    const [nativeAntialias] = useState(() => !TIERS[detectTier()].postprocessing && !dbgFlag('noaa'));
+    /* Нет WebGL — то же, что потерянный контекст: сцены не будет. */
+    const [lost, setLost] = useState(() => !hasWebGL());
     const [hidden, setHidden] = useState(false);
 
-    const profile = TIERS[tier];
+    /* Страница знает, есть ли сцена: по html[data-scene="off"] сворачивается
+       пустой экран финала (#outro), который без сцены — просто пустота перед
+       футером. Атрибут снимается при размонтировании. */
+    useEffect(() => {
+        const root = document.documentElement;
+        root.dataset.scene = lost ? 'off' : 'on';
+        return () => {
+            delete root.dataset.scene;
+        };
+    }, [lost]);
+
+    const profile = useMemo(() => {
+        const base = TIERS[tier];
+        if (process.env.NEXT_PUBLIC_PERF_HARNESS !== '1') return base;
+        /* A/B-переопределения для замеров (только сборка с харнесом): ?fps=60, ?dpr=1.25 */
+        const q = new URLSearchParams(window.location.search);
+        const fps = q.get('fps');
+        const dpr = q.get('dpr');
+        if (fps === null && dpr === null) return base;
+        return { ...base, fps: fps === null ? base.fps : fps === '0' ? null : Number(fps), dpr: dpr === null ? base.dpr : Number(dpr) };
+    }, [tier]);
 
     /* Тир нужен и странице: на низком гасится стеклянное размытие карточек.
        Под ними едет анимированный canvas, и backdrop-filter на десятках
@@ -62,6 +93,13 @@ export default function NeuronCanvas() {
         setTier((current) => downshift(current));
     }, []);
 
+    /* Отладочный крюк измерительной обвязки (docs/perf-v3): принудительный
+       дауншифт для проверки dispose. Вне сборки с харнесом ветка вырезается. */
+    useEffect(() => {
+        if (process.env.NEXT_PUBLIC_PERF_HARNESS !== '1') return;
+        (window as unknown as { __neuronCanvas?: unknown }).__neuronCanvas = { tier, downgrade: onDowngrade };
+    }, [tier, onDowngrade]);
+
     /* Понижать некуда — страховку можно снять, чтобы не мерить впустую. */
     const guarded = !reduced && tier !== 'low';
 
@@ -74,12 +112,19 @@ export default function NeuronCanvas() {
             <Canvas
                 className={styles.canvas}
                 dpr={[1, profile.dpr]}
-                /* Всегда 'demand': такт задаёт FrameDriver с потолком по тиру,
-                   а не монитор пользователя. При скрытой вкладке драйвер не
-                   монтируется вовсе, и сцена не жжёт GPU в фоне. */
-                frameloop="demand"
+                /* 'always' — сцена идёт вровень с монитором; 'demand' — только
+                   там, где такт задаёт FrameDriver с потолком (low) или где
+                   нужен ровно один кадр (reduced-motion). В фоновой вкладке
+                   браузер сам останавливает rAF, GPU не греется. */
+                frameloop={reduced || profile.fps ? 'demand' : 'always'}
+                /* Указатель слушаем на body: сам слой — pointer-events: none
+                   (сцена не должна перехватывать скролл и клики), а значит на
+                   canvas pointermove не приходит, и параллакс мыши в v2 был
+                   мёртвым кодом: frame.pointer навсегда (0, 0). */
+                eventSource={typeof document === 'undefined' || dbgFlag('nopointer') ? undefined : document.body}
+                eventPrefix="client"
                 gl={{
-                    antialias: false,
+                    antialias: nativeAntialias,
                     // alpha обязателен: сквозь сцену читаются «обои» страницы,
                     // и стеклянным карточкам есть что преломлять
                     alpha: true,
@@ -107,10 +152,13 @@ export default function NeuronCanvas() {
                     });
                 }}
             >
-                <Neuron profile={profile} reduced={reduced} />
-                {!reduced && !hidden ? <FrameDriver fps={profile.fps} /> : null}
+                <Neuron profile={profile} reduced={reduced} smaa={!dbgFlag('nosmaa')} />
+                {!reduced && !hidden && profile.fps ? <FrameDriver fps={profile.fps} /> : null}
                 {guarded && !hidden ? <PerformanceGuard onDowngrade={onDowngrade} /> : null}
             </Canvas>
+            {/* Без композитора зерно и виньетку рисует CSS: статичный тайл шума
+                и радиальный градиент, стоимость — ноль на кадр. */}
+            {!profile.postprocessing && !reduced ? <div className={styles.grain} aria-hidden="true" /> : null}
         </div>
     );
 }

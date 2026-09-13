@@ -8,6 +8,7 @@ import {
     DepthOfField,
     EffectComposer,
     Noise,
+    SMAA,
     SSAO,
     Vignette,
 } from '@react-three/postprocessing';
@@ -47,6 +48,8 @@ import {
     createCoreMaterial,
     createDendriteMaterial,
     createMembraneMaterial,
+    setGrowClip,
+    setTransparent,
 } from './materials/tissue';
 
 const BREATH_RATE = (Math.PI * 2) / SOMA.BREATH_PERIOD;
@@ -63,12 +66,15 @@ type Gains = {
 export default function Neuron({
     profile,
     reduced,
+    smaa = true,
 }: {
     profile: TierProfile;
     reduced: boolean;
+    /** SMAA в композиторе; false — только для A/B-замера */
+    smaa?: boolean;
 }) {
     const director = useScrollDirector(!reduced);
-    const { camera, scene, invalidate } = useThree();
+    const { camera, scene, invalidate, gl } = useThree();
 
     const groupRef = useRef<THREE.Group>(null);
     const membraneRef = useRef<THREE.Mesh>(null);
@@ -90,6 +96,11 @@ export default function Neuron({
        0.185, а при frameloop 'demand' полагаться на внутренние часы рендерера
        и не нужно — мы сами знаем, сколько прошло. */
     const elapsed = useRef(0);
+    /* Состояния материалов кроны (см. materials/tissue.ts): отсечение роста
+       включено, пока идёт прорастание; альфа — только на растворении. Оба
+       переключаются по смене состояния, не покадрово: смена — перекомпиляция. */
+    const growClipOn = useRef(true);
+    const alphaOn = useRef(false);
     const gains = useRef<Gains>({
         collect: 0,
         faltering: 0,
@@ -115,7 +126,7 @@ export default function Neuron({
 
         const dendrite = createDendriteMaterial(profile);
         const membrane = createMembraneMaterial(profile);
-        const coreMaterial = createCoreMaterial();
+        const coreMaterial = createCoreMaterial(profile);
         const auraMaterial = createAuraMaterial();
 
         const signals = createSignalSystem(profile.signalCount, signalPaths, NEURON.SEED + 1);
@@ -194,6 +205,36 @@ export default function Neuron({
         [built],
     );
 
+    /* Новый профиль — новые материалы в исходном состоянии. */
+    useLayoutEffect(() => {
+        growClipOn.current = true;
+        alphaOn.current = profile.somaTransmission;
+    }, [built, profile.somaTransmission]);
+
+    /* Возврат из фоновой вкладки: за время паузы страницу могли прокрутить, а
+       сглаженная позиция директора осталась старой — первый кадр догонял бы
+       цель через половину нарратива. snap() приравнивает её к мгновенной. */
+    useEffect(() => {
+        const onVisibility = () => {
+            if (!document.hidden) director.snap();
+        };
+        document.addEventListener('visibilitychange', onVisibility);
+        return () => document.removeEventListener('visibilitychange', onVisibility);
+    }, [director]);
+
+    /* Отладочный крюк для измерительной обвязки (docs/perf-v3): в прод-сборке
+       без NEXT_PUBLIC_PERF_HARNESS ветка вырезается целиком. */
+    useEffect(() => {
+        if (process.env.NEXT_PUBLIC_PERF_HARNESS !== '1') return;
+        (window as unknown as { __neuron?: unknown }).__neuron = {
+            built,
+            gl,
+            director,
+            pointer: () => ({ x: parallax.current.x, y: parallax.current.y }),
+            memory: () => ({ ...gl.info.memory, programs: gl.info.programs?.length ?? 0 }),
+        };
+    }, [built, gl, director]);
+
     /* — Раскладка соседей ставится один раз: она не анимируется, меняется
          только их непрозрачность — */
     useLayoutEffect(() => {
@@ -242,9 +283,28 @@ export default function Neuron({
         /* Прорастание: ветви прочерчиваются от сомы к кончикам. Идёт по времени
            с момента монтирования, а глава может только ограничить результат. */
         const grown = easeOut(clamp01(elapsed.current / CHOREO.INTRO_DURATION));
+        const growTarget = Math.min(grown, state.grow);
         built.dendrite.material.opacity = alive;
         built.dendrite.uniforms.uTime.value = time;
-        built.dendrite.uniforms.uGrow.value = Math.min(grown, state.grow);
+        built.dendrite.uniforms.uGrow.value = growTarget;
+
+        /* Рост завершён — discard больше ничего не отсекает, а early-Z из-за
+           него выключен для всей кроны. Снимаем define один раз. */
+        const clipNeeded = growTarget < 1;
+        if (clipNeeded !== growClipOn.current) {
+            growClipOn.current = clipNeeded;
+            setGrowClip(built.dendrite.material, clipNeeded);
+        }
+        /* Прозрачный проход — только когда крона и ядро реально растворяются
+           (глава «Выход»); остальное время они непрозрачны и не сортируются.
+           С преломлением мембраны прозрачность держится всегда — иначе крона
+           рендерилась бы второй раз в буфер преломления (см. tissue.ts). */
+        const alphaNeeded = dissolve > 0.001 || profile.somaTransmission;
+        if (alphaNeeded !== alphaOn.current) {
+            alphaOn.current = alphaNeeded;
+            setTransparent(built.dendrite.material, alphaNeeded);
+            setTransparent(built.coreMaterial, alphaNeeded);
+        }
 
         /* Сканирующая волна: идёт снизу вверх по всему дереву, между проходами
            пауза. Вне главы «Диагностика» усиление нулевое, и полосы не видно. */
@@ -514,8 +574,16 @@ export default function Neuron({
                 интонации медицинского бренда.
 
                 SSAO требует NormalPass — это отдельный проход рендера сцены,
-                поэтому на низком тире выключены оба. */}
+                поэтому на низком тире выключены оба.
+
+                На low композитора нет вовсе (profile.postprocessing): зерно и
+                виньетку даёт CSS-оверлей в NeuronCanvas, блум там не нужен —
+                фон почти не темнеет по времени пребывания. SMAA — первым:
+                сглаживание тонких веток до блума; MSAA с постпроцессингом не
+                работает, поэтому multisampling={0}. */}
+            {profile.postprocessing ? (
             <EffectComposer multisampling={0} enableNormalPass={profile.ssao}>
+                {smaa ? <SMAA /> : null}
                 {profile.ssao ? (
                     <SSAO
                         ref={ssaoRef}
@@ -547,6 +615,7 @@ export default function Neuron({
                 <Vignette ref={vignetteRef} offset={0.32} darkness={0.7} />
                 <Noise ref={noiseRef} premultiply />
             </EffectComposer>
+            ) : null}
         </>
     );
 }

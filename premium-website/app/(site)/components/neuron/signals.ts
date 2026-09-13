@@ -48,6 +48,8 @@ type Signal = {
     reach: number;
     /** номер группы: залп поднимает одну группу, а не всё сразу */
     group: number;
+    /** яркость уже занулена — неактивный импульс можно пропускать целиком */
+    dark: boolean;
 };
 
 const scratch = new THREE.Vector3();
@@ -77,6 +79,7 @@ export function createSignalSystem(
         // Ближе к концу «недоход» перестаёт читаться.
         reach: lerp(0.34, 0.76, rand()),
         group: i % groups,
+        dark: false,
     }));
 
     /** общий такт: к нему стягиваются фазы в режиме sync */
@@ -99,6 +102,21 @@ export function createSignalSystem(
 
         for (let s = 0; s < count; s += 1) {
             const signal = signals[s];
+
+            /* Неактивные импульсы (s ≥ active) не считаем вовсе: в v2 внутренний
+               цикл по хвосту всё равно семплировал путь для всех count, а alive
+               лишь занулял яркость — на high при load 0.3 это 270 лишних
+               samplePath на кадр. Яркость зануляется один раз; при росте load
+               импульс просыпается с той фазой, на которой заснул. */
+            if (s >= active) {
+                if (!signal.dark) {
+                    for (let k = 0; k < SIGNAL.TRAIL; k += 1) bright[s * SIGNAL.TRAIL + k] = 0;
+                    signal.dark = true;
+                }
+                continue;
+            }
+            signal.dark = false;
+
             const burstGain = burstLeft > 0 && signal.group === burstGroup ? 2.3 : 1;
             signal.phase = (signal.phase + signal.speed * common * burstGain * dt) % 1;
 
@@ -112,7 +130,6 @@ export function createSignalSystem(
                 if (signal.phase >= 1) signal.phase -= 1;
             }
 
-            const alive = s < active ? 1 : 0;
             const flat = paths[signal.path];
 
             for (let k = 0; k < SIGNAL.TRAIL; k += 1) {
@@ -139,7 +156,7 @@ export function createSignalSystem(
                 bright[index] =
                     raw < 0 && params.collect < 0.02
                         ? 0
-                        : arrival * tail * tail * fade * params.intensity * alive;
+                        : arrival * tail * tail * fade * params.intensity;
             }
         }
 
