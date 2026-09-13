@@ -1,0 +1,80 @@
+{
+  "cmd": "shots",
+  "label": "baseline",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T18:26:14.051Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "flash",
+      "y": 5484,
+      "file": "baseline-flash-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "mid",
+      "y": 6009,
+      "file": "baseline-mid-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "outro",
+      "y": 6160,
+      "file": "baseline-outro-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "footer",
+      "y": 2584,
+      "file": "baseline-footer-16x9.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "flash",
+      "y": 5181,
+      "file": "baseline-flash-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "mid",
+      "y": 5683,
+      "file": "baseline-mid-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "outro",
+      "y": 5826,
+      "file": "baseline-outro-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "footer",
+      "y": 2386,
+      "file": "baseline-footer-4x3.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "flash",
+      "y": 5069,
+      "file": "baseline-flash-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "mid",
+      "y": 6096,
+      "file": "baseline-mid-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "outro",
+      "y": 6262,
+      "file": "baseline-outro-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "footer",
+      "y": 2857,
+      "file": "baseline-footer-9x19.5.jpg"
+    }
+  ]
+}

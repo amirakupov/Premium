@@ -1,0 +1,11 @@
+{
+  "cmd": "eval",
+  "label": "probe-renderer",
+  "url": "http://localhost:3100/",
+  "at": "2026-09-13T18:26:02.898Z",
+  "result": {
+    "r": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+    "tier": "high",
+    "scene": "on"
+  }
+}
