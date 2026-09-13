@@ -14,6 +14,10 @@
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-sheen), var(--glass-shadow);
   transition: background 0.3s ease, box-shadow 0.35s ease, transform 0.5s var(--spring);
+  /* Карточки вне вьюпорта не рендерятся. Высота карточки зависит от текста,
+     поэтому до первого показа подставляется оценка; после — запомненный размер. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
 }
 
 /* блик на поверхности линзы — поверх фото и текста */

@@ -7,7 +7,8 @@ import { clamp01, smoothstep } from './utils';
  *
  * Цвет фона живёт в таблице глав. Отсюда он расходится в два места:
  *   1) туман и сцена — их красит Neuron.tsx;
- *   2) CSS-переменные на documentElement — их пишет этот модуль.
+ *   2) страница — её пишет этот модуль: цвет грунта и «темнота» инлайном на
+ *      подложку `#page-ground`, дискретные перебросы токенов — на documentElement.
  *
  * Из того же цвета выводятся три величины, и других источников нет:
  *   dark — насколько темно (по ней гаснут светлые «обои»);
@@ -48,13 +49,17 @@ import { clamp01, smoothstep } from './utils';
  *
  * Запись переменной на :root инвалидирует стили ВСЕГО документа, а на главной
  * десятки элементов с backdrop-filter, и каждый после этого пересобирает
- * размытие. Делать это на каждом кадре — самая дорогая строчка во всей сцене.
- * Поэтому:
- *   — значения квантуются;
- *   — непрерывные (цвет фона и «темнота») пишутся не чаще MIN_WRITE_INTERVAL:
- *     переход медленный, десяти шагов в секунду ему достаточно;
- *   — ступень и полоса пишутся немедленно: это читаемость текста, её
- *     откладывать нельзя.
+ * размытие. В v2 это делалось на каждом шаге перехода и было самой дорогой
+ * строчкой сцены: замер perf-v3 показал половину Recalculate Style и до 45 %
+ * GPU за скролл (docs/perf-v3/baseline.md, B1). Поэтому:
+ *   — непрерывные величины (цвет грунта и «темнота») пишутся НЕ на :root, а
+ *     инлайном на выделенную подложку `#page-ground` (app/(site)/layout.tsx):
+ *     это фиксированный слой без потомков, кроме собственного ::before с
+ *     обоями, и инвалидация ограничена им;
+ *   — они же квантуются и пишутся не чаще MIN_WRITE_INTERVAL: переход
+ *     медленный, десяти шагов в секунду ему достаточно;
+ *   — ступень и полоса — дискретные и редкие — остаются на :root и пишутся
+ *     немедленно: это читаемость текста, её откладывать нельзя.
  */
 
 type Rgba = [number, number, number, number];
@@ -205,6 +210,10 @@ export type PageTheme = {
  */
 export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
     const root = typeof document === 'undefined' ? null : document.documentElement;
+    /* Подложка может отсутствовать (сцена смонтирована вне витрины) — тогда
+       непрерывные величины уходят на :root, как в v2: дороже, но корректно. */
+    const ground: HTMLElement | null =
+        (typeof document === 'undefined' ? null : document.getElementById('page-ground')) ?? root;
     let lastDark = -1;
     let lastSwap = -1;
     let lastBand = -1;
@@ -214,6 +223,8 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
 
     const reset = () => {
         if (!root) return;
+        ground?.style.removeProperty('--scene-dark');
+        ground?.style.removeProperty('background-color');
         root.style.removeProperty('--scene-dark');
         root.style.removeProperty('--page-bg');
         root.style.removeProperty('--panel-filter');
@@ -272,8 +283,10 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
             lastBand = band;
             lastBackground = css;
 
-            root.style.setProperty('--scene-dark', String(quantizedDark));
-            root.style.setProperty('--page-bg', css);
+            if (ground) {
+                ground.style.setProperty('--scene-dark', String(quantizedDark));
+                ground.style.backgroundColor = css;
+            }
 
             if (!surfacesChanged) return;
 

@@ -6,6 +6,10 @@ import CookieBanner from "@/app/(site)/components/CookieBanner";
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="site">
+            {/* Грунт страницы: цвет фона и «обои». Сцена пишет цвет главы и
+                «темноту» сюда, а не на <html>, — инвалидация стилей ограничена
+                одним слоем без потомков. См. neuron/pageTheme.ts и globals.css. */}
+            <div className="page-ground" id="page-ground" aria-hidden="true" />
             <Header />
             <div className="a11y-row">
                 <A11yToggle />

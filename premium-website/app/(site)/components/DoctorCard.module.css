@@ -4,6 +4,8 @@
   max-width: 285px;
   height: 400px;
   cursor: pointer;
+  /* вне вьюпорта не рендерится; высота явная, размер не зависит от содержимого */
+  content-visibility: auto;
 }
 
 .cardInner {
@@ -97,8 +99,7 @@
   margin-top: 0.9rem;
   padding: 0.5rem 1.3rem;
   background: var(--glass-primary);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  /* без backdrop-filter — как у .btn: заливка почти непрозрачна */
   border-radius: 999px;
   border: none;
   color: #ffffff;

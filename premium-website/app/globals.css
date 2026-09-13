@@ -32,11 +32,12 @@
   --scrim: 18, 41, 77;         /* тёмно-синий для оверлеев (rgb-тройка) */
 
   /* ── Переход фона по ходу скролла ───────────────────────────────── */
-  /* Значения по умолчанию = светлая страница. Сцена нейрона переписывает
-     --page-bg и --scene-dark (плюс токены текста и стекла) прямо на
-     documentElement; см. components/neuron/pageTheme.ts. Ни один компонент об
-     этом не знает — они собраны на var(--…), и это тот случай, ради которого
-     дисциплина токенов и держалась. */
+  /* Значения по умолчанию = светлая страница. Непрерывные величины перехода —
+     цвет грунта и «темнота» — сцена пишет НЕ сюда, а инлайном на .page-ground
+     (см. ниже): запись переменной на :root инвалидирует стили всего документа
+     на каждом шаге. На :root остаются только редкие дискретные перебросы
+     токенов текста и стекла (swap/band); см. components/neuron/pageTheme.ts.
+     Ни один компонент об этом не знает — они собраны на var(--…). */
   --page-bg: #eaf1ff;          /* грунт страницы; на тёмных главах уходит в navy */
   --scene-dark: 0;             /* 0 — светло, 1 — тёмная точка нарратива */
 
@@ -459,12 +460,26 @@ body {
   margin: 0;
   line-height: var(--line);
   letter-spacing: var(--letter);
-  /* грунт страницы: сцена ведёт его от светлого к тёмному и обратно */
+  /* статичный грунт по умолчанию; на витрине поверх него лежит .page-ground,
+     который и ведёт сцена от светлого к тёмному */
   background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Грунт витрины. Один выделенный фиксированный слой под всей страницей
+   (z-index: -2 — ниже сцены, которая на -1). Сцена пишет сюда инлайном
+   background-color (цвет главы) и --scene-dark: инвалидация стилей при этом
+   ограничена этим элементом и его ::before, а не всем документом, как было при
+   записи на :root. Пока сцена не смонтирована — статичный светлый грунт. */
+.page-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--page-bg);
 }
 
 /* «Обои» под стеклом. Стекло видно только тогда, когда за ним есть что
@@ -475,14 +490,13 @@ body {
      подкрашивают карточку — это и читается как преломление.
    Слой прибит к вьюпорту: при прокрутке островки едут по обоям, и
    картинка внутри стекла живёт. */
-body::before {
+.page-ground::before {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: -1;
-  pointer-events: none;
   /* На тёмных главах светлые обои уходят, и стеклу остаётся преломлять саму
-     сцену — нейрон и есть фактура тёмного отрезка. */
+     сцену — нейрон и есть фактура тёмного отрезка. --scene-dark наследуется
+     от .page-ground, куда её пишет сцена. */
   opacity: calc(1 - var(--scene-dark));
   background:
     radial-gradient(circle at center, rgba(15, 31, 56, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
@@ -494,11 +508,12 @@ body::before {
     linear-gradient(165deg, #e6eeff 0%, #f4f8ff 46%, #e4edff 100%);
 }
 
-html[data-a11y="1"] body {
+html[data-a11y="1"] body,
+html[data-a11y="1"] .page-ground {
   background: var(--paper);
 }
 
-html[data-a11y="1"] body::before {
+html[data-a11y="1"] .page-ground::before {
   display: none;
 }
 
@@ -529,7 +544,7 @@ h1, h2, h3 {
      прелоадер (--z-overlay: 200) в первую очередь — оказалось бы прижато под
      шапку (--z-header: 100). Сцена уходит вниз сама (z-index: -1 на своём
      слое), и порядок снизу вверх получается тот же:
-     обои body::before → сцена → контент → шапка → баннеры. */
+     грунт .page-ground (с обоями) → сцена → контент → шапка → баннеры. */
 }
 
 .a11y-row {
@@ -582,8 +597,10 @@ h1, h2, h3 {
   line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  /* backdrop-filter снят намеренно: кнопок на главной десятки, каждая — свой
+     слой композитора с размытием, а размывать за ними нечего: у --primary
+     заливка почти непрозрачна (альфа 0.92/0.94), у --ghost материал держат
+     заливка и блики --glass-sheen. См. docs/perf-v3/report.md, B2. */
   transition: background 0.25s ease, color 0.25s ease,
     border-color 0.25s ease, box-shadow 0.3s ease, transform 0.45s var(--spring);
 }
