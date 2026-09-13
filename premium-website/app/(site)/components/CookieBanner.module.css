@@ -40,6 +40,37 @@
   color: var(--brand-deep);
 }
 
+/* html[data-cookie="set"] ставит inline-скрипт в <head>: выбор уже сделан,
+   баннер не показывается ни одного кадра, ещё до React. */
+:global(html[data-cookie="set"]) .banner {
+  display: none;
+}
+
+.buttons {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.6rem;
+}
+
+/* «Отклонить» — контурная, равноправная по размеру */
+.buttonGhost {
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.buttonGhost:hover {
+  background: var(--brand);
+  color: #ffffff;
+}
+
 .button {
   flex-shrink: 0;
   background: var(--glass-primary);
@@ -73,7 +104,11 @@
   .message {
     margin-bottom: 0.75rem;
   }
-  .button {
+  .buttons {
+    flex-direction: column;
+  }
+  .button,
+  .buttonGhost {
     width: 100%;
   }
 }

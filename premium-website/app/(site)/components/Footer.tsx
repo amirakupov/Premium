@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
 import A11yToggle from "@/app/(site)/components/A11yToggle";
+import MapEmbed from "@/app/(site)/components/MapEmbed";
 import { CLINIC } from "@/lib/constants";
 
 export default function Footer() {
@@ -10,14 +11,8 @@ export default function Footer() {
 
         <div className={styles.topArea}>
           <div className={styles.mapWrapper}>
-            <iframe
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad327fce798422fcd5d920a9ccc441768bc8681acc45894d3adc940841067f112&amp;source=constructor"
-              width="500"
-              height="400"
-              frameBorder="0"
-              loading="lazy"
-              title="Клиника «Премиум» на карте"
-            ></iframe>
+            {/* iframe Яндекс Карт — только после согласия на cookies */}
+            <MapEmbed />
           </div>
 
           <div className={styles.columns}>

@@ -438,6 +438,13 @@ html[data-a11y="1"] body {
   font-size: 20px;
 }
 
+/* Подпись переключателя режима выбирает CSS по атрибуту, который стоит на <html>
+   до первого пейнта, — см. A11yToggle.tsx. */
+html[data-a11y="1"] .a11y-label-off,
+html:not([data-a11y="1"]) .a11y-label-on {
+  display: none;
+}
+
 :focus-visible {
   outline: var(--focus) solid currentColor;
   outline-offset: 3px;
@@ -459,6 +466,15 @@ html, body {
 html {
   font-size: calc(16px * var(--font-scale));
   scroll-behavior: smooth;
+}
+
+/* Плавный скролл — не animation и не transition, глобальное правило выше его
+   не гасит. Стоит ПОСЛЕ html { scroll-behavior: smooth }: при равной
+   специфичности побеждает порядок. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -550,6 +566,35 @@ h1, h2, h3 {
      шапку (--z-header: 100). Сцена уходит вниз сама (z-index: -1 на своём
      слое), и порядок снизу вверх получается тот же:
      грунт .page-ground (с обоями) → сцена → контент → шапка → баннеры. */
+}
+
+/* Ссылка «к основному содержанию»: вне фокуса убрана за верхний край и
+   прозрачна, по фокусу выезжает поверх шапки и занавеса. */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: calc(var(--z-overlay) + 1);
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-200%);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  opacity: 1;
+}
+
+/* цель skip-link получает программный фокус; контур ему не нужен */
+.site-main:focus {
+  outline: none;
 }
 
 .a11y-row {

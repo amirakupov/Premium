@@ -4,7 +4,12 @@ import { useRouter } from 'next/navigation';
 import { BsSearch } from 'react-icons/bs';
 import styles from './Searchbar.module.css';
 
-export default function SearchBar() {
+/**
+ * `label` — имя формы-ландмарка. Шапка рендерит два поиска (десктопный и в
+ * мобильном меню), и у ландмарков должны быть разные имена; неактивный вдобавок
+ * закрыт для скринридера через inert на меню.
+ */
+export default function SearchBar({ label = 'Поиск по сайту' }: { label?: string }) {
   const [query, setQuery] = useState('');
   const router = useRouter();
 
@@ -16,7 +21,7 @@ export default function SearchBar() {
   };
 
   return (
-    <form className={styles.searchForm} onSubmit={handleSubmit} role="search">
+    <form className={styles.searchForm} onSubmit={handleSubmit} role="search" aria-label={label}>
       <input
         type="search"
         className={styles.input}

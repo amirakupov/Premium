@@ -71,6 +71,13 @@ const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.get
 const curtainInitScript = `try{document.documentElement.dataset.curtain=(location.pathname==="/"&&!sessionStorage.getItem("preloaderSeen"))?"1":"0"}catch(e){document.documentElement.dataset.curtain="1"}`;
 
 /**
+ * Cookie-баннер: решение «показывать ли» — тоже до пейнта. Баннер всегда в
+ * серверном HTML (иначе он выпрыгивал через сотни миллисекунд после загрузки),
+ * а CSS по html[data-cookie="set"] прячет его, если выбор уже сделан.
+ */
+const cookieInitScript = `try{document.documentElement.dataset.cookie=localStorage.getItem("cookie_consent")?"set":"ask"}catch(e){document.documentElement.dataset.cookie="ask"}`;
+
+/**
  * Измерительная обвязка perf-v3 (docs/perf-v3/harness.js): long tasks, LCP,
  * CLS, жизненный цикл прелоадера, профиль скролла. В прод не попадает —
  * включается только сборкой с NEXT_PUBLIC_PERF_HARNESS=1.
@@ -113,7 +120,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
         <head>
             {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
-            <script dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript }} />
+            <script
+                dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript + cookieInitScript }}
+            />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(clinicJsonLd) }}

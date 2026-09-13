@@ -72,7 +72,8 @@
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav a[aria-current="page"] {
   color: var(--brand);
   border-bottom-color: var(--brass-fill);
 }
@@ -181,7 +182,8 @@
   text-decoration: none;
 }
 
-.mobileNavContent a:hover {
+.mobileNavContent a:hover,
+.mobileNavContent a[aria-current="page"] {
   color: var(--brass-bright);
 }
 
