@@ -1,0 +1,56 @@
+{
+  "cmd": "eval",
+  "label": "baseline-resize",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T21:07:22.961Z",
+  "result": {
+    "burst5": {
+      "gbcr": 17,
+      "byEl": {
+        "DIV": 5,
+        "hero": 1,
+        "symptom": 1,
+        "diagnostics": 1,
+        "quote": 1,
+        "services": 1,
+        "clinic-photos": 1,
+        "doctors": 1,
+        "outro-draw": 1,
+        "outro-verdict": 1,
+        "outro-exit": 1,
+        "NarrativeActs-module__okKeaq__": 2
+      }
+    },
+    "single": {
+      "gbcr": 13,
+      "byEl": {
+        "DIV": 1,
+        "hero": 1,
+        "symptom": 1,
+        "diagnostics": 1,
+        "quote": 1,
+        "services": 1,
+        "clinic-photos": 1,
+        "doctors": 1,
+        "outro-draw": 1,
+        "outro-verdict": 1,
+        "outro-exit": 1,
+        "NarrativeActs-module__okKeaq__": 2
+      }
+    },
+    "stream60": {
+      "gbcr": 781,
+      "perFrame": 13
+    },
+    "groupBefore": {
+      "x": 0,
+      "y": -1.315155227319146,
+      "scale": 0.7075628444931843
+    },
+    "groupAfter": {
+      "x": 0,
+      "y": -1.315155227319146,
+      "scale": 0.7075628444931843
+    }
+  }
+}
