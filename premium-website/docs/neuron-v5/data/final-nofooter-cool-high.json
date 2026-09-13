@@ -1,0 +1,72 @@
+{
+  "cmd": "fps",
+  "label": "final-nofooter-cool-high",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T22:02:07.808Z",
+  "runs": [
+    {
+      "frames": 361,
+      "seconds": 6,
+      "median": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8,
+      "fps": 60.2,
+      "over16": 11,
+      "over33": 0,
+      "longTasksDuring": 0
+    },
+    {
+      "frames": 361,
+      "seconds": 6,
+      "median": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8,
+      "fps": 60.2,
+      "over16": 4,
+      "over33": 0,
+      "longTasksDuring": 0
+    },
+    {
+      "frames": 361,
+      "seconds": 6,
+      "median": 16.7,
+      "p95": 16.8,
+      "p99": 16.8,
+      "max": 16.8,
+      "fps": 60.2,
+      "over16": 1,
+      "over33": 0,
+      "longTasksDuring": 0
+    }
+  ],
+  "load": [
+    {
+      "windowMs": 6032,
+      "mainBusyMs": 666.3,
+      "mainBusyPct": 11,
+      "gpuTaskMs": 473.7,
+      "gpuPct": 7.9
+    },
+    {
+      "windowMs": 6020,
+      "mainBusyMs": 564.2,
+      "mainBusyPct": 9.4,
+      "gpuTaskMs": 459,
+      "gpuPct": 7.6
+    },
+    {
+      "windowMs": 6024,
+      "mainBusyMs": 552.7,
+      "mainBusyPct": 9.2,
+      "gpuTaskMs": 459.9,
+      "gpuPct": 7.6
+    }
+  ],
+  "gpuPct": 7.6,
+  "mainBusyPct": 9.4,
+  "median": 16.7,
+  "p95": 16.7,
+  "fps": 60.2
+}

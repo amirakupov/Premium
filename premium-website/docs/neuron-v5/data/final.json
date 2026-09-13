@@ -1,0 +1,32 @@
+{
+  "cmd": "shots",
+  "label": "final",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T21:48:33.387Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "flash",
+      "y": 5484,
+      "file": "final-flash-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "draw",
+      "y": 6152,
+      "file": "final-draw-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "verdict",
+      "y": 7002,
+      "file": "final-verdict-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "exit",
+      "y": 7205,
+      "file": "final-exit-16x9.jpg"
+    }
+  ]
+}

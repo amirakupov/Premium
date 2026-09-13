@@ -425,7 +425,12 @@ async function main() {
       for (let i = 0; i < runs; i += 1) {
         const from = await page.eval(focusOn('#doctors'));
         await sleep(900);
-        const to = await page.eval(`document.documentElement.scrollHeight - innerHeight`);
+        /* FPS_TO=#outro-exit — окно без футера: после укорочения финала стеклянный
+           футер (backdrop-filter поверх канваса) занимает большую долю окна
+           «до низа документа», и сравнение с baseline перестаёт быть честным. */
+        const to = process.env.FPS_TO
+          ? await page.eval(`(function(){ ${PAGE_LIB} return centerY(${JSON.stringify(process.env.FPS_TO)}); })()`)
+          : await page.eval(`document.documentElement.scrollHeight - innerHeight`);
         const { result, events } = await withTrace(b, page, () =>
           page.eval(`__perf.scrollRun(${seconds}, ${from}, ${to})`));
         out.runs.push(result);
