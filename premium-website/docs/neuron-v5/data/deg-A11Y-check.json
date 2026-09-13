@@ -1,0 +1,53 @@
+{
+  "cmd": "eval",
+  "label": "deg-A11Y-check",
+  "url": "http://localhost:3100/",
+  "at": "2026-09-13T21:21:09.066Z",
+  "mode": "a11y",
+  "result": {
+    "scene": "on",
+    "a11y": "1",
+    "reducedMotion": false,
+    "heading": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 237,
+        "h": 57
+      }
+    },
+    "text": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 318,
+        "h": 94
+      }
+    },
+    "cta": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 433,
+        "h": 56
+      }
+    },
+    "ctaHref": "/contacts",
+    "ctaClickable": true,
+    "rigHidden": true,
+    "staticSvgShown": true,
+    "runups": [
+      {
+        "sel": "#outro-draw",
+        "display": "none",
+        "h": 0
+      },
+      {
+        "sel": "#outro-exit",
+        "display": "none",
+        "h": 0
+      }
+    ],
+    "canvas": true
+  }
+}

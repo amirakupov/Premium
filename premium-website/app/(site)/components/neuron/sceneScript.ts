@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { FINALE } from './params';
 import { darknessOf, lerp, luminanceOf } from './utils';
 
 /**
@@ -67,8 +68,35 @@ export type Chapter = {
         mode: SignalMode;
     };
     fx: { bloom: number; dof: number; ao: number; grain: number; vignette: number };
-    /** 0…1 — прочерченность финальной линии ЭЭГ */
-    eeg: number;
+    /**
+     * Финальная диаграмма. Три величины, а не одна: лента прочерчивается,
+     * приборная обвязка проявляется и уходит отдельно от неё, а яркость пера
+     * ведётся по главам — в `exit-draw` перо горячее, в `exit-verdict` остывает
+     * до мягкого пульса.
+     */
+    eeg: {
+        /** 0…1 — прочерченность ленты */
+        draw: number;
+        /** 0…1 — приборная обвязка: сетка, рамка, калибровка */
+        rig: number;
+        /** множитель яркости пера поверх EEG.HEAD_HDR */
+        head: number;
+        /**
+         * 0…1 — видимость самих чернил. Прочерченность (`draw`) монотонна и не
+         * умеет убывать, поэтому гасить дописанную ленту на выходе нечем, кроме
+         * отдельной величины. Внутри финала — 1; в `exit-exit` — 0.
+         */
+        ink: number;
+    };
+    /**
+     * 0…1 — насколько кадр «замер»: гасит параллакс мыши и медленный дрейф
+     * поворота. Финалу это нужно дважды. Во-первых, `exit-verdict` — стоп-кадр
+     * по смыслу: прибор закончил запись, двигаться в кадре нечему. Во-вторых,
+     * параллакс двигает КАМЕРУ, а экранный прямоугольник диаграммы посчитан от
+     * неподвижного вьюпорта — без этого DOM-метки разъезжались бы с сеткой при
+     * каждом движении мыши.
+     */
+    still: number;
 };
 
 /**
@@ -77,6 +105,49 @@ export type Chapter = {
  * поведением: тусклый глубокий синий, рваный ритм, часть импульсов гаснет на
  * полпути. К финалу — ровный частый ход фирменным #2563eb.
  */
+/**
+ * Камера финала одна на все три главы — и это не лень, а требование.
+ * Экранный прямоугольник диаграммы считается из fov и расстояния
+ * (params.FINALE) под коробку DOM-слоя меток. Поехала бы камера — поехала бы и
+ * диаграмма относительно меток. Движение в финале несут не камера, а сама
+ * запись: перо, сетка, обвязка.
+ *
+ * Вход в финал (climax-flash → exit-draw) камера проезжает от z 5.6 к 8.6, и
+ * на этом отрезке плоскость диаграммы держится на FINALE.CAMERA_Z перед
+ * камерой (Neuron.tsx, planeZ), а не на z = 0 мира — иначе нейрон летел бы не
+ * туда, где потом зажжётся перо. Условие корректности: от вспышки и дальше
+ * камера на оси (x = y = 0, lookAt в ноль) с fov = FINALE.FOV — это проверяет
+ * lib/finale-frame.test.ts.
+ */
+const FINALE_CAMERA = {
+    position: [0, 0, FINALE.CAMERA_Z] as Vec3,
+    lookAt: [0, 0, 0] as Vec3,
+    fov: FINALE.FOV,
+};
+
+/**
+ * ── A/B: чем заканчивается страница ──
+ *
+ * A — свет возвращается: последняя глава уходит в светлый, дальше тёмный футер.
+ * B — тёмное течёт в тёмное: последняя глава берёт ровно цвет футера
+ *     (--brand-deep #12294d), и ступени переброса токенов в финале нет вовсе.
+ *
+ * Разбор и кадры обоих — docs/neuron-v4/report.md. В сборке с обвязкой замеров
+ * вариант переключается через ?exit=A|B; в прод попадает только EXIT_DEFAULT, а
+ * ветка с разбором URL вырезается вместе с остальными крюками харнеса.
+ */
+const EXIT_BACKGROUND = { A: '#eaf1ff', B: '#12294d' } as const;
+type ExitVariant = keyof typeof EXIT_BACKGROUND;
+const EXIT_DEFAULT: ExitVariant = 'B';
+
+const EXIT_VARIANT: ExitVariant = (() => {
+    if (process.env.NEXT_PUBLIC_PERF_HARNESS !== '1' || typeof window === 'undefined') {
+        return EXIT_DEFAULT;
+    }
+    const q = new URLSearchParams(window.location.search).get('exit');
+    return q === 'A' || q === 'B' ? q : EXIT_DEFAULT;
+})();
+
 export const SCENE_SCRIPT: readonly Chapter[] = [
     {
         id: 'awaken',
@@ -87,7 +158,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [1.4, -0.15, 0], rotation: [0.06, 0.2, 0], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.3, speed: 0.55, color: '#1d4ed8', core: '#12294d', mode: 'idle' },
         fx: { bloom: 0.35, dof: 0, ao: 0.7, grain: 0.03, vignette: 0 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'symptom',
@@ -98,7 +170,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [-1.5, 0.1, 0], rotation: [0.12, 1.4, 0.05], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.26, speed: 0.34, color: '#12294d', core: '#0b1a30', mode: 'faltering' },
         fx: { bloom: 0.4, dof: 0.15, ao: 0.85, grain: 0.03, vignette: 0.05 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'diagnostics',
@@ -109,7 +182,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, 0], rotation: [-0.04, 2.6, -0.06], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.7, speed: 0.6, color: '#4b90e2', core: '#a7cbf7', mode: 'scan' },
         fx: { bloom: 0.95, dof: 1, ao: 1, grain: 0.04, vignette: 0.3 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'network',
@@ -120,7 +194,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [2.2, 0.35, -1.6], rotation: [-0.1, 3.6, 0.08], scale: 0.92, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.8, speed: 0.72, color: '#6aa8f5', core: '#d6e8ff', mode: 'jump' },
         fx: { bloom: 1.1, dof: 0.6, ao: 0.9, grain: 0.04, vignette: 0.28 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'therapy',
@@ -131,7 +206,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, -2.6], rotation: [0.05, 4.6, 0], scale: 0.86, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 1, speed: 0.95, color: '#3b82f6', core: '#e6f0fd', mode: 'sync' },
         fx: { bloom: 1.2, dof: 0.4, ao: 0.85, grain: 0.04, vignette: 0.22 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'climax-build',
@@ -142,7 +218,8 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [-2.2, 0, -1.4], rotation: [0, 5.4, 0.05], scale: 0.9, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 1, speed: 1.15, color: '#2563eb', core: '#f2f7ff', mode: 'converge' },
         fx: { bloom: 1.4, dof: 0.5, ao: 0.8, grain: 0.04, vignette: 0.3 },
-        eeg: 0,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0,
     },
     {
         id: 'climax-flash',
@@ -153,18 +230,62 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, -0.8], rotation: [0, 5.9, 0], scale: 1.05, grow: 1, dissolve: 0.15, flash: 1 },
         signals: { load: 1, speed: 1.35, color: '#2563eb', core: '#ffffff', mode: 'converge' },
         fx: { bloom: 2.2, dof: 0.2, ao: 0.5, grain: 0.04, vignette: 0.18 },
-        eeg: 0.05,
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
+        still: 0.35,
+    },
+    /* ─────────────────────────── ФИНАЛ ───────────────────────────
+       Одна глава не могла отыграть три события — рождение линии, её завершение
+       и выход в футер: между ключевыми кадрами всё интерполируется линейно, и у
+       финала не оставалось ни ритма, ни стоп-кадра. Отсюда три главы.
+
+       Фон держится тёмным (#0a1628, тот же, что у вспышки) до конца линии.
+       Раньше он светлел РОВНО в те кадры, когда линия прочерчивалась, и это
+       ломало сразу три вещи: блум падал с 2.2 до 0.4 и всё равно не работал
+       (прибавлять свет к почти белому некуда), перо приходилось делать темнее
+       линии вместо того, чтобы оно светилось, а ступень переброса токенов
+       (pageTheme, SWAP_LUMINANCE) приходилась на самый заметный момент
+       страницы. Тёмный фон снимает все три разом. */
+    {
+        id: 'exit-draw',
+        title: 'Финал: запись',
+        anchor: '#outro-draw',
+        camera: FINALE_CAMERA,
+        background: '#0a1628',
+        neuron: { position: [0, 0, 0], rotation: [0, 6.2, 0], scale: 1, grow: 1, dissolve: 1, flash: 0 },
+        signals: { load: 0, speed: 0, color: '#2563eb', core: '#f2f7ff', mode: 'quiet' },
+        fx: { bloom: 1.8, dof: 0.25, ao: 0.4, grain: 0.04, vignette: 0.3 },
+        eeg: { draw: 0.35, rig: 1, head: 1, ink: 1 },
+        still: 1,
     },
     {
-        id: 'exit',
-        title: 'Выход',
-        anchor: '#outro',
-        camera: { position: [0, -0.2, 8.6], lookAt: [0, -0.35, 0], fov: 45 },
-        background: '#eaf1ff',
+        id: 'exit-verdict',
+        title: 'Финал: заключение',
+        anchor: '#outro-verdict',
+        camera: FINALE_CAMERA,
+        background: '#0a1628',
         neuron: { position: [0, 0, 0], rotation: [0, 6.2, 0], scale: 1, grow: 1, dissolve: 1, flash: 0 },
-        signals: { load: 0, speed: 0, color: '#2563eb', core: '#12294d', mode: 'quiet' },
-        fx: { bloom: 0.4, dof: 0, ao: 0.6, grain: 0.03, vignette: 0 },
-        eeg: 1,
+        signals: { load: 0, speed: 0, color: '#2563eb', core: '#f2f7ff', mode: 'quiet' },
+        /* Стоп-кадр: DoF выключен, блум приглушён, в кадре не движется ничего,
+           кроме тихого пульса запаркованного пера. */
+        fx: { bloom: 1, dof: 0, ao: 0.4, grain: 0.04, vignette: 0.22 },
+        eeg: { draw: 1, rig: 1, head: 0.45, ink: 1 },
+        still: 1,
+    },
+    {
+        id: 'exit-exit',
+        title: 'Финал: выход в футер',
+        anchor: '#outro-exit',
+        camera: FINALE_CAMERA,
+        background: EXIT_BACKGROUND[EXIT_VARIANT],
+        neuron: { position: [0, 0, 0], rotation: [0, 6.2, 0], scale: 1, grow: 1, dissolve: 1, flash: 0 },
+        signals: { load: 0, speed: 0, color: '#2563eb', core: '#f2f7ff', mode: 'quiet' },
+        fx: { bloom: 0.3, dof: 0, ao: 0.5, grain: 0.03, vignette: 0 },
+        /* Выход: сетка, лента и перо гаснут вместе, пока липкая коробка ещё
+           приклеена (якорь — метка в точке отклеивания, NarrativeActs.tsx).
+           В v4 `ink` не было, лента держалась на полной непрозрачности до
+           футера и просвечивала сквозь его стекло. */
+        eeg: { draw: 1, rig: 0, head: 0, ink: 0 },
+        still: 0.6,
     },
 ] as const;
 
@@ -202,7 +323,16 @@ export type SceneState = {
     ao: number;
     grain: number;
     vignette: number;
-    eeg: number;
+    /** 0…1 — прочерченность ленты (в кадр уходит монотонный максимум, см. Neuron.tsx) */
+    eegDraw: number;
+    /** 0…1 — приборная обвязка */
+    eegRig: number;
+    /** множитель яркости пера */
+    eegHead: number;
+    /** 0…1 — видимость чернил (гаснет на выходе) */
+    eegInk: number;
+    /** 0…1 — насколько кадр замер: гасит параллакс и дрейф */
+    still: number;
 };
 
 export function createSceneState(): SceneState {
@@ -230,7 +360,11 @@ export function createSceneState(): SceneState {
         ao: 0,
         grain: 0,
         vignette: 0,
-        eeg: 0,
+        eegDraw: 0,
+        eegRig: 0,
+        eegHead: 0,
+        eegInk: 1,
+        still: 0,
     };
 }
 
@@ -283,7 +417,22 @@ export function resolveSceneState(p: number, out: SceneState): SceneState {
     out.ao = lerp(a.fx.ao, b.fx.ao, t);
     out.grain = lerp(a.fx.grain, b.fx.grain, t);
     out.vignette = lerp(a.fx.vignette, b.fx.vignette, t);
-    out.eeg = lerp(a.eeg, b.eeg, t);
+    out.eegDraw = lerp(a.eeg.draw, b.eeg.draw, t);
+    out.eegRig = lerp(a.eeg.rig, b.eeg.rig, t);
+    out.eegHead = lerp(a.eeg.head, b.eeg.head, t);
+    out.eegInk = lerp(a.eeg.ink, b.eeg.ink, t);
+    out.still = lerp(a.still, b.still, t);
 
     return out;
+}
+
+/**
+ * Индекс главы по идентификатору. Нужен коду, который завязан на конкретную
+ * главу (сброс монотонного прочерчивания в финале), чтобы не хардкодить число:
+ * добавили главу в середину — ничего не разъехалось.
+ */
+export function chapterIndex(id: string): number {
+    const i = SCENE_SCRIPT.findIndex((c) => c.id === id);
+    if (i < 0) throw new Error(`sceneScript: нет главы «${id}»`);
+    return i;
 }

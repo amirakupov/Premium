@@ -1,0 +1,27 @@
+{
+  "cmd": "eval",
+  "label": "end-geometry",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T21:41:28.913Z",
+  "result": {
+    "vh": 810,
+    "draw": {
+      "top": 6205,
+      "h": 486
+    },
+    "verdict": {
+      "top": 6691,
+      "h": 1215
+    },
+    "exit": {
+      "top": 7501,
+      "h": 0
+    },
+    "footer": {
+      "top": 2953,
+      "h": 72
+    },
+    "docH": 8516,
+    "finaleSvh": 2.1
+  }
+}

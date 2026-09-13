@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "eeg:path": "node scripts/eeg-path.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

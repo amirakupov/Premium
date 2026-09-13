@@ -1,0 +1,53 @@
+{
+  "cmd": "eval",
+  "label": "end-deg-REDUCED",
+  "url": "http://localhost:3100/",
+  "at": "2026-09-13T21:42:00.338Z",
+  "mode": "prefers-reduced-motion",
+  "result": {
+    "scene": "on",
+    "a11y": "0",
+    "reducedMotion": true,
+    "heading": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 255,
+        "h": 48
+      }
+    },
+    "text": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 324,
+        "h": 82
+      }
+    },
+    "cta": {
+      "ok": true,
+      "reasons": [],
+      "rect": {
+        "top": 427,
+        "h": 51
+      }
+    },
+    "ctaHref": "/contacts",
+    "ctaClickable": true,
+    "rigHidden": true,
+    "staticSvgShown": true,
+    "runups": [
+      {
+        "sel": "#outro-draw",
+        "display": "none",
+        "h": 0
+      },
+      {
+        "sel": "#outro-exit",
+        "display": "none",
+        "h": 0
+      }
+    ],
+    "canvas": true
+  }
+}

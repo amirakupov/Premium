@@ -1,0 +1,27 @@
+{
+  "cmd": "shots",
+  "label": "deg-A11Y",
+  "url": "http://localhost:3100/",
+  "at": "2026-09-13T19:10:37.368Z",
+  "mode": "a11y",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "verdict",
+      "y": 6232,
+      "file": "deg-A11Y-verdict-16x9.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "verdict",
+      "y": 5827,
+      "file": "deg-A11Y-verdict-4x3.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "verdict",
+      "y": 6820,
+      "file": "deg-A11Y-verdict-9x19.5.jpg"
+    }
+  ]
+}

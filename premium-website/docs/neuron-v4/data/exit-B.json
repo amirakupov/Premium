@@ -1,0 +1,62 @@
+{
+  "cmd": "shots",
+  "label": "exit-B",
+  "url": "http://localhost:3100/?tier=high&exit=B",
+  "at": "2026-09-13T19:12:48.334Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "verdict",
+      "y": 7197,
+      "file": "exit-B-verdict-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "exit",
+      "y": 8068,
+      "file": "exit-B-exit-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "tofooter",
+      "y": 8453,
+      "file": "exit-B-tofooter-16x9.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "verdict",
+      "y": 6804,
+      "file": "exit-B-verdict-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "exit",
+      "y": 7630,
+      "file": "exit-B-exit-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "tofooter",
+      "y": 7994,
+      "file": "exit-B-tofooter-4x3.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "verdict",
+      "y": 7525,
+      "file": "exit-B-verdict-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "exit",
+      "y": 8483,
+      "file": "exit-B-exit-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "tofooter",
+      "y": 8907,
+      "file": "exit-B-tofooter-9x19.5.jpg"
+    }
+  ]
+}

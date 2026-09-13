@@ -1,0 +1,62 @@
+{
+  "cmd": "shots",
+  "label": "s1",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T18:50:54.336Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "draw",
+      "y": 6165,
+      "file": "s1-draw-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "verdict",
+      "y": 7197,
+      "file": "s1-verdict-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "exit",
+      "y": 8068,
+      "file": "s1-exit-16x9.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "draw",
+      "y": 5825,
+      "file": "s1-draw-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "verdict",
+      "y": 6804,
+      "file": "s1-verdict-4x3.jpg"
+    },
+    {
+      "viewport": "4x3",
+      "stop": "exit",
+      "y": 7630,
+      "file": "s1-exit-4x3.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "draw",
+      "y": 6387,
+      "file": "s1-draw-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "verdict",
+      "y": 7525,
+      "file": "s1-verdict-9x19.5.jpg"
+    },
+    {
+      "viewport": "9x19.5",
+      "stop": "exit",
+      "y": 8483,
+      "file": "s1-exit-9x19.5.jpg"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "cmd": "shots",
+  "label": "regress",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T19:18:30.958Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "hero",
+      "y": 83,
+      "file": "regress-hero-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "diagnostics",
+      "y": 1625,
+      "file": "regress-diagnostics-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "doctors",
+      "y": 5538,
+      "file": "regress-doctors-16x9.jpg"
+    }
+  ]
+}

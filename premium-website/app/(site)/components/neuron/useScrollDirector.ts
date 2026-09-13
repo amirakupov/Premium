@@ -4,8 +4,13 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { DIRECTOR } from './params';
-import { SCENE_SCRIPT } from './sceneScript';
+import { SCENE_SCRIPT, chapterIndex } from './sceneScript';
 import { clamp01, damp } from './utils';
+
+/* Потолок скорости таймлайна действует от вспышки до стоп-кадра: ровно там,
+   где событие обязано быть увидено (передача эстафеты, запись). */
+const FINALE_FROM = chapterIndex('climax-flash');
+const FINALE_TO = chapterIndex('exit-verdict');
 
 /**
  * Прогресс сцены из НАТИВНОГО скролла документа.
@@ -80,7 +85,16 @@ function createDirector(): DirectorInternals {
             lastScrollY = scrollY;
 
             director.targetP = mapFocus(scrollY + viewport * 0.5);
-            director.p = damp(director.p, director.targetP, DIRECTOR.PROGRESS_LAMBDA, dt);
+            const next = damp(director.p, director.targetP, DIRECTOR.PROGRESS_LAMBDA, dt);
+            /* Вперёд по финалу — не быстрее потолка: демпфер при далёкой цели
+               разгоняет p до десятков глав в секунду, и передача эстафеты
+               пролетала за кадр (params.DIRECTOR.FINALE_MAX_SPEED). Назад и
+               вне финала — как есть. */
+            const inFinale = director.p >= FINALE_FROM && director.p < FINALE_TO;
+            director.p =
+                inFinale && next > director.p
+                    ? Math.min(next, director.p + DIRECTOR.FINALE_MAX_SPEED * dt)
+                    : next;
 
             const instant = clamp01(Math.abs(dy) / dt / DIRECTOR.VELOCITY_SCALE);
             director.velocity = damp(director.velocity, instant, DIRECTOR.VELOCITY_LAMBDA, dt);
@@ -169,7 +183,10 @@ export function useScrollDirector(enabled: boolean) {
         window.addEventListener('resize', schedule);
         window.addEventListener('orientationchange', schedule);
         window.addEventListener('load', schedule);
-        ScrollTrigger.addEventListener('refresh', measure);
+        /* Тоже через rAF: на один resize приходит и своё событие, и refresh
+           ScrollTrigger, и ResizeObserver — десять getBoundingClientRect на
+           каждый превращались в тридцать за кадр. Коалесценция — один замер. */
+        ScrollTrigger.addEventListener('refresh', schedule);
 
         const observer = new ResizeObserver(schedule);
         observer.observe(document.body);
@@ -181,7 +198,7 @@ export function useScrollDirector(enabled: boolean) {
             window.removeEventListener('resize', schedule);
             window.removeEventListener('orientationchange', schedule);
             window.removeEventListener('load', schedule);
-            ScrollTrigger.removeEventListener('refresh', measure);
+            ScrollTrigger.removeEventListener('refresh', schedule);
             observer.disconnect();
         };
     }, [enabled]);
