@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Golos_Text, Prata } from "next/font/google";
 import { CLINIC, SITE_URL } from "@/lib/constants";
 import "./globals.css";
@@ -59,6 +61,32 @@ const clinicJsonLd = {
  */
 const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.getItem("a11y") === "1" ? "1" : "0";`;
 
+/**
+ * Занавес (прелоадер главной) решается тоже до пейнта, иначе при повторном
+ * заходе в рамках сессии страница даёт кадр-два тёмного полотна и только потом
+ * контент. `1` — показать (первый заход на «/»), `0` — не показывать. На других
+ * страницах всегда `0`: там занавеса нет, а атрибут ещё и блокирует скролл.
+ * Клиентскую навигацию на «/» обрабатывает сам Preloader.
+ */
+const curtainInitScript = `try{document.documentElement.dataset.curtain=(location.pathname==="/"&&!sessionStorage.getItem("preloaderSeen"))?"1":"0"}catch(e){document.documentElement.dataset.curtain="1"}`;
+
+/**
+ * Cookie-баннер: решение «показывать ли» — тоже до пейнта. Баннер всегда в
+ * серверном HTML (иначе он выпрыгивал через сотни миллисекунд после загрузки),
+ * а CSS по html[data-cookie="set"] прячет его, если выбор уже сделан.
+ */
+const cookieInitScript = `try{document.documentElement.dataset.cookie=localStorage.getItem("cookie_consent")?"set":"ask"}catch(e){document.documentElement.dataset.cookie="ask"}`;
+
+/**
+ * Измерительная обвязка perf-v3 (docs/perf-v3/harness.js): long tasks, LCP,
+ * CLS, жизненный цикл прелоадера, профиль скролла. В прод не попадает —
+ * включается только сборкой с NEXT_PUBLIC_PERF_HARNESS=1.
+ */
+const perfHarness =
+    process.env.NEXT_PUBLIC_PERF_HARNESS === "1"
+        ? readFileSync(join(process.cwd(), "docs/perf-v3/harness.js"), "utf8")
+        : null;
+
 /* Контракт визуального направления — обязан пережить production-сборку. */
 const designContract = `<!--
 THESIS: Чистая современная неврологическая клиника в духе Celestia/Phenomenon Labs:
@@ -91,7 +119,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             suppressHydrationWarning
         >
         <head>
-            <script dangerouslySetInnerHTML={{ __html: a11yInitScript }} />
+            {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
+            <script
+                dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript + cookieInitScript }}
+            />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(clinicJsonLd) }}

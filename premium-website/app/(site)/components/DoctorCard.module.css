@@ -3,7 +3,8 @@
   width: 100%;
   max-width: 285px;
   height: 400px;
-  cursor: pointer;
+  /* вне вьюпорта не рендерится; высота явная, размер не зависит от содержимого */
+  content-visibility: auto;
 }
 
 .cardInner {
@@ -91,14 +92,20 @@
   color: var(--on-dark-soft);
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
 /* синее стекло поверх фото — как первичные кнопки сайта */
 .button {
   display: inline-block;
-  margin-top: 0.9rem;
   padding: 0.5rem 1.3rem;
   background: var(--glass-primary);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  /* без backdrop-filter — как у .btn: заливка почти непрозрачна */
   border-radius: 999px;
   border: none;
   color: #ffffff;
@@ -116,6 +123,45 @@
 
 .button:active {
   transform: scale(0.95);
+}
+
+/* Кнопка переворота на лицевой стороне: тёмное стекло на фото, светлый текст. */
+.flipButton {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-dark-border);
+  background: rgba(var(--scrim), 0.35);
+  color: var(--on-dark);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.4s var(--spring);
+}
+
+.flipButton:hover {
+  background: rgba(var(--scrim), 0.6);
+  transform: translateY(-1px);
+}
+
+/* На обороте — контурная синяя, как вторичное действие на светлом. */
+.flipButtonBack {
+  margin-top: 1rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--brand);
+  background: transparent;
+  color: var(--brand);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.flipButtonBack:hover {
+  background: var(--brand);
+  color: #ffffff;
 }
 
 .backContent {

@@ -20,6 +20,10 @@ import { useThree } from '@react-three/fiber';
  *
  * Демпферы в сцене считаются от dt, а не от номера кадра, поэтому при 30 к/с
  * хореография идёт с той же скоростью — просто реже обновляется.
+ *
+ * После perf-v3 драйвер остаётся только на low (perf.ts, fps: null у остальных):
+ * там сцена упрощена и ступени под плавным текстом менее заметны, а GPU
+ * действительно слабый.
  */
 export default function FrameDriver({ fps }: { fps: number }) {
     const invalidate = useThree((state) => state.invalidate);
@@ -28,12 +32,20 @@ export default function FrameDriver({ fps }: { fps: number }) {
         const interval = 1000 / fps;
         let raf = 0;
         let previous = 0;
+        let lastTick = 0;
+        /** интервал кадра монитора, замеренный по соседним rAF */
+        let refresh = 1000 / 60;
 
         const tick = (now: number) => {
             raf = requestAnimationFrame(tick);
-            // допуск в половину кадра: иначе при 60 Гц и потолке 60 каждый
-            // второй такт промахивается и получается ровно 30
-            if (now - previous < interval - 8) return;
+            if (lastTick) refresh = now - lastTick;
+            lastTick = now;
+            /* Допуск — половина РЕАЛЬНОГО кадра монитора, а не константа 8 мс:
+               с константой при fps 40 на 60 Гц порог 17 мс пропускал каждый
+               второй такт, и «40» на деле было 30. Считая от замеренного
+               интервала, на 60 Гц потолок 30 даёт ровно 30, на 30-герцовом
+               мониторе — все его кадры. */
+            if (now - previous < interval - refresh * 0.5) return;
             previous = now;
             invalidate();
         };

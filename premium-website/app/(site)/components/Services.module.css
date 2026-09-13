@@ -40,6 +40,22 @@
   gap: clamp(20px, 2.5vw, 32px);
 }
 
+/* Скелетон карточки услуги: та же высота, что оценка contain-intrinsic-size у
+   настоящей карточки, то же стекло без размытия — бегущая полоса на нём. */
+.skeleton {
+  height: 480px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--shimmer), var(--glass-bg);
+  background-size: 420px 100%, auto;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -420px 0, 0 0; }
+  to { background-position: 420px 0, 0 0; }
+}
+
 @media (max-width: 960px) {
   .servicesContainer {
     grid-template-columns: repeat(2, 1fr);
@@ -55,5 +71,9 @@
     scroll-snap-type: x proximity;
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .skeleton {
+    flex: 0 0 78%;
   }
 }

@@ -1,0 +1,137 @@
+{
+  "cmd": "scroll",
+  "label": "C4-high-demand30",
+  "url": "http://localhost:3000/?tier=high&fps=30",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T16:05:22.532Z",
+  "layersBefore": {
+    "count": 27,
+    "estBytesAtDpr1": 556079228,
+    "estMB": 530.3,
+    "big": 23
+  },
+  "frames": {
+    "frames": 593,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 17.4,
+    "p99": 33.4,
+    "max": 34.2,
+    "fps": 59.3,
+    "over16": 101,
+    "over33": 1,
+    "longTasksDuring": 0
+  },
+  "rendersPerSec": 1281,
+  "trace": {
+    "windowMs": 10005,
+    "mainBusyMs": 1262.9,
+    "mainBusyPct": 12.6,
+    "buckets": {
+      "script": 515.7,
+      "style": 182.9,
+      "layout": 150.1,
+      "paint": 159.7,
+      "composite": 65.8,
+      "other": 188.7
+    },
+    "bucketsPct": {
+      "script": 5.2,
+      "style": 1.8,
+      "layout": 1.5,
+      "paint": 1.6,
+      "composite": 0.7,
+      "other": 1.9
+    },
+    "gpuTaskMs": 880.5,
+    "rasterMs": 58.7,
+    "longTasks": [],
+    "userMarks": [
+      {
+        "name": "navigationStart",
+        "at": 9983.7
+      },
+      {
+        "name": "domLoading",
+        "at": 9983.8
+      },
+      {
+        "name": "responseEnd",
+        "at": 9983.9
+      },
+      {
+        "name": "domInteractive",
+        "at": 9984.5
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 9984.5
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 9984.5
+      },
+      {
+        "name": "domComplete",
+        "at": 9984.6
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        428.9
+      ],
+      [
+        "UpdateLayoutTree",
+        182.9
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        155.1
+      ],
+      [
+        "Paint",
+        87
+      ],
+      [
+        "Commit",
+        65.8
+      ],
+      [
+        "Layerize",
+        63
+      ],
+      [
+        "PrePaint",
+        55.4
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        35.1
+      ],
+      [
+        "Layout",
+        32.7
+      ],
+      [
+        "EventDispatch",
+        32.4
+      ],
+      [
+        "HitTest",
+        26.7
+      ],
+      [
+        "RunTask",
+        19.4
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 62,
+    "estBytesAtDpr1": 792384628,
+    "estMB": 755.7,
+    "big": 56
+  }
+}

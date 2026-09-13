@@ -1,0 +1,8 @@
+{
+  "cmd": "shot",
+  "label": "B-diagnostics-high",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:42:36.886Z"
+}

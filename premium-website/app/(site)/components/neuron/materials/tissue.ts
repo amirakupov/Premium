@@ -18,7 +18,49 @@ import { SNOISE3 } from './glsl';
  * шейдер через onBeforeCompile: так остаётся полноценный физический свет и
  * тени от окружения, но появляются прочерчивание роста (uGrow) и сканирующая
  * волна (uScan). Значения по умолчанию нейтральны — анимирует их этап 3.
+ *
+ * Два состояния кроны, оба переключает Neuron.tsx по ходу сцены:
+ *   — GROW_CLIP (define): `discard` по uGrow нужен только пока идёт
+ *     прорастание (первые CHOREO.INTRO_DURATION секунд). Любой discard во
+ *     фрагментном шейдере отключает early-Z для всего материала — каждый
+ *     перекрытый фрагмент сотен трубок всё равно растеризуется. Когда рост
+ *     завершён, define снимается: одна перекомпиляция в обмен на постоянный
+ *     выигрыш, на мобильных GPU кратный;
+ *   — transparent: альфа кроне нужна только в финале («Выход», dissolve > 0).
+ *     Всё остальное время меш идёт непрозрачным проходом — без сортировки и
+ *     блендинга на каждом перекрытии. Исключение — тиры с transmission в
+ *     мембране сомы (high): three рендерит все непрозрачные объекты второй раз
+ *     в буфер преломления, и непрозрачная крона удваивала бы стоимость кадра
+ *     (замер perf-v3: high 60 → 44 к/с). Там крона остаётся в прозрачном
+ *     проходе, как в v2, — он не попадает в буфер преломления.
  */
+
+/** Ключ define прорастания; см. setGrowClip. */
+export const GROW_CLIP = 'GROW_CLIP';
+
+/**
+ * Включить/выключить отсечение роста. Меняет define, поэтому программа
+ * пересобирается — вызывать только на смене состояния, не покадрово.
+ */
+export function setGrowClip(material: THREE.Material, enabled: boolean) {
+    const defines = (material.defines ??= {});
+    const has = GROW_CLIP in defines;
+    if (has === enabled) return;
+    if (enabled) defines[GROW_CLIP] = '';
+    else delete defines[GROW_CLIP];
+    material.needsUpdate = true;
+}
+
+/**
+ * Прозрачный проход только когда есть что растворять. Смена transparent меняет
+ * define OPAQUE в шейдере three, поэтому нужен needsUpdate; программа для
+ * второго состояния попадает в кэш three и компилируется один раз.
+ */
+export function setTransparent(material: THREE.Material, transparent: boolean) {
+    if (material.transparent === transparent) return;
+    material.transparent = transparent;
+    material.needsUpdate = true;
+}
 
 export type DendriteMaterial = {
     material: THREE.MeshPhysicalMaterial;
@@ -42,16 +84,21 @@ export function createDendriteMaterial(profile: TierProfile): DendriteMaterial {
         vertexColors: true,
         roughness: 0.25,
         metalness: 0,
-        clearcoat: 0.55,
+        // по тирам (perf.ts); ноль выкидывает ветку шейдера целиком
+        clearcoat: profile.clearcoat,
         clearcoatRoughness: 0.3,
-        iridescence: 0.12,
+        iridescence: profile.iridescence,
         iridescenceIOR: 1.25,
         ior: 1.4,
         transmission: physical ? 0.35 : 0,
         thickness: physical ? 0.55 : 0,
-        transparent: true,
+        // непрозрачный проход (альфу включает Neuron.tsx на dissolve), кроме
+        // тиров с преломлением мембраны — см. шапку файла
+        transparent: profile.somaTransmission,
         side: THREE.FrontSide,
     });
+    // прорастание идёт с момента монтирования — отсечение включено сразу
+    material.defines = { ...material.defines, [GROW_CLIP]: '' };
 
     const uniforms = {
         /** 0…1 — до какой доли aPathT ветви прочерчены */
@@ -115,8 +162,11 @@ export function createDendriteMaterial(profile: TierProfile): DendriteMaterial {
                 #include <clipping_planes_fragment>
                 /* Прочерчивание роста: отсекаем во фрагментном шейдере по
                    расстоянию от сомы. Пересобирать геометрию на каждый кадр
-                   роста было бы в разы дороже. */
+                   роста было бы в разы дороже. Только под define: discard
+                   отключает early-Z на весь материал, а рост длится секунды. */
+                #ifdef GROW_CLIP
                 if (vPathT > uGrow) discard;
+                #endif
                 `,
             )
             .replace(
@@ -134,6 +184,8 @@ export function createDendriteMaterial(profile: TierProfile): DendriteMaterial {
 
     /* Без своего ключа three сложит в кэш программу от «обычного» physical и
        вернёт её другим материалам без наших инъекций. */
+    /* Состояния (define роста, прозрачность, лак/иризация) three включает в ключ
+       сам — здесь только наши инъекции. */
     material.customProgramCacheKey = () => `dendrite-${physical ? 'transmission' : 'plain'}`;
 
     return { material, uniforms };
@@ -232,14 +284,15 @@ export function createMembraneMaterial(profile: TierProfile): MembraneMaterial {
  * Ядро внутри мембраны. Видно сквозь оболочку, вращается само по себе — именно
  * рассогласование двух вращений и читается как объём.
  */
-export function createCoreMaterial() {
+export function createCoreMaterial(profile: TierProfile) {
     return new THREE.MeshStandardMaterial({
         color: new THREE.Color(SOMA.CORE_COLOR),
         emissive: new THREE.Color(SOMA.CORE_EMISSIVE),
         emissiveIntensity: SOMA.CORE_GLOW,
         roughness: 0.38,
         metalness: 0.05,
-        // растворение в финале гасит и ядро — без transparent opacity не работает
-        transparent: true,
+        // растворение в финале гасит и ядро; transparent включает Neuron.tsx на
+        // dissolve. С преломлением мембраны — всегда прозрачное, как крона.
+        transparent: profile.somaTransmission,
     });
 }

@@ -1,0 +1,20 @@
+{
+  "cmd": "reload",
+  "label": "A-reload",
+  "url": "http://localhost:3000/",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:32:35.712Z",
+  "firstVisit": {
+    "seen": 16.9,
+    "gone": 1880.8,
+    "curtainFrames": 112
+  },
+  "reload": {
+    "seen": 42.8,
+    "gone": 68.1,
+    "curtainFrames": 0,
+    "curtainFirstFrameAt": null,
+    "sessionSeen": "1"
+  }
+}

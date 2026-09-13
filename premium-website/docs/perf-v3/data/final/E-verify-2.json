@@ -1,0 +1,38 @@
+{
+  "freshBanner": {
+    "attr": "ask",
+    "bannerVisible": true,
+    "buttons": [
+      "Отклонить",
+      "Принять"
+    ]
+  },
+  "mapBeforeDecision": {
+    "iframe": false,
+    "placeholder": "Карта загрузится после согласия на использование cookies."
+  },
+  "afterDecline": {
+    "iframe": false,
+    "placeholder": "Карта не загружена: вы отклонили использование cookies.",
+    "consent": "declined",
+    "attr": "set",
+    "bannerInDom": false
+  },
+  "a11yLabel": {
+    "attr": "1",
+    "label": "Версия для слабовидящихОбычная версия",
+    "pressed": "true",
+    "hydrated": true
+  },
+  "reducedScrollBehavior": "auto",
+  "mobileMenu": {
+    "inert": false,
+    "ariaHidden": "false",
+    "focusInMenu": true,
+    "active": "Услуги"
+  },
+  "mobileMenuClosed": {
+    "inert": true,
+    "activeIsBurger": false
+  }
+}

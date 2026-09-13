@@ -1,0 +1,42 @@
+{
+  "pointerBefore": {
+    "x": 0,
+    "y": 0
+  },
+  "pointerLeft": {
+    "x": -0.8435770814449421,
+    "y": 0
+  },
+  "cameraLeft": null,
+  "pointerRight": {
+    "x": 0.8261788439271333,
+    "y": 0
+  },
+  "pointerTop": {
+    "x": 0.017421065280699463,
+    "y": 0.7619810810447714
+  },
+  "memHigh": {
+    "geometries": 24,
+    "textures": 43,
+    "programs": 33
+  },
+  "tierAfter1": "mid",
+  "memMid": {
+    "geometries": 24,
+    "textures": 32,
+    "programs": 23
+  },
+  "tierAfter2": "low",
+  "memLow": {
+    "geometries": 21,
+    "textures": 6,
+    "programs": 16
+  },
+  "e2": {
+    "atMore": "A → a[href=/services/service-eeg]",
+    "atImage": "A → a"
+  },
+  "dataScene": "on",
+  "footerInHtml": true
+}

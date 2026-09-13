@@ -41,6 +41,23 @@
   pointer-events: none;
 }
 
+/**
+ * Замена постпроцессинга на low: зерно (SVG-тайл 128×128 с feTurbulence, один
+ * раз растеризуется и повторяется) и виньетка радиальным градиентом. Лежит
+ * поверх canvas внутри того же слоя, под контентом. Значения — средние по
+ * таблице глав: grain 0.03–0.04, vignette 0–0.3.
+ */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(5, 12, 28, 0.22) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 128px 128px;
+  opacity: 0.06;
+}
+
 .canvas {
   /* R3F проставляет размеры инлайном; класс нужен как якорь для фона на
      случай, если WebGL-контекст потерян — под канвасом остаются обои. */

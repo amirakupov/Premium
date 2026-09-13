@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import NeuronCanvasMount from '@/app/(site)/components/neuron/NeuronCanvasMount';
 import NeuronHero from '@/app/(site)/components/NeuronHero';
 import { SymptomAct, DiagnosticsAct, ExitStage } from '@/app/(site)/components/NarrativeActs';
@@ -11,7 +12,23 @@ import { listAllDoctors, listAllServices } from '@/lib/cms';
 
 // Блоки услуг и врачей на главной приходят из CMS — на билде бэкенда нет,
 // пререндер дал бы пустые секции. Подробнее: app/(site)/doctors/page.tsx.
+// Кэш запросов при этом работает: `next: { revalidate }` в lib/cms.ts даёт час
+// ISR на уровне fetch и при force-dynamic — проверено логом фикстурного
+// бэкенда в perf-v3 (39 просмотров → 4 запроса, см. docs/perf-v3/report.md, D1).
 export const dynamic = 'force-dynamic';
+
+/* Секции из CMS — за границами Suspense: первый экран, нарративные экраны и
+   цитата не зависят от бэкенда и отдаются сразу, а сетки услуг и врачей
+   приезжают стримом со скелетонами вместо себя. */
+async function ServicesFromCms() {
+    const services = await listAllServices();
+    return <Services services={services.slice(0, 9)} />;
+}
+
+async function DoctorsFromCms() {
+    const doctors = await listAllDoctors();
+    return <Doctors doctors={doctors.slice(0, 4)} />;
+}
 
 /**
  * Порядок секций здесь — это порядок глав сцены. Каждая глава привязана к
@@ -29,12 +46,7 @@ export const dynamic = 'force-dynamic';
  * Переставили секции — перестановьте и главы: сцена читает таблицу сверху вниз
  * и требует, чтобы якоря шли в том же порядке, что и в разметке.
  */
-export default async function HomePage() {
-    const [services, doctors] = await Promise.all([
-        listAllServices(),
-        listAllDoctors(),
-    ]);
-
+export default function HomePage() {
     return (
         <HomeShell>
             {/* Единственный Canvas на страницу: фиксированный слой за всем контентом. */}
@@ -45,9 +57,13 @@ export default async function HomePage() {
             <SymptomAct />
             <DiagnosticsAct />
             <Quote />
-            <Services services={services.slice(0, 9)} />
+            <Suspense fallback={<Services services={null} />}>
+                <ServicesFromCms />
+            </Suspense>
             <ClinicFotos />
-            <Doctors doctors={doctors.slice(0, 4)} />
+            <Suspense fallback={<Doctors doctors={null} />}>
+                <DoctorsFromCms />
+            </Suspense>
             <ExitStage />
         </HomeShell>
     );

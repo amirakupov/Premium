@@ -3,7 +3,10 @@ import DoctorCard from './DoctorCard';
 import styles from './Doctors.module.css';
 import type { Doctor } from '@/lib/types';
 
-export default function Doctors({ doctors }: { doctors: Doctor[] }) {
+const SKELETON_COUNT = 4;
+
+/** `doctors: null` — fallback Suspense: секция с якорем и заголовком, сетка — скелетон. */
+export default function Doctors({ doctors }: { doctors: Doctor[] | null }) {
   return (
     <section id="doctors" className={styles.doctorsSection}>
       <div className={styles.headerContainer}>
@@ -13,15 +16,19 @@ export default function Doctors({ doctors }: { doctors: Doctor[] }) {
         </Link>
       </div>
       <div className={styles.gridWrapper} data-reveal-group>
-        {doctors.map((doc) => (
-          <DoctorCard
-            key={doc.id}
-            imgSrc={doc.imgSrc}
-            name={doc.name}
-            specialty={doc.specialty}
-            bio={doc.bio}
-          />
-        ))}
+        {doctors
+          ? doctors.map((doc) => (
+              <DoctorCard
+                key={doc.id}
+                imgSrc={doc.imgSrc}
+                name={doc.name}
+                specialty={doc.specialty}
+                bio={doc.bio}
+              />
+            ))
+          : Array.from({ length: SKELETON_COUNT }, (_, i) => (
+              <div key={i} className={styles.skeleton} aria-hidden="true" />
+            ))}
       </div>
     </section>
   );

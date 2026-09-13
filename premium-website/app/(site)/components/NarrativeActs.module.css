@@ -89,6 +89,12 @@
   }
 }
 
+/* Сцены нет (WebGL недоступен или контекст потерян — NeuronCanvas ставит
+   html[data-scene="off"]): тот же пустой экран перед футером сворачивается. */
+:global(html[data-scene="off"]) .outro {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .staticEeg {
     display: block;

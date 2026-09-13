@@ -20,12 +20,18 @@ export type TierProfile = {
     /** верхняя граница device pixel ratio */
     dpr: number;
     /**
-     * Потолок кадров в секунду для сцены. Сцена декоративная и живёт под всей
-     * страницей; рисовать её чаще, чем нужно глазу, — значит отбирать кадры у
-     * скролла и у стеклянных карточек, которые перекомпоновывают размытие на
-     * каждом изменении фона под ними.
+     * Потолок кадров в секунду для сцены; `null` — без потолка, Canvas в режиме
+     * frameloop 'always' и идёт вровень с монитором.
+     *
+     * В v2 потолок стоял на всех тирах (60/40/30) как компенсация дорогой
+     * страницы: каждый кадр сцены перекомпоновывал размытие под десятками
+     * стеклянных карточек. После блока B (стекло дешевле, запись фона не на
+     * :root) замер показал 8–15 % главного потока и ~10 % GPU на high при 60 Гц
+     * (docs/perf-v3/report.md, C7) — потолок стал вреден: под ним сцена шла
+     * ступеньками под плавным текстом. Остаётся только на low, где ступени
+     * менее заметны из-за общего упрощения сцены.
      */
-    fps: number;
+    fps: number | null;
     /** глубина рекурсии ветвления: +1 примерно утраивает число веток */
     branchDepth: number;
     /** одновременных импульсов */
@@ -34,6 +40,22 @@ export type TierProfile = {
     neighbours: number;
     ssao: boolean;
     dof: boolean;
+    /**
+     * Постпроцессинг вообще. `false` — EffectComposer не монтируется: на low три
+     * полноэкранных прохода (блум, виньетка, зерно) заменяет статичный
+     * CSS-оверлей (NeuronCanvas.module.css, .grain), а сглаживание даёт нативный
+     * MSAA рендерера, которому без постпроцессинга ничего не мешает.
+     */
+    postprocessing: boolean;
+    /**
+     * Лак и иризация кроны. Это отдельные ветки шейдера MeshPhysicalMaterial;
+     * ноль, а не малое значение, — чтобы three выкинул define и не платить за
+     * ветку. Иризация 0.12 на тонких синих трубках не читается вовсе (сравнение
+     * скриншотов на high — docs/perf-v3/report.md, C3), поэтому выключена
+     * везде; лак виден как блик на трубках и остаётся на mid/high.
+     */
+    clearcoat: number;
+    iridescence: number;
     /** mipmapBlur даёт мягкий широкий ореол, но это лишний проход */
     bloomMipmap: boolean;
     /**
@@ -66,6 +88,9 @@ export const TIERS: Record<Tier, TierProfile> = {
         neighbours: 0,
         ssao: false,
         dof: false,
+        postprocessing: false,
+        clearcoat: 0,
+        iridescence: 0,
         bloomMipmap: false,
         branchMaterial: 'shader',
         somaTransmission: false,
@@ -77,7 +102,7 @@ export const TIERS: Record<Tier, TierProfile> = {
            с хиро, а этот — во весь вьюпорт и под ним ещё десятки стеклянных
            карточек. Пиксели здесь дороже, чем казалось. */
         dpr: 1.25,
-        fps: 40,
+        fps: null,
         branchDepth: 3,
         signalCount: 28,
         neighbours: 4,
@@ -87,6 +112,9 @@ export const TIERS: Record<Tier, TierProfile> = {
            остаются только блум, виньетка и зерно. */
         ssao: false,
         dof: false,
+        postprocessing: true,
+        clearcoat: 0.55,
+        iridescence: 0,
         bloomMipmap: true,
         branchMaterial: 'shader',
         somaTransmission: false,
@@ -96,14 +124,24 @@ export const TIERS: Record<Tier, TierProfile> = {
         tier: 'high',
         /* 2.0 на полноэкранном канвасе с четырьмя проходами — это 4-5 млн
            пикселей на кадр несколько раз. Сцена мягкая и с зерном, разницы
-           между 1.5 и 2.0 на ней практически не видно. */
-        dpr: 1.5,
-        fps: 60,
+           между 1.5 и 2.0 на ней практически не видно.
+           1.25, а не 1.5 — по замеру perf-v3 (docs/perf-v3/report.md, C7):
+           без потолка FPS сцена на M3 при 1.5 с SSAO+DoF+Bloom+SMAA держит
+           44 к/с (GPU-bound), при 1.25 — 58–60. В v2 потолок 60 через
+           demand-цикл на деле давал ~28 рендеров/с, и 1.5 «влезало» именно
+           поэтому. */
+        dpr: 1.25,
+        fps: null,
         branchDepth: 3,
         signalCount: 48,
         neighbours: 12,
         ssao: true,
         dof: true,
+        postprocessing: true,
+        clearcoat: 0.55,
+        /* 0 и на high: на скриншотах диагностики (docs/perf-v3/shots/C3-*)
+           иризация 0.12 неотличима от нуля, а это отдельная ветка шейдера. */
+        iridescence: 0,
         bloomMipmap: true,
         branchMaterial: 'physical',
         somaTransmission: true,
@@ -124,6 +162,16 @@ export const PERF = {
     WARMUP: 2.5,
     /** медиана выше этого — тир вниз (22 мс ≈ ниже 45 fps) */
     BUDGET_MS: 22,
+    /**
+     * Бюджет считается не ниже REFRESH_FACTOR × интервал кадра монитора.
+     * Гвард меряет интервал между кадрами, а не время рендера: на 30-герцовом
+     * мониторе (у владельца такой — внешний 5K по кабелю, см.
+     * docs/perf-v3/baseline.md) интервал всегда 33 мс, и с фиксированным
+     * бюджетом гвард принимал медленный дисплей за медленное железо и через
+     * 4,5 с опускал high до mid. Оценка интервала монитора — 10-й процентиль
+     * окна: самые быстрые кадры и есть частота обновления.
+     */
+    REFRESH_FACTOR: 1.6,
 } as const;
 
 const ORDER: readonly Tier[] = ['low', 'mid', 'high'];
@@ -154,8 +202,25 @@ function isSoftwareRenderer() {
     }
 }
 
+/** WebGL доступен вообще: без него сцену не монтируем и страница об этом знает (html[data-scene="off"]). */
+export function hasWebGL(): boolean {
+    try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+        if (!gl) return false;
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export function detectTier(): Tier {
     if (typeof window === 'undefined') return 'mid';
+    /* Принудительный тир для замеров и отладки: /?tier=low|mid|high.
+       Профили сравниваются на одном железе — иначе цифры тиров несопоставимы. */
+    const forced = new URLSearchParams(window.location.search).get('tier');
+    if (forced === 'low' || forced === 'mid' || forced === 'high') return forced;
     if (isSoftwareRenderer()) return 'low';
 
     const cores = navigator.hardwareConcurrency ?? 4;

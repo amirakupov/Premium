@@ -32,11 +32,12 @@
   --scrim: 18, 41, 77;         /* тёмно-синий для оверлеев (rgb-тройка) */
 
   /* ── Переход фона по ходу скролла ───────────────────────────────── */
-  /* Значения по умолчанию = светлая страница. Сцена нейрона переписывает
-     --page-bg и --scene-dark (плюс токены текста и стекла) прямо на
-     documentElement; см. components/neuron/pageTheme.ts. Ни один компонент об
-     этом не знает — они собраны на var(--…), и это тот случай, ради которого
-     дисциплина токенов и держалась. */
+  /* Значения по умолчанию = светлая страница. Непрерывные величины перехода —
+     цвет грунта и «темнота» — сцена пишет НЕ сюда, а инлайном на .page-ground
+     (см. ниже): запись переменной на :root инвалидирует стили всего документа
+     на каждом шаге. На :root остаются только редкие дискретные перебросы
+     токенов текста и стекла (swap/band); см. components/neuron/pageTheme.ts.
+     Ни один компонент об этом не знает — они собраны на var(--…). */
   --page-bg: #eaf1ff;          /* грунт страницы; на тёмных главах уходит в navy */
   --scene-dark: 0;             /* 0 — светло, 1 — тёмная точка нарратива */
 
@@ -60,11 +61,16 @@
   /* ── Liquid glass: единый стеклянный материал ──────────────────── */
   /* brightness подсвечивает линзу изнутри, saturate вытягивает цвет
      обоев сквозь стекло — без них фрост выглядит серой плёнкой */
-  --glass-blur: blur(22px) saturate(190%) brightness(1.1);
+  /* Радиус 12px, а не 22: стоимость размытия растёт быстрее линейной от
+     радиуса, а под стеклом едет анимированный canvas — каждый его кадр
+     пересобирает размытие под всеми стеклянными слоями. Визуально разницу
+     компенсирует чуть более плотная заливка ниже (0.2 → 0.26).
+     Скриншоты до/после — docs/perf-v3/report.md, B2. */
+  --glass-blur: blur(12px) saturate(190%) brightness(1.1);
   /* заливка почти прозрачна: цвет карточке даёт то, что за ней.
      Белила выше ~0.3 убивают преломление и дают матовую плашку, ниже 0.18 —
      вторичный текст на синих пятнах обоев проваливается ниже 4.5:1 */
-  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.26);
   --glass-bg-strong: rgba(255, 255, 255, 0.34); /* плотнее — шапка, поля */
   /* рамка почти невидима: кромку стекла рисуют блики в --glass-sheen */
   --glass-border: rgba(255, 255, 255, 0.06);
@@ -250,6 +256,25 @@ html[data-scene-tier="low"] {
   --panel-filter: none;
 }
 
+/**
+ * Занавес главной (см. HomeShell / Preloader). Атрибут ставит inline-скрипт в
+ * <head> до первого пейнта и снимает HomeShell по окончании анимации.
+ *
+ * Пока занавес виден, страница не скроллится: иначе режиссёр сцены отыграл бы
+ * половину нарратива за закрытым полотном. scrollbar-gutter держит место под
+ * полосу прокрутки, чтобы вёрстка не дёрнулась, когда overflow вернётся.
+ * Футер спрятан на то же время — раньше его снимали из дерева (FooterGate), и
+ * он моргал при каждом заходе.
+ */
+html[data-curtain="1"] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+html[data-curtain="1"] footer {
+  visibility: hidden;
+}
+
 /* Уважаем системную настройку «меньше прозрачности» — сплошные поверхности. */
 @media (prefers-reduced-transparency: reduce) {
   :root {
@@ -413,6 +438,13 @@ html[data-a11y="1"] body {
   font-size: 20px;
 }
 
+/* Подпись переключателя режима выбирает CSS по атрибуту, который стоит на <html>
+   до первого пейнта, — см. A11yToggle.tsx. */
+html[data-a11y="1"] .a11y-label-off,
+html:not([data-a11y="1"]) .a11y-label-on {
+  display: none;
+}
+
 :focus-visible {
   outline: var(--focus) solid currentColor;
   outline-offset: 3px;
@@ -436,16 +468,39 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Плавный скролл — не animation и не transition, глобальное правило выше его
+   не гасит. Стоит ПОСЛЕ html { scroll-behavior: smooth }: при равной
+   специфичности побеждает порядок. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   line-height: var(--line);
   letter-spacing: var(--letter);
-  /* грунт страницы: сцена ведёт его от светлого к тёмному и обратно */
+  /* статичный грунт по умолчанию; на витрине поверх него лежит .page-ground,
+     который и ведёт сцена от светлого к тёмному */
   background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Грунт витрины. Один выделенный фиксированный слой под всей страницей
+   (z-index: -2 — ниже сцены, которая на -1). Сцена пишет сюда инлайном
+   background-color (цвет главы) и --scene-dark: инвалидация стилей при этом
+   ограничена этим элементом и его ::before, а не всем документом, как было при
+   записи на :root. Пока сцена не смонтирована — статичный светлый грунт. */
+.page-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--page-bg);
 }
 
 /* «Обои» под стеклом. Стекло видно только тогда, когда за ним есть что
@@ -456,14 +511,13 @@ body {
      подкрашивают карточку — это и читается как преломление.
    Слой прибит к вьюпорту: при прокрутке островки едут по обоям, и
    картинка внутри стекла живёт. */
-body::before {
+.page-ground::before {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: -1;
-  pointer-events: none;
   /* На тёмных главах светлые обои уходят, и стеклу остаётся преломлять саму
-     сцену — нейрон и есть фактура тёмного отрезка. */
+     сцену — нейрон и есть фактура тёмного отрезка. --scene-dark наследуется
+     от .page-ground, куда её пишет сцена. */
   opacity: calc(1 - var(--scene-dark));
   background:
     radial-gradient(circle at center, rgba(15, 31, 56, 0.06) 1px, transparent 1.1px) 0 0 / 20px 20px,
@@ -475,11 +529,12 @@ body::before {
     linear-gradient(165deg, #e6eeff 0%, #f4f8ff 46%, #e4edff 100%);
 }
 
-html[data-a11y="1"] body {
+html[data-a11y="1"] body,
+html[data-a11y="1"] .page-ground {
   background: var(--paper);
 }
 
-html[data-a11y="1"] body::before {
+html[data-a11y="1"] .page-ground::before {
   display: none;
 }
 
@@ -510,7 +565,36 @@ h1, h2, h3 {
      прелоадер (--z-overlay: 200) в первую очередь — оказалось бы прижато под
      шапку (--z-header: 100). Сцена уходит вниз сама (z-index: -1 на своём
      слое), и порядок снизу вверх получается тот же:
-     обои body::before → сцена → контент → шапка → баннеры. */
+     грунт .page-ground (с обоями) → сцена → контент → шапка → баннеры. */
+}
+
+/* Ссылка «к основному содержанию»: вне фокуса убрана за верхний край и
+   прозрачна, по фокусу выезжает поверх шапки и занавеса. */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: calc(var(--z-overlay) + 1);
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-200%);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  opacity: 1;
+}
+
+/* цель skip-link получает программный фокус; контур ему не нужен */
+.site-main:focus {
+  outline: none;
 }
 
 .a11y-row {
@@ -563,8 +647,10 @@ h1, h2, h3 {
   line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  /* backdrop-filter снят намеренно: кнопок на главной десятки, каждая — свой
+     слой композитора с размытием, а размывать за ними нечего: у --primary
+     заливка почти непрозрачна (альфа 0.92/0.94), у --ghost материал держат
+     заливка и блики --glass-sheen. См. docs/perf-v3/report.md, B2. */
   transition: background 0.25s ease, color 0.25s ease,
     border-color 0.25s ease, box-shadow 0.3s ease, transform 0.45s var(--spring);
 }
