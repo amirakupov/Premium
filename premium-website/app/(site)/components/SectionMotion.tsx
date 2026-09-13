@@ -37,6 +37,9 @@ export default function SectionMotion() {
 
         let cancelled = false;
         let ctx: gsap.Context | undefined;
+        /* Наблюдатели живут вне gsap.context: ctx.revert() возвращает стили, но
+           о ResizeObserver ничего не знает. */
+        const watchers: Array<() => void> = [];
 
         /* Сетки услуг и врачей приезжают стримом за границами Suspense. Пока
            документ грузится, их карточек в DOM может ещё не быть — а триггеры
@@ -136,7 +139,24 @@ export default function SectionMotion() {
                ScrollTrigger посчитал бы по ней ерунду. */
             const verdict = document.querySelector<HTMLElement>('#outro-verdict');
             if (verdict) {
-                const start = 'top top-=22%';
+                /* Точка старта зависит от высоты секции, и это не тонкость, а
+                   защита от полной потери текста.
+
+                   Со сценой секция выше экрана, её верх уходит за верх вьюпорта,
+                   и отсчёт «на 22 % экрана выше верха» ловит момент, когда линия
+                   уже дописана. Но в режимах деградации (нет WebGL, отключены
+                   анимации, режим для слабовидящих) разгоны свёрнуты, секция
+                   становится короткой и стоит у низа документа — её верх ДО
+                   такой высоты не доходит никогда, прокручивать дальше некуда.
+                   С фиксированной точкой старта триггер в этих режимах не
+                   срабатывал вовсе, и заголовок с кнопкой «Записаться» так и
+                   оставались спрятанными начальным кадром анимации.
+
+                   Функция, а не строка: ScrollTrigger пересчитывает её на каждом
+                   refresh, поэтому переключение режима на живой странице
+                   (A11yToggle) тоже подхватывается. */
+                const start = () =>
+                    verdict.offsetHeight > window.innerHeight ? 'top top-=22%' : 'top 80%';
                 const heading = verdict.querySelector<HTMLElement>('[data-reveal="verdict-heading"]');
                 if (heading) {
                     gsap.fromTo(
@@ -169,6 +189,34 @@ export default function SectionMotion() {
                         },
                     );
                 }
+                /* Высота секции меняется уже ПОСЛЕ того, как триггеры
+                   посчитаны, и это не редкость, а норма: `data-scene="off"`
+                   ставит канвас из лениво загруженного чанка, `data-a11y`
+                   переключается прямо на живой странице, — и в обоих случаях
+                   разгоны сворачиваются, а секция становится втрое ниже. Без
+                   сцены пересчитывать метки к тому же некому: режиссёр
+                   скролла не монтируется вовсе, а он единственный, кто иначе
+                   дёргает refresh.
+
+                   Порог в 40 пикселей — чтобы не дёргать глобальный пересчёт
+                   на каждое дрожание высоты от подстановки шрифта. */
+                let lastHeight = verdict.offsetHeight;
+                let pending = 0;
+                const watcher = new ResizeObserver(() => {
+                    if (Math.abs(verdict.offsetHeight - lastHeight) < 40) return;
+                    lastHeight = verdict.offsetHeight;
+                    if (pending) return;
+                    pending = requestAnimationFrame(() => {
+                        pending = 0;
+                        ScrollTrigger.refresh();
+                    });
+                });
+                watcher.observe(verdict);
+                watchers.push(() => {
+                    if (pending) cancelAnimationFrame(pending);
+                    watcher.disconnect();
+                });
+
                 /* Приборная обвязка приходит вместе с расплатой и тем же
                    движением — но позже и мягче: это контекст, а не содержание. */
                 const rig = verdict.querySelector<HTMLElement>('[data-reveal="rig"]');
@@ -212,6 +260,7 @@ export default function SectionMotion() {
 
         return () => {
             cancelled = true;
+            watchers.forEach((stop) => stop());
             ctx?.revert();
         };
     }, []);

@@ -1,0 +1,44 @@
+{
+  "cmd": "shots",
+  "label": "handoff",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T19:17:53.719Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "1-flash",
+      "y": 5484,
+      "file": "handoff-1-flash-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "2",
+      "y": 5938,
+      "file": "handoff-2-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "3",
+      "y": 5982,
+      "file": "handoff-3-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "4",
+      "y": 6025,
+      "file": "handoff-4-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "5",
+      "y": 6113,
+      "file": "handoff-5-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "6",
+      "y": 6273,
+      "file": "handoff-6-16x9.jpg"
+    }
+  ]
+}

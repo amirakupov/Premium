@@ -161,12 +161,38 @@ async function main() {
   const b = await browser();
   const page = await openPage(b);
   const out = { cmd, label, url, at: new Date().toISOString() };
+
+  /* Режимы деградации выставляются ДО навигации: prefers-reduced-motion и
+     наличие WebGL сцена читает при монтировании, а не по событию. */
+  if (process.env.REDUCED === '1') {
+    out.mode = 'prefers-reduced-motion';
+    await page.s('Emulation.setEmulatedMedia', {
+      features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+    });
+  }
+  if (process.env.NO_WEBGL === '1') {
+    out.mode = 'scene=off';
+    await page.s('Page.addScriptToEvaluateOnNewDocument', {
+      source: 'HTMLCanvasElement.prototype.getContext = function(){ return null; };',
+    });
+  }
+  /* Ключ a11y пишется ВСЕГДА, в том числе нулём: профиль браузера переживает
+     прогоны, и один запуск с A11Y=1 иначе тихо заражал бы все следующие. */
+  if (process.env.A11Y === '1') out.mode = 'a11y';
+  await page.s('Page.addScriptToEvaluateOnNewDocument', {
+    source: `try{localStorage.setItem('a11y','${process.env.A11Y === '1' ? '1' : '0'}');}catch(e){}`,
+  });
+
   try {
     if (cmd === 'shots') {
       /* rest: список «имя@селектор[:смещение]» — по кадру на каждый якорь и соотношение */
       const stops = (rest[0] || 'verdict@#outro-verdict').split(',');
       out.stops = [];
+      /* ONLY=16x9 — снять только одно соотношение: раскадровке передачи
+         эстафеты три пропорции не нужны, а каждая стоит перезагрузки. */
+      const only = process.env.ONLY ? process.env.ONLY.split(',') : null;
       for (const [name, [w, h]] of Object.entries(VIEWPORTS)) {
+        if (only && !only.includes(name)) continue;
         await page.metrics(w, h, name === '9x19.5' ? 3 : 2);
         await page.goto(url);
         await waitFor(page, READY);
@@ -218,7 +244,12 @@ async function main() {
       await page.goto(url);
       await waitFor(page, READY);
       await sleep(2000);
-      out.result = await page.eval(rest.join(' '));
+      /* Выражение можно передать файлом: @path — проверки многострочные, и в
+         argv они превращаются в кашу из экранирования. */
+      const expr = rest.join(' ');
+      out.result = await page.eval(
+        expr.startsWith('@') ? fs.readFileSync(expr.slice(1), 'utf8') : expr,
+      );
     }
   } catch (e) { out.error = String(e.stack || e); }
   fs.mkdirSync(`${ROOT}/data`, { recursive: true });

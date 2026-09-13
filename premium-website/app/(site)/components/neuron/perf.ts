@@ -70,6 +70,16 @@ export type TierProfile = {
      */
     penHalo: number;
     /**
+     * Множитель плотности приборной сетки.
+     *
+     * Сетка нарисована очень бледной намеренно: это контекст, а не рисунок. Но
+     * на mid/high её слегка приподнимает блум, а на low композитора нет, dpr
+     * зажат в единицу, и поверх лежит CSS-оверлей с зерном и виньеткой — в
+     * сумме от сетки не остаётся почти ничего, и «бумага» пропадает вместе с
+     * ощущением прибора. Там она рисуется плотнее.
+     */
+    gridInk: number;
+    /**
      * physical — MeshPhysicalMaterial с transmission на ветвях; shader — тот же
      * материал без преломления (по стоимости примерно Standard).
      */
@@ -104,6 +114,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         iridescence: 0,
         bloomMipmap: false,
         penHalo: 0.85,
+        gridInk: 1.75,
         branchMaterial: 'shader',
         somaTransmission: false,
         pageGlass: false,
@@ -129,6 +140,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         iridescence: 0,
         bloomMipmap: true,
         penHalo: 0.42,
+        gridInk: 1.0,
         branchMaterial: 'shader',
         somaTransmission: false,
         pageGlass: true,
@@ -157,6 +169,7 @@ export const TIERS: Record<Tier, TierProfile> = {
         iridescence: 0,
         bloomMipmap: true,
         penHalo: 0.36,
+        gridInk: 1.0,
         branchMaterial: 'physical',
         somaTransmission: true,
         pageGlass: true,

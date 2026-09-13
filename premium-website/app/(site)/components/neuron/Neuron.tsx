@@ -402,11 +402,29 @@ export default function Neuron({
         (window as unknown as { __neuron?: unknown }).__neuron = {
             built,
             gl,
+            camera,
             director,
             pointer: () => ({ x: parallax.current.x, y: parallax.current.y }),
             memory: () => ({ ...gl.info.memory, programs: gl.info.programs?.length ?? 0 }),
+            /* Состояние финала: по нему проверяются монотонность прочерчивания и
+               совпадение 3D-диаграммы с DOM-коробкой меток. */
+            finale: () => ({
+                p: director.p,
+                progress: built.eegMaterial.uniforms.uProgress.value,
+                opacity: built.eegMaterial.uniforms.uOpacity.value,
+                rig: built.gridMaterial.uniforms.uOpacity.value,
+                pen: built.penMaterial.uniforms.uOpacity.value,
+                headHDR: built.eegMaterial.uniforms.uHeadHDR.value,
+                group: eegGroupRef.current
+                    ? {
+                          x: eegGroupRef.current.position.x,
+                          y: eegGroupRef.current.position.y,
+                          scale: eegGroupRef.current.scale.x,
+                      }
+                    : null,
+            }),
         };
-    }, [built, gl, director]);
+    }, [built, gl, camera, director]);
 
     /* — Раскладка соседей ставится один раз: она не анимируется, меняется
          только их непрозрачность — */
@@ -466,7 +484,12 @@ export default function Neuron({
            независимыми кривыми свет в кадре либо провалился бы между ними,
            либо подскочил. */
         const collapse = clamp01(range(dissolve, 0.15, 1));
-        const handoff = smoothstep(0.55, 0.8, collapse);
+        /* Порог не на глаз: масштаб группы идёт как lerp(1, 0.015, easeOut(dissolve)),
+           и ниже 0.12 — то есть до состояния «точка» — он уходит примерно на
+           collapse ≈ 0.9. Передача заканчивается там же, а движение пера
+           начинается ещё чуть позже (FINALE.DRAW_START): сначала схлопывание,
+           потом запись, и ни в одном кадре в кадре нет двух светящихся точек. */
+        const handoff = smoothstep(0.78, 0.93, collapse);
 
         /* Левый конец ленты в мировых координатах: туда стягивается нейрон.
            Там же стоит калибровочный импульс, с которого начинается запись. */
@@ -591,7 +614,7 @@ export default function Neuron({
         built.eegMaterial.uniforms.uHeadHDR.value = EEG.HEAD_HDR * state.eegHead;
 
         built.gridMaterial.uniforms.uProgress.value = progress;
-        built.gridMaterial.uniforms.uOpacity.value = rig;
+        built.gridMaterial.uniforms.uOpacity.value = rig * profile.gridInk;
 
         /* Перо — отдельный объект, а не градиент на хвосте ленты: у записи
            должен быть физический наконечник. Позиция берётся опросом той же

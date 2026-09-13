@@ -1,0 +1,13 @@
+{
+  "cmd": "eval",
+  "label": "monotone",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T19:03:14.558Z",
+  "result": {
+    "atVerdict": 1.02,
+    "afterScrollUp": 1.02,
+    "backAtDraw": 1.02,
+    "aboveClimax": 0,
+    "replay": 1.02
+  }
+}

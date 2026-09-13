@@ -1,0 +1,19 @@
+{
+  "cmd": "eval",
+  "label": "deg-normal",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-09-13T19:09:25.639Z",
+  "result": {
+    "scene": "on",
+    "a11y": "0",
+    "verdictVisible": true,
+    "headingVisible": true,
+    "textVisible": true,
+    "ctaVisible": true,
+    "ctaText": "Записаться на приём",
+    "ctaHref": "/contacts",
+    "staticEegVisible": false,
+    "drawSpacerHidden": false,
+    "exitSpacerHidden": false
+  }
+}

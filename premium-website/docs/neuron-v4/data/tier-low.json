@@ -1,0 +1,20 @@
+{
+  "cmd": "shots",
+  "label": "tier-low",
+  "url": "http://localhost:3100/?tier=low",
+  "at": "2026-09-13T19:20:26.122Z",
+  "stops": [
+    {
+      "viewport": "16x9",
+      "stop": "draw",
+      "y": 6019,
+      "file": "tier-low-draw-16x9.jpg"
+    },
+    {
+      "viewport": "16x9",
+      "stop": "verdict",
+      "y": 7252,
+      "file": "tier-low-verdict-16x9.jpg"
+    }
+  ]
+}
