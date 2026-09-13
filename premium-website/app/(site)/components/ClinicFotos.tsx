@@ -6,7 +6,7 @@ const photos: string[] = [
   '/clinic/clinic10.jpg',
   '/clinic/clinic7.jpg',
   '/clinic/clinic6.jpg',
-  '/clinic/clinic13.png',
+  '/clinic/clinic13.webp',
   '/clinic/clinic5.jpg',
   '/clinic/clinic4.jpg',
   '/clinic/clinic12.jpg',

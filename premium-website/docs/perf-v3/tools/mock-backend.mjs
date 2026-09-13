@@ -3,7 +3,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 const LOG = process.env.MOCK_LOG || '/tmp/mock-backend.log';
-const svcImgs = ['eeg','uzi','massage','physiotherapy','bottocs','blocade','capelnic','ozon','plazma','vlok','elektro','anal'];
+const svcImgs = ['eeg','uzi2','massage','elektro','blocade','capelnic','anal','eeg','uzi2','massage','elektro','blocade'];
 const services = svcImgs.map((img, i) => ({
   id: i + 1, slug: `service-${img}`, imageSrc: `/services/${img}.png`,
   serviceName: ['ЭЭГ','УЗДГ сосудов','Массаж','Физиотерапия','Ботулинотерапия','Блокады','Капельницы','Озонотерапия','Плазмотерапия','ВЛОК','Электромиография','Анализы'][i],
@@ -13,7 +13,7 @@ const services = svcImgs.map((img, i) => ({
 }));
 const docImgs = ['azam','bash','berg','guzel','ildar','ivan'];
 const doctors = docImgs.map((img, i) => ({
-  id: i + 1, imgSrc: `/doctors/${img}.jpeg`,
+  id: i + 1, imgSrc: `/hero/founder.jpg`, // public/doctors удалён (не использовался кодом)
   name: ['Азамат Р.','Башир К.','Елена Берг','Гузель И.','Ильдар С.','Иван П.'][i],
   specialty: ['Невролог','Физиотерапевт','Невролог, эпилептолог','Массажист','Невролог','Нейрофизиолог'][i],
   bio: 'Стаж 12 лет. Диагностика и лечение головной боли, эпилепсии, последствий инсульта. Автор 8 научных публикаций.',

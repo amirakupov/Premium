@@ -38,7 +38,17 @@ export default function SectionMotion() {
         let cancelled = false;
         let ctx: gsap.Context | undefined;
 
-        Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
+        /* Сетки услуг и врачей приезжают стримом за границами Suspense. Пока
+           документ грузится, их карточек в DOM может ещё не быть — а триггеры
+           ищут узлы один раз. Событие load приходит после того, как стрим
+           закрыт целиком, поэтому ждём его; ScrollTrigger по нему же делает
+           refresh, а режиссёр сцены — measure(). */
+        const loaded =
+            document.readyState === 'complete'
+                ? Promise.resolve()
+                : new Promise<void>((resolve) => window.addEventListener('load', () => resolve(), { once: true }));
+
+        Promise.all([loaded, import('gsap'), import('gsap/ScrollTrigger')]).then(([, { gsap }, { ScrollTrigger }]) => {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
         const numbers = new Intl.NumberFormat('ru-RU');

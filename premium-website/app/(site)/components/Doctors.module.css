@@ -51,6 +51,23 @@
   grid-template-columns: 1fr;
 }
 
+/* Скелетон карточки врача — геометрия DoctorCard (285×400). */
+.skeleton {
+  width: 100%;
+  max-width: 285px;
+  height: 400px;
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  background: var(--shimmer), var(--brand-tint);
+  background-size: 420px 100%, auto;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -420px 0, 0 0; }
+  to { background-position: 420px 0, 0 0; }
+}
+
 @media (min-width: 560px) {
   .gridWrapper {
     grid-template-columns: repeat(2, 1fr);
