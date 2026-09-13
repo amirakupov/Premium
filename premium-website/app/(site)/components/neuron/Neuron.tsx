@@ -108,6 +108,7 @@ export default function Neuron({
 
     /* — Геометрия и материалы: строятся один раз на профиль тира — */
     const built = useMemo(() => {
+        performance.mark(`neuron:build:start:${profile.tier}`);
         const morphology = growNeuron(profile.branchDepth);
         const dendrites = buildDendriteGeometry(morphology);
         const signalPaths = buildSignalPaths(morphology.paths);
@@ -145,6 +146,7 @@ export default function Neuron({
         const eegMaterial = createEegMaterial();
 
         const events = createMicroEvents(NEURON.SEED + 41);
+        performance.mark(`neuron:build:end:${profile.tier}`);
 
         return {
             dendrites,
@@ -348,6 +350,7 @@ export default function Neuron({
 
     useFrame((frame, delta) => {
         if (reduced) return;
+        if (elapsed.current === 0) performance.mark('neuron:first-frame');
         // Кадр может быть сколь угодно длинным (переключили таб, залип поток) —
         // без ограничения демпферы получают огромный dt и всё дёргается.
         const dt = Math.min(delta, 1 / 20);

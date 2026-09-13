@@ -1,0 +1,140 @@
+{
+  "cmd": "scroll",
+  "label": "b1-mid-glass-none",
+  "url": "http://localhost:3000/?tier=mid",
+  "variant": "glass-none",
+  "cold": false,
+  "at": "2026-09-13T15:24:58.601Z",
+  "variantApplied": "glass-none",
+  "layersBefore": null,
+  "frames": {
+    "frames": 600,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 17.3,
+    "p99": 17.7,
+    "max": 21.5,
+    "fps": 60,
+    "over16": 98,
+    "over33": 0,
+    "longTasksDuring": 0
+  },
+  "trace": {
+    "windowMs": 104698,
+    "mainBusyMs": 1557.2,
+    "mainBusyPct": 1.5,
+    "buckets": {
+      "script": 571.5,
+      "style": 297,
+      "layout": 187.3,
+      "paint": 169,
+      "composite": 56.3,
+      "other": 276.1
+    },
+    "bucketsPct": {
+      "script": 0.5,
+      "style": 0.3,
+      "layout": 0.2,
+      "paint": 0.2,
+      "composite": 0.1,
+      "other": 0.3
+    },
+    "gpuTaskMs": 1014.8,
+    "rasterMs": 68.1,
+    "longTasks": [],
+    "userMarks": [
+      {
+        "name": "navigationStart",
+        "at": 95299.3
+      },
+      {
+        "name": "domLoading",
+        "at": 95299.4
+      },
+      {
+        "name": "responseEnd",
+        "at": 95299.5
+      },
+      {
+        "name": "domInteractive",
+        "at": 95299.6
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 95299.6
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 95299.6
+      },
+      {
+        "name": "domComplete",
+        "at": 95299.6
+      },
+      {
+        "name": "neuron:build:start:low",
+        "at": 99225.1
+      },
+      {
+        "name": "neuron:build:end:low",
+        "at": 99245.3
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        395.8
+      ],
+      [
+        "UpdateLayoutTree",
+        297
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        206.8
+      ],
+      [
+        "Paint",
+        91.4
+      ],
+      [
+        "Layerize",
+        70.2
+      ],
+      [
+        "HitTest",
+        63.5
+      ],
+      [
+        "PrePaint",
+        58.3
+      ],
+      [
+        "Commit",
+        56.3
+      ],
+      [
+        "TimerFire",
+        52.5
+      ],
+      [
+        "RunTask",
+        43.4
+      ],
+      [
+        "Layout",
+        37
+      ],
+      [
+        "EventDispatch",
+        32.4
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 38,
+    "estBytesAtDpr1": 704143808,
+    "estMB": 671.5,
+    "big": 35
+  }
+}

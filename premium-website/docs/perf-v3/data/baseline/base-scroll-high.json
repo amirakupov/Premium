@@ -1,0 +1,151 @@
+{
+  "cmd": "scroll",
+  "label": "base-scroll-high",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:08:50.941Z",
+  "layersBefore": null,
+  "frames": {
+    "frames": 578,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 17.3,
+    "p99": 17.7,
+    "max": 166.7,
+    "fps": 57.8,
+    "over16": 80,
+    "over33": 4,
+    "longTasksDuring": 0
+  },
+  "trace": {
+    "windowMs": 18754,
+    "mainBusyMs": 1578.9,
+    "mainBusyPct": 8.4,
+    "buckets": {
+      "script": 712.7,
+      "style": 301.5,
+      "layout": 136.7,
+      "paint": 169.3,
+      "composite": 78.6,
+      "other": 180.1
+    },
+    "bucketsPct": {
+      "script": 3.8,
+      "style": 1.6,
+      "layout": 0.7,
+      "paint": 0.9,
+      "composite": 0.4,
+      "other": 1
+    },
+    "gpuTaskMs": 1077.2,
+    "rasterMs": 77.8,
+    "longTasks": [
+      {
+        "at": 293.4,
+        "dur": 74,
+        "top": [
+          "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING: 74ms",
+          "ThreadControllerImpl::RunTask: 0ms",
+          "V8.GC_MC_INCREMENTAL: 0ms",
+          "BlinkScheduler_PerformMicrotaskCheckpoint: 0ms"
+        ],
+        "marks": []
+      }
+    ],
+    "userMarks": [
+      {
+        "name": "navigationStart",
+        "at": 8972.9
+      },
+      {
+        "name": "domLoading",
+        "at": 8972.9
+      },
+      {
+        "name": "responseEnd",
+        "at": 8973.1
+      },
+      {
+        "name": "domInteractive",
+        "at": 8973.1
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 8973.1
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 8973.1
+      },
+      {
+        "name": "domComplete",
+        "at": 8973.1
+      },
+      {
+        "name": "neuron:build:start:mid",
+        "at": 13285.3
+      },
+      {
+        "name": "neuron:build:end:mid",
+        "at": 13331.1
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        491.4
+      ],
+      [
+        "UpdateLayoutTree",
+        301.5
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        145.8
+      ],
+      [
+        "Paint",
+        86.2
+      ],
+      [
+        "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+        79.6
+      ],
+      [
+        "Commit",
+        78.6
+      ],
+      [
+        "Layerize",
+        73.7
+      ],
+      [
+        "PrePaint",
+        56.7
+      ],
+      [
+        "Layout",
+        31.9
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        31.7
+      ],
+      [
+        "EventDispatch",
+        30.6
+      ],
+      [
+        "RunTask",
+        19.3
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 63,
+    "estBytesAtDpr1": 796231504,
+    "estMB": 759.3,
+    "big": 54
+  }
+}

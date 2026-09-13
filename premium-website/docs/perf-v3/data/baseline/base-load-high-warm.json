@@ -1,0 +1,330 @@
+{
+  "cmd": "load",
+  "label": "base-load-high-warm",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:08:24.732Z",
+  "summary": {
+    "ttfb": 13.7,
+    "fcp": 96,
+    "lcp": 96,
+    "cls": 0,
+    "tbt": 36,
+    "preloader": {
+      "seen": 26.5,
+      "firstAnim": 89.5,
+      "gone": 3762
+    },
+    "canvasSeen": 302.5,
+    "curtainFrames": 219,
+    "curtainFirstFrameAt": 34.8,
+    "longTasksTotal": 1,
+    "longTasksInPreloader": 1,
+    "longTasksInPreloaderMs": 86,
+    "longTasks": [
+      {
+        "start": 407.6,
+        "dur": 86
+      }
+    ],
+    "marks": [
+      {
+        "name": "neuron:build:start:high",
+        "t": 369.8
+      },
+      {
+        "name": "neuron:build:end:high",
+        "t": 391.3
+      },
+      {
+        "name": "neuron:gl-created",
+        "t": 399.3
+      },
+      {
+        "name": "neuron:first-frame",
+        "t": 399.7
+      },
+      {
+        "name": "neuron:build:start:mid",
+        "t": 4935.8
+      },
+      {
+        "name": "neuron:build:end:mid",
+        "t": 4959.3
+      }
+    ]
+  },
+  "network": {
+    "jsTransferred": 0,
+    "docTransferred": 26351,
+    "allTransferred": 50097,
+    "jsCount": 18,
+    "topChunks": [
+      {
+        "url": "2zjueh7t2vecu.js",
+        "bytes": 0
+      },
+      {
+        "url": "3ew2r1m0nfe6o.js",
+        "bytes": 0
+      },
+      {
+        "url": "0ha4m18glnjqn.js",
+        "bytes": 0
+      },
+      {
+        "url": "0paxexg6-m0de.js",
+        "bytes": 0
+      },
+      {
+        "url": "05-c3ty_6dwfk.js",
+        "bytes": 0
+      },
+      {
+        "url": "turbopack-0-0eiuvzvjqqv.js",
+        "bytes": 0
+      }
+    ]
+  },
+  "trace": {
+    "windowMs": 4977,
+    "mainBusyMs": 613.3,
+    "mainBusyPct": 12.3,
+    "buckets": {
+      "script": 425.2,
+      "style": 25.4,
+      "layout": 46.5,
+      "paint": 27,
+      "composite": 24.1,
+      "other": 65.1
+    },
+    "bucketsPct": {
+      "script": 8.5,
+      "style": 0.5,
+      "layout": 0.9,
+      "paint": 0.5,
+      "composite": 0.5,
+      "other": 1.3
+    },
+    "gpuTaskMs": 310.6,
+    "rasterMs": 13.9,
+    "longTasks": [
+      {
+        "at": 712.7,
+        "dur": 86.9,
+        "top": [
+          "FunctionCall 1fbwjhevn8d6r.js ht: 83.8ms",
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE: 0.3ms",
+          "V8.HandleInterrupts: 0.3ms",
+          "Layerize: 0.2ms"
+        ],
+        "marks": []
+      }
+    ],
+    "userMarks": [
+      {
+        "name": "navigationStart",
+        "at": 304.9
+      },
+      {
+        "name": "domLoading",
+        "at": 305
+      },
+      {
+        "name": "responseEnd",
+        "at": 305.1
+      },
+      {
+        "name": "navigationStart",
+        "at": 305.1
+      },
+      {
+        "name": "domInteractive",
+        "at": 305.2
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 305.2
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 305.2
+      },
+      {
+        "name": "domComplete",
+        "at": 305.2
+      },
+      {
+        "name": "fetchStart",
+        "at": 305.8
+      },
+      {
+        "name": "unloadEventStart",
+        "at": 321.5
+      },
+      {
+        "name": "unloadEventEnd",
+        "at": 321.5
+      },
+      {
+        "name": "commitNavigationEnd",
+        "at": 322.2
+      },
+      {
+        "name": "domLoading",
+        "at": 322.3
+      },
+      {
+        "name": "navigationStart",
+        "at": 331.1
+      },
+      {
+        "name": "domLoading",
+        "at": 331.2
+      },
+      {
+        "name": "responseEnd",
+        "at": 331.3
+      },
+      {
+        "name": "domInteractive",
+        "at": 331.3
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 331.3
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 331.3
+      },
+      {
+        "name": "domComplete",
+        "at": 331.4
+      },
+      {
+        "name": "responseEnd",
+        "at": 334.1
+      },
+      {
+        "name": "domInteractive",
+        "at": 358
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 358
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 358.1
+      },
+      {
+        "name": "domComplete",
+        "at": 376.7
+      },
+      {
+        "name": "loadEventStart",
+        "at": 376.7
+      },
+      {
+        "name": "loadEventEnd",
+        "at": 376.7
+      },
+      {
+        "name": "neuron:build:start:high",
+        "at": 675
+      },
+      {
+        "name": "neuron:build:end:high",
+        "at": 696.4
+      },
+      {
+        "name": "neuron:gl-created",
+        "at": 704.4
+      },
+      {
+        "name": "neuron:first-frame",
+        "at": 704.8
+      },
+      {
+        "name": "navigationStart",
+        "at": 4066.6
+      },
+      {
+        "name": "domLoading",
+        "at": 4066.6
+      },
+      {
+        "name": "responseEnd",
+        "at": 4066.8
+      },
+      {
+        "name": "domInteractive",
+        "at": 4066.9
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": 4066.9
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": 4066.9
+      },
+      {
+        "name": "domComplete",
+        "at": 4066.9
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        342.6
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        44.5
+      ],
+      [
+        "RunMicrotasks",
+        36.2
+      ],
+      [
+        "UpdateLayoutTree",
+        25.4
+      ],
+      [
+        "Commit",
+        24.1
+      ],
+      [
+        "Layerize",
+        20.4
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        17.3
+      ],
+      [
+        "Layout",
+        14.9
+      ],
+      [
+        "PrePaint",
+        13.8
+      ],
+      [
+        "FireAnimationFrame",
+        12.3
+      ],
+      [
+        "RunTask",
+        9.8
+      ],
+      [
+        "v8.produceCache",
+        8.6
+      ]
+    ]
+  }
+}

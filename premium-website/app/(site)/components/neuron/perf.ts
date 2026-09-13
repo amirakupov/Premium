@@ -156,6 +156,10 @@ function isSoftwareRenderer() {
 
 export function detectTier(): Tier {
     if (typeof window === 'undefined') return 'mid';
+    /* Принудительный тир для замеров и отладки: /?tier=low|mid|high.
+       Профили сравниваются на одном железе — иначе цифры тиров несопоставимы. */
+    const forced = new URLSearchParams(window.location.search).get('tier');
+    if (forced === 'low' || forced === 'mid' || forced === 'high') return forced;
     if (isSoftwareRenderer()) return 'low';
 
     const cores = navigator.hardwareConcurrency ?? 4;

@@ -1,0 +1,14 @@
+{
+  "cmd": "link",
+  "label": "base-link",
+  "url": "http://localhost:3000/",
+  "variant": "none",
+  "cold": false,
+  "at": "2026-09-13T15:29:24.638Z",
+  "linkNav": {
+    "curtainFrames": 2,
+    "firstAt": 52.3,
+    "footerMissingFrames": 0,
+    "path": "/"
+  }
+}

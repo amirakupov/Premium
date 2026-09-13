@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Golos_Text, Prata } from "next/font/google";
 import { CLINIC, SITE_URL } from "@/lib/constants";
 import "./globals.css";
@@ -59,6 +61,16 @@ const clinicJsonLd = {
  */
 const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.getItem("a11y") === "1" ? "1" : "0";`;
 
+/**
+ * Измерительная обвязка perf-v3 (docs/perf-v3/harness.js): long tasks, LCP,
+ * CLS, жизненный цикл прелоадера, профиль скролла. В прод не попадает —
+ * включается только сборкой с NEXT_PUBLIC_PERF_HARNESS=1.
+ */
+const perfHarness =
+    process.env.NEXT_PUBLIC_PERF_HARNESS === "1"
+        ? readFileSync(join(process.cwd(), "docs/perf-v3/harness.js"), "utf8")
+        : null;
+
 /* Контракт визуального направления — обязан пережить production-сборку. */
 const designContract = `<!--
 THESIS: Чистая современная неврологическая клиника в духе Celestia/Phenomenon Labs:
@@ -91,6 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             suppressHydrationWarning
         >
         <head>
+            {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
             <script dangerouslySetInnerHTML={{ __html: a11yInitScript }} />
             <script
                 type="application/ld+json"

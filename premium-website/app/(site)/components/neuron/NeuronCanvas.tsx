@@ -98,6 +98,7 @@ export default function NeuronCanvas() {
                     far: CAMERA.FAR,
                 }}
                 onCreated={({ gl }) => {
+                    performance.mark('neuron:gl-created');
                     /* Контекст не восстанавливаем: восстановление требует
                        пересборки всех буферов и всё равно даёт заметный провал.
                        Честнее снять сцену — страница от неё не зависит. */

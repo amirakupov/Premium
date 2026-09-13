@@ -1,0 +1,345 @@
+{
+  "cmd": "scroll",
+  "label": "b1-high-glass-none",
+  "url": "http://localhost:3000/?tier=high",
+  "variant": "glass-none",
+  "cold": false,
+  "at": "2026-09-13T15:10:28.622Z",
+  "variantApplied": "glass-none",
+  "layersBefore": {
+    "count": 31,
+    "estBytesAtDpr1": 502268960,
+    "estMB": 479,
+    "big": 29
+  },
+  "frames": {
+    "frames": 601,
+    "seconds": 10,
+    "median": 16.7,
+    "p95": 16.9,
+    "p99": 17.5,
+    "max": 17.6,
+    "fps": 60.1,
+    "over16": 52,
+    "over33": 0,
+    "longTasksDuring": 0
+  },
+  "trace": {
+    "windowMs": 10017,
+    "mainBusyMs": 1323.5,
+    "mainBusyPct": 13.2,
+    "buckets": {
+      "script": 459.2,
+      "style": 355.5,
+      "layout": 123.8,
+      "paint": 155.7,
+      "composite": 58.4,
+      "other": 170.9
+    },
+    "bucketsPct": {
+      "script": 4.6,
+      "style": 3.5,
+      "layout": 1.2,
+      "paint": 1.6,
+      "composite": 0.6,
+      "other": 1.7
+    },
+    "gpuTaskMs": 990.1,
+    "rasterMs": 57.6,
+    "longTasks": [],
+    "userMarks": [
+      {
+        "name": "navigationStart",
+        "at": -6375.2
+      },
+      {
+        "name": "navigationStart",
+        "at": -6373.1
+      },
+      {
+        "name": "domLoading",
+        "at": -6372.8
+      },
+      {
+        "name": "responseEnd",
+        "at": -6372.4
+      },
+      {
+        "name": "domInteractive",
+        "at": -6372.2
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -6372.2
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -6372.2
+      },
+      {
+        "name": "domComplete",
+        "at": -6372.1
+      },
+      {
+        "name": "unloadEventStart",
+        "at": -6370.3
+      },
+      {
+        "name": "unloadEventEnd",
+        "at": -6370.3
+      },
+      {
+        "name": "commitNavigationEnd",
+        "at": -6370.2
+      },
+      {
+        "name": "domLoading",
+        "at": -6370.1
+      },
+      {
+        "name": "responseEnd",
+        "at": -6368.7
+      },
+      {
+        "name": "domInteractive",
+        "at": -6368.7
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -6368.7
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -6368.7
+      },
+      {
+        "name": "domComplete",
+        "at": -6368.1
+      },
+      {
+        "name": "loadEventStart",
+        "at": -6368.1
+      },
+      {
+        "name": "loadEventEnd",
+        "at": -6368.1
+      },
+      {
+        "name": "navigationStart",
+        "at": -6269
+      },
+      {
+        "name": "navigationStart",
+        "at": -6269
+      },
+      {
+        "name": "domLoading",
+        "at": -6268.9
+      },
+      {
+        "name": "responseEnd",
+        "at": -6268.9
+      },
+      {
+        "name": "domInteractive",
+        "at": -6268.8
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -6268.8
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -6268.8
+      },
+      {
+        "name": "domComplete",
+        "at": -6268.8
+      },
+      {
+        "name": "fetchStart",
+        "at": -6268.6
+      },
+      {
+        "name": "unloadEventStart",
+        "at": -6238.1
+      },
+      {
+        "name": "unloadEventEnd",
+        "at": -6238.1
+      },
+      {
+        "name": "commitNavigationEnd",
+        "at": -6237.5
+      },
+      {
+        "name": "domLoading",
+        "at": -6237.4
+      },
+      {
+        "name": "navigationStart",
+        "at": -6231.4
+      },
+      {
+        "name": "domLoading",
+        "at": -6231.3
+      },
+      {
+        "name": "responseEnd",
+        "at": -6231.3
+      },
+      {
+        "name": "domInteractive",
+        "at": -6231.2
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -6231.2
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -6231.2
+      },
+      {
+        "name": "domComplete",
+        "at": -6231.2
+      },
+      {
+        "name": "responseEnd",
+        "at": -6219.5
+      },
+      {
+        "name": "domInteractive",
+        "at": -6212.6
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -6212.6
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -6212.5
+      },
+      {
+        "name": "domComplete",
+        "at": -6189.7
+      },
+      {
+        "name": "loadEventStart",
+        "at": -6189.7
+      },
+      {
+        "name": "loadEventEnd",
+        "at": -6189.7
+      },
+      {
+        "name": "neuron:build:start:high",
+        "at": -5896.1
+      },
+      {
+        "name": "neuron:build:end:high",
+        "at": -5873.1
+      },
+      {
+        "name": "neuron:gl-created",
+        "at": -5865
+      },
+      {
+        "name": "neuron:first-frame",
+        "at": -5864.8
+      },
+      {
+        "name": "navigationStart",
+        "at": -2496.5
+      },
+      {
+        "name": "domLoading",
+        "at": -2496.4
+      },
+      {
+        "name": "responseEnd",
+        "at": -2496.3
+      },
+      {
+        "name": "domInteractive",
+        "at": -2496.2
+      },
+      {
+        "name": "domContentLoadedEventStart",
+        "at": -2496.2
+      },
+      {
+        "name": "domContentLoadedEventEnd",
+        "at": -2496.2
+      },
+      {
+        "name": "domComplete",
+        "at": -2496.2
+      },
+      {
+        "name": "neuron:build:start:mid",
+        "at": -1333.1
+      },
+      {
+        "name": "neuron:build:end:mid",
+        "at": -1305.8
+      }
+    ],
+    "topNames": [
+      [
+        "FunctionCall",
+        362.4
+      ],
+      [
+        "UpdateLayoutTree",
+        355.5
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        134.7
+      ],
+      [
+        "Paint",
+        82.5
+      ],
+      [
+        "Layerize",
+        65.9
+      ],
+      [
+        "Commit",
+        58.4
+      ],
+      [
+        "PrePaint",
+        52.9
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        36.9
+      ],
+      [
+        "Layout",
+        33
+      ],
+      [
+        "EventDispatch",
+        31
+      ],
+      [
+        "RunTask",
+        20.3
+      ],
+      [
+        "FireAnimationFrame",
+        16.5
+      ]
+    ]
+  },
+  "layersAfter": {
+    "count": 38,
+    "estBytesAtDpr1": 704143808,
+    "estMB": 671.5,
+    "big": 35
+  }
+}
