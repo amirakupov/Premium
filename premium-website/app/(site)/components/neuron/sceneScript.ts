@@ -81,6 +81,12 @@ export type Chapter = {
         rig: number;
         /** множитель яркости пера поверх EEG.HEAD_HDR */
         head: number;
+        /**
+         * 0…1 — видимость самих чернил. Прочерченность (`draw`) монотонна и не
+         * умеет убывать, поэтому гасить дописанную ленту на выходе нечем, кроме
+         * отдельной величины. Внутри финала — 1; в `exit-exit` — 0.
+         */
+        ink: number;
     };
     /**
      * 0…1 — насколько кадр «замер»: гасит параллакс мыши и медленный дрейф
@@ -152,7 +158,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [1.4, -0.15, 0], rotation: [0.06, 0.2, 0], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.3, speed: 0.55, color: '#1d4ed8', core: '#12294d', mode: 'idle' },
         fx: { bloom: 0.35, dof: 0, ao: 0.7, grain: 0.03, vignette: 0 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -164,7 +170,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [-1.5, 0.1, 0], rotation: [0.12, 1.4, 0.05], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.26, speed: 0.34, color: '#12294d', core: '#0b1a30', mode: 'faltering' },
         fx: { bloom: 0.4, dof: 0.15, ao: 0.85, grain: 0.03, vignette: 0.05 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -176,7 +182,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, 0], rotation: [-0.04, 2.6, -0.06], scale: 1, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.7, speed: 0.6, color: '#4b90e2', core: '#a7cbf7', mode: 'scan' },
         fx: { bloom: 0.95, dof: 1, ao: 1, grain: 0.04, vignette: 0.3 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -188,7 +194,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [2.2, 0.35, -1.6], rotation: [-0.1, 3.6, 0.08], scale: 0.92, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 0.8, speed: 0.72, color: '#6aa8f5', core: '#d6e8ff', mode: 'jump' },
         fx: { bloom: 1.1, dof: 0.6, ao: 0.9, grain: 0.04, vignette: 0.28 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -200,7 +206,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, -2.6], rotation: [0.05, 4.6, 0], scale: 0.86, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 1, speed: 0.95, color: '#3b82f6', core: '#e6f0fd', mode: 'sync' },
         fx: { bloom: 1.2, dof: 0.4, ao: 0.85, grain: 0.04, vignette: 0.22 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -212,7 +218,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [-2.2, 0, -1.4], rotation: [0, 5.4, 0.05], scale: 0.9, grow: 1, dissolve: 0, flash: 0 },
         signals: { load: 1, speed: 1.15, color: '#2563eb', core: '#f2f7ff', mode: 'converge' },
         fx: { bloom: 1.4, dof: 0.5, ao: 0.8, grain: 0.04, vignette: 0.3 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0,
     },
     {
@@ -224,7 +230,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, -0.8], rotation: [0, 5.9, 0], scale: 1.05, grow: 1, dissolve: 0.15, flash: 1 },
         signals: { load: 1, speed: 1.35, color: '#2563eb', core: '#ffffff', mode: 'converge' },
         fx: { bloom: 2.2, dof: 0.2, ao: 0.5, grain: 0.04, vignette: 0.18 },
-        eeg: { draw: 0, rig: 0, head: 0 },
+        eeg: { draw: 0, rig: 0, head: 0, ink: 1 },
         still: 0.35,
     },
     /* ─────────────────────────── ФИНАЛ ───────────────────────────
@@ -248,7 +254,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, 0], rotation: [0, 6.2, 0], scale: 1, grow: 1, dissolve: 1, flash: 0 },
         signals: { load: 0, speed: 0, color: '#2563eb', core: '#f2f7ff', mode: 'quiet' },
         fx: { bloom: 1.8, dof: 0.25, ao: 0.4, grain: 0.04, vignette: 0.3 },
-        eeg: { draw: 0.35, rig: 1, head: 1 },
+        eeg: { draw: 0.35, rig: 1, head: 1, ink: 1 },
         still: 1,
     },
     {
@@ -262,7 +268,7 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         /* Стоп-кадр: DoF выключен, блум приглушён, в кадре не движется ничего,
            кроме тихого пульса запаркованного пера. */
         fx: { bloom: 1, dof: 0, ao: 0.4, grain: 0.04, vignette: 0.22 },
-        eeg: { draw: 1, rig: 1, head: 0.45 },
+        eeg: { draw: 1, rig: 1, head: 0.45, ink: 1 },
         still: 1,
     },
     {
@@ -274,9 +280,11 @@ export const SCENE_SCRIPT: readonly Chapter[] = [
         neuron: { position: [0, 0, 0], rotation: [0, 6.2, 0], scale: 1, grow: 1, dissolve: 1, flash: 0 },
         signals: { load: 0, speed: 0, color: '#2563eb', core: '#f2f7ff', mode: 'quiet' },
         fx: { bloom: 0.3, dof: 0, ao: 0.5, grain: 0.03, vignette: 0 },
-        /* Лента остаётся, обвязка уходит: диаграмма передаёт эстафету статичному
-           SVG-орнаменту футера и гаснет. */
-        eeg: { draw: 1, rig: 0, head: 0 },
+        /* Выход: сетка, лента и перо гаснут вместе, пока липкая коробка ещё
+           приклеена (якорь — метка в точке отклеивания, NarrativeActs.tsx).
+           В v4 `ink` не было, лента держалась на полной непрозрачности до
+           футера и просвечивала сквозь его стекло. */
+        eeg: { draw: 1, rig: 0, head: 0, ink: 0 },
         still: 0.6,
     },
 ] as const;
@@ -321,6 +329,8 @@ export type SceneState = {
     eegRig: number;
     /** множитель яркости пера */
     eegHead: number;
+    /** 0…1 — видимость чернил (гаснет на выходе) */
+    eegInk: number;
     /** 0…1 — насколько кадр замер: гасит параллакс и дрейф */
     still: number;
 };
@@ -353,6 +363,7 @@ export function createSceneState(): SceneState {
         eegDraw: 0,
         eegRig: 0,
         eegHead: 0,
+        eegInk: 1,
         still: 0,
     };
 }
@@ -409,6 +420,7 @@ export function resolveSceneState(p: number, out: SceneState): SceneState {
     out.eegDraw = lerp(a.eeg.draw, b.eeg.draw, t);
     out.eegRig = lerp(a.eeg.rig, b.eeg.rig, t);
     out.eegHead = lerp(a.eeg.head, b.eeg.head, t);
+    out.eegInk = lerp(a.eeg.ink, b.eeg.ink, t);
     out.still = lerp(a.still, b.still, t);
 
     return out;

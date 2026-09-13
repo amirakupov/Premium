@@ -155,8 +155,13 @@ export default function SectionMotion() {
                    Функция, а не строка: ScrollTrigger пересчитывает её на каждом
                    refresh, поэтому переключение режима на живой странице
                    (A11yToggle) тоже подхватывается. */
+                /* v5: линия дописывается ещё до того, как секция приклеится
+                   (FINALE.DRAW_END → p ≈ 7.55, это ~20svh выше прилипания), а
+                   стоп-кадр после укорочения финала держится 25svh. Текст
+                   поэтому приходит, когда верх секции на 10 % от верха вьюпорта:
+                   линия уже стоит, а до начала выхода остаётся 35svh хода. */
                 const start = () =>
-                    verdict.offsetHeight > window.innerHeight ? 'top top-=22%' : 'top 80%';
+                    verdict.offsetHeight > window.innerHeight ? 'top 10%' : 'top 80%';
                 const heading = verdict.querySelector<HTMLElement>('[data-reveal="verdict-heading"]');
                 if (heading) {
                     gsap.fromTo(
@@ -231,6 +236,30 @@ export default function SectionMotion() {
                             delay: 0.4,
                             clearProps: 'opacity',
                             scrollTrigger: { trigger: verdict, start, once: true },
+                        },
+                    );
+
+                    /* Выход: метки и калибровка гаснут по скроллу ровно на том
+                       отрезке, на котором сцена гасит сетку и ленту — от центра
+                       секции в центре вьюпорта (глава exit-verdict) до её низа
+                       у низа вьюпорта (метка exit-exit = отклеивание коробки).
+                       Иначе метки уезжали бы со страницей поверх уже погасшей
+                       или ещё видимой сетки. Цель — дети коробки, а не сама
+                       `.rig`: на ней висит однократное появление, и два твина
+                       на одном свойстве спорили бы при быстрой прокрутке. */
+                    gsap.fromTo(
+                        rig.children,
+                        { opacity: 1 },
+                        {
+                            opacity: 0,
+                            ease: 'none',
+                            immediateRender: false,
+                            scrollTrigger: {
+                                trigger: verdict,
+                                start: 'center center',
+                                end: 'bottom bottom',
+                                scrub: true,
+                            },
                         },
                     );
                 }

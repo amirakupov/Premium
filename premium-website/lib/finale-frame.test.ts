@@ -141,6 +141,30 @@ describe('коробка и кадр — в одной единице', () => {
         expect(sticky).toMatch(/position:\s*sticky/);
         expect(sticky).toMatch(/(^|;)\s*top:\s*0\s*(;|$)/);
     });
+
+    it('глава выхода завершается ровно в момент отклеивания коробки', () => {
+        /* Метка #outro-exit стоит внутри .verdict на половину высоты липкой
+           коробки выше её низа: центр вьюпорта доходит до метки тогда же,
+           когда низ секции касается низа вьюпорта. Разойдись эти числа — сетка
+           и лента снова остались бы висеть под уезжающими метками. */
+        const sticky = /height:\s*(\d+)svh/.exec(rule('.verdictSticky'));
+        const marker = rule('.outroExit');
+        const bottom = /bottom:\s*(\d+)svh/.exec(marker);
+        expect(sticky, 'у .verdictSticky нет height в svh').not.toBeNull();
+        expect(bottom, 'у .outroExit нет bottom в svh').not.toBeNull();
+        expect(Number(bottom![1])).toBe(Number(sticky![1]) / 2);
+        expect(marker).toMatch(/position:\s*absolute/);
+        expect(marker).toMatch(/height:\s*0/);
+        // и метка обязана лежать внутри секции стоп-кадра, а не после неё
+        const verdictOpen = MARKUP.indexOf('id="outro-verdict"');
+        const exitAt = MARKUP.indexOf('id="outro-exit"');
+        const sectionClose = MARKUP.indexOf('</section>', verdictOpen);
+        expect(exitAt).toBeGreaterThan(verdictOpen);
+        expect(exitAt).toBeLessThan(sectionClose);
+        // и у секции есть приклеенный ход, в котором выход помещается
+        const min = /min-height:\s*(\d+)svh/.exec(rule('.verdict'));
+        expect(Number(min![1])).toBeGreaterThan(Number(sticky![1]));
+    });
 });
 
 describe('оптика финала', () => {

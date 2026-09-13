@@ -619,9 +619,13 @@ export default function Neuron({
            drawn (baseline.md, 1.2). Теперь на пути вверх лента гаснет там же, где
            разгорается уголёк сомы — передача идёт в обратную сторону, — а сброс
            drawn ниже climax-build случается при уже нулевой непрозрачности.
-           Монотонность прочерченности внутри прохода при этом не тронута. */
+           Монотонность прочерченности внутри прохода при этом не тронута.
+
+           `eegInk` — выход: дописанная лента гаснет вместе с обвязкой, пока
+           липкая коробка ещё приклеена (глава exit-exit). */
         built.eegMaterial.uniforms.uProgress.value = progress;
-        built.eegMaterial.uniforms.uOpacity.value = handoff * clamp01(drawn.current * 12) * visible;
+        built.eegMaterial.uniforms.uOpacity.value =
+            handoff * clamp01(drawn.current * 12) * clamp01(state.eegInk) * visible;
         built.eegMaterial.uniforms.uHeadHDR.value = EEG.HEAD_HDR * state.eegHead;
 
         /* Перо — отдельный объект, а не градиент на хвосте ленты: у записи
