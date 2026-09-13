@@ -62,6 +62,15 @@ const clinicJsonLd = {
 const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.getItem("a11y") === "1" ? "1" : "0";`;
 
 /**
+ * Занавес (прелоадер главной) решается тоже до пейнта, иначе при повторном
+ * заходе в рамках сессии страница даёт кадр-два тёмного полотна и только потом
+ * контент. `1` — показать (первый заход на «/»), `0` — не показывать. На других
+ * страницах всегда `0`: там занавеса нет, а атрибут ещё и блокирует скролл.
+ * Клиентскую навигацию на «/» обрабатывает сам Preloader.
+ */
+const curtainInitScript = `try{document.documentElement.dataset.curtain=(location.pathname==="/"&&!sessionStorage.getItem("preloaderSeen"))?"1":"0"}catch(e){document.documentElement.dataset.curtain="1"}`;
+
+/**
  * Измерительная обвязка perf-v3 (docs/perf-v3/harness.js): long tasks, LCP,
  * CLS, жизненный цикл прелоадера, профиль скролла. В прод не попадает —
  * включается только сборкой с NEXT_PUBLIC_PERF_HARNESS=1.
@@ -104,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
         <head>
             {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
-            <script dangerouslySetInnerHTML={{ __html: a11yInitScript }} />
+            <script dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript }} />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(clinicJsonLd) }}

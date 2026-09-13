@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 /**
  * Анимации DOM-секций главной.
@@ -26,15 +24,26 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
  *
  * Все триггеры живут внутри gsap.context и умирают вместе с ним: при навигации
  * в Next.js утечка триггеров даёт «призрачные» анимации на следующей странице.
+ *
+ * gsap импортируется динамически, из эффекта: этот модуль — единственный, кому
+ * gsap нужен в первом кадре главной (прелоадер переехал на CSS, режиссёр сцены
+ * живёт в ленивом чанке сцены). Статический импорт тащил бы gsap + ScrollTrigger
+ * в критический бандл каждой страницы сайта, а нужны они только после гидрации
+ * и только ниже первого экрана. Чанк общий со сценой — дубля нет.
  */
 export default function SectionMotion() {
     useEffect(() => {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+        let cancelled = false;
+        let ctx: gsap.Context | undefined;
+
+        Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
+        if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
         const numbers = new Intl.NumberFormat('ru-RU');
 
-        const ctx = gsap.context(() => {
+        ctx = gsap.context(() => {
             /* Заголовки: маска снизу вверх. clip-path не участвует ни в одном
                CSS-переходе секций, поэтому конфликта нет. */
             gsap.utils.toArray<HTMLElement>('[data-reveal="heading"]').forEach((element) => {
@@ -123,8 +132,12 @@ export default function SectionMotion() {
                 );
             });
         });
+        });
 
-        return () => ctx.revert();
+        return () => {
+            cancelled = true;
+            ctx?.revert();
+        };
     }, []);
 
     return null;

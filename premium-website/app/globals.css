@@ -250,6 +250,25 @@ html[data-scene-tier="low"] {
   --panel-filter: none;
 }
 
+/**
+ * Занавес главной (см. HomeShell / Preloader). Атрибут ставит inline-скрипт в
+ * <head> до первого пейнта и снимает HomeShell по окончании анимации.
+ *
+ * Пока занавес виден, страница не скроллится: иначе режиссёр сцены отыграл бы
+ * половину нарратива за закрытым полотном. scrollbar-gutter держит место под
+ * полосу прокрутки, чтобы вёрстка не дёрнулась, когда overflow вернётся.
+ * Футер спрятан на то же время — раньше его снимали из дерева (FooterGate), и
+ * он моргал при каждом заходе.
+ */
+html[data-curtain="1"] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+html[data-curtain="1"] footer {
+  visibility: hidden;
+}
+
 /* Уважаем системную настройку «меньше прозрачности» — сплошные поверхности. */
 @media (prefers-reduced-transparency: reduce) {
   :root {
