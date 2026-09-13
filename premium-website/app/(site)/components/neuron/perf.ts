@@ -50,8 +50,9 @@ export type TierProfile = {
     /**
      * Лак и иризация кроны. Это отдельные ветки шейдера MeshPhysicalMaterial;
      * ноль, а не малое значение, — чтобы three выкинул define и не платить за
-     * ветку. Иризация 0.12 на тонких синих трубках почти не читается, поэтому
-     * остаётся только на high.
+     * ветку. Иризация 0.12 на тонких синих трубках не читается вовсе (сравнение
+     * скриншотов на high — docs/perf-v3/report.md, C3), поэтому выключена
+     * везде; лак виден как блик на трубках и остаётся на mid/high.
      */
     clearcoat: number;
     iridescence: number;
@@ -138,7 +139,9 @@ export const TIERS: Record<Tier, TierProfile> = {
         dof: true,
         postprocessing: true,
         clearcoat: 0.55,
-        iridescence: 0.12,
+        /* 0 и на high: на скриншотах диагностики (docs/perf-v3/shots/C3-*)
+           иризация 0.12 неотличима от нуля, а это отдельная ветка шейдера. */
+        iridescence: 0,
         bloomMipmap: true,
         branchMaterial: 'physical',
         somaTransmission: true,
