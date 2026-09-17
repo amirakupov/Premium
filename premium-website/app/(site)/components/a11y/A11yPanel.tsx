@@ -6,6 +6,7 @@ import { useFocusTrap } from "@/app/(admin)/admin/components/ui/useFocusTrap";
 import {
     A11Y_DEFAULTS,
     A11Y_OPEN_EVENT,
+    A11Y_STATE_EVENT,
     type A11yFont,
     type A11yLetter,
     type A11yScheme,
@@ -62,6 +63,25 @@ export default function A11yPanel() {
         };
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
+    }, [open]);
+
+    // Пока панель открыта, страница под ней не скроллится. Снимаем блокировку
+    // именно в функции очистки эффекта — иначе размонтирование или закрытие
+    // панели в обход этого же setOpen(false) (их несколько: Escape, клик по
+    // подложке, кнопка «Закрыть») рискует оставить страницу запертой.
+    useEffect(() => {
+        if (!open) return;
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = prevOverflow;
+        };
+    }, [open]);
+
+    // Кнопок-триггеров несколько, панель одна: сообщаем фактическое состояние
+    // событием, чтобы каждая кнопка держала свой aria-expanded в синхроне.
+    useEffect(() => {
+        window.dispatchEvent(new CustomEvent(A11Y_STATE_EVENT, { detail: open }));
     }, [open]);
 
     const apply = (patch: Partial<A11ySettings>) => {

@@ -7,6 +7,13 @@
 export const A11Y_KEY = "a11y";
 /** Кнопка просит открыть панель. Кнопок несколько, панель одна. */
 export const A11Y_OPEN_EVENT = "a11y-open";
+/**
+ * Панель сообщает своё открыто/закрыто состояние — событием, а не пропом:
+ * кнопок несколько и они не связаны друг с другом деревом компонентов.
+ * detail: boolean. Слушают все экземпляры A11yTrigger, чтобы синхронизировать
+ * aria-expanded с фактическим состоянием панели.
+ */
+export const A11Y_STATE_EVENT = "a11y-state";
 
 export type A11yScheme = "black-on-white" | "white-on-black" | "brown-on-beige";
 export type A11yFont = "normal" | "large" | "huge";
