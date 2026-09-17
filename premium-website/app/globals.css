@@ -889,3 +889,33 @@ h1, h2, h3 {
   color: var(--ink-soft);
   font-size: 0.92rem;
 }
+
+/* ── Согласие на обработку персональных данных ─────────────────────────
+   Общий стиль для всех форм сбора данных: контактной, отзыва, обращения. */
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+/* Галочка не должна сжиматься при длинной подписи в две-три строки. */
+.consent input {
+  flex: none;
+  margin-top: 0.2em;
+  width: 18px;
+  height: 18px;
+}
+
+.consent a {
+  color: var(--brand);
+}
+
+.consent-error {
+  margin: 6px 0 0;
+  color: #b3261e;
+  font-size: 0.9rem;
+}

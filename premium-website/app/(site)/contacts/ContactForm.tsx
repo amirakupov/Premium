@@ -4,6 +4,8 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import styles from './page.module.css';
 import { EMAILJS } from '@/lib/constants';
+import ConsentCheckbox from '@/app/(site)/components/ConsentCheckbox';
+import { type LeadErrors, validateLead } from '@/lib/forms/lead';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -11,6 +13,8 @@ const initialForm = { name: '', email: '', phone: '', message: '' };
 
 export default function ContactForm() {
   const [formData, setFormData] = useState(initialForm);
+  const [consent, setConsent] = useState(false);
+  const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<Status>('idle');
 
   const handleChange = (
@@ -23,6 +27,12 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === 'sending') return;
+
+    // Проверяем до отправки: без согласия данные уходить не должны вовсе.
+    const found = validateLead({ ...formData, consent });
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+
     setStatus('sending');
 
     try {
@@ -42,6 +52,7 @@ export default function ContactForm() {
       ]);
       setStatus('success');
       setFormData(initialForm);
+      setConsent(false);
     } catch (error) {
       console.error('Не удалось отправить заявку', error);
       setStatus('error');
@@ -116,6 +127,17 @@ export default function ContactForm() {
             required
           />
         </div>
+
+        <ConsentCheckbox
+          checked={consent}
+          onChange={(next) => {
+            setConsent(next);
+            // Убираем ошибку сразу, как её исправили: висящий красный текст
+            // под уже поставленной галочкой читается как «всё ещё не так».
+            setErrors((prev) => ({ ...prev, consent: undefined }));
+          }}
+          error={errors.consent}
+        />
 
         <button
           type="submit"
