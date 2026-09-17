@@ -67,13 +67,13 @@ export default function DisclosurePage() {
                 <ul className="link-list">
                     {DISCLOSURE_DOCS.map((doc) => (
                         <li key={doc.href} className="link-item">
-                            <span className={styles.docTitle}>
+                            <div className={styles.docTitle}>
                                 <a href={doc.href} target="_blank" rel="noreferrer">
-                                    {doc.title}
+                                    {doc.title} (PDF)
                                 </a>
-                                {doc.note ? <span className={styles.note}>{doc.note}</span> : null}
-                            </span>
-                            <span>PDF</span>
+                                {doc.note ? <div className={styles.note}>{doc.note}</div> : null}
+                            </div>
+                            <span aria-hidden="true">PDF</span>
                         </li>
                     ))}
                 </ul>
