@@ -1,0 +1,104 @@
+.lead {
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section {
+  margin-bottom: 48px;
+  /* Якорь из оглавления не должен уезжать под фиксированную шапку. */
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+
+.requisites {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.requisite {
+  display: grid;
+  grid-template-columns: minmax(180px, 32%) 1fr;
+  gap: 8px 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* На узком экране подпись встаёт над значением: две колонки в 360px
+   превращают каждое значение в столбик по одному слову. */
+@media (max-width: 560px) {
+  .requisite {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+.requisiteLabel {
+  color: var(--ink-soft);
+}
+
+.requisiteValue {
+  margin: 0;
+  font-weight: 600;
+}
+
+.docTitle {
+  display: grid;
+  gap: 2px;
+}
+
+.note {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+/* Требование постановления — заявить отсутствие ОМС заметно, а не сноской. */
+.omsNotice {
+  margin: 0 0 20px;
+  padding: 16px 18px;
+  border: 2px solid var(--brand);
+  border-radius: var(--radius);
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.partners {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 6px;
+}
+
+.regulators {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.regulator {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.regulatorName {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.regulatorLine {
+  margin: 0 0 4px;
+  color: var(--ink-soft);
+}

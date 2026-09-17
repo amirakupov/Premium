@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Golos_Text, Prata } from "next/font/google";
 import { CLINIC, SITE_URL } from "@/lib/constants";
+import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import "./globals.css";
 
 const golos = Golos_Text({
@@ -56,12 +57,6 @@ const clinicJsonLd = {
 };
 
 /**
- * Режим для слабовидящих применяем до отрисовки,
- * чтобы страница не «мигала» обычной версией после гидрации.
- */
-const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.getItem("a11y") === "1" ? "1" : "0";`;
-
-/**
  * Занавес (прелоадер главной) решается тоже до пейнта, иначе при повторном
  * заходе в рамках сессии страница даёт кадр-два тёмного полотна и только потом
  * контент. `1` — показать (первый заход на «/»), `0` — не показывать. На других
@@ -109,7 +104,7 @@ finish review, the verdict, and DESIGN.md.
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        /* suppressHydrationWarning: a11yInitScript ниже ставит data-a11y на
+        /* suppressHydrationWarning: A11Y_INIT_SCRIPT ниже ставит data-a11y на
            <html> ДО гидрации, чтобы страница не мигала обычной версией. Это
            намеренное расхождение серверной разметки с клиентской, и React
            должен знать, что оно ожидаемое. */
@@ -121,7 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
             {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
             <script
-                dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript + cookieInitScript }}
+                dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT + curtainInitScript + cookieInitScript }}
             />
             <script
                 type="application/ld+json"

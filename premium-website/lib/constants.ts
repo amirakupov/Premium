@@ -20,6 +20,7 @@ export const NAV_LINKS = [
     { href: "/doctors", label: "Врачи" },
     { href: "/blog", label: "Блог" },
     { href: "/eeg", label: "ЭЭГ" },
+    { href: "/documents", label: "Документы" },
     { href: "/contacts", label: "Контакты" },
     { href: "/#address", label: "Адрес" },
 ] as const;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
-import A11yToggle from "@/app/(site)/components/A11yToggle";
+import A11yTrigger from "@/app/(site)/components/a11y/A11yTrigger";
 import MapEmbed from "@/app/(site)/components/MapEmbed";
 import { CLINIC } from "@/lib/constants";
 
@@ -25,7 +25,7 @@ export default function Footer() {
             <div className={styles.column}>
               <h4 className={styles.title}>Услуги</h4>
               <Link href="/contacts" className={styles.link}>Заявка</Link>
-              <Link href="/documents" className={styles.link}>Документы</Link>
+              <Link href="/documents" className={styles.link}>Раскрытие информации</Link>
             </div>
 
             <div className={styles.column}>
@@ -57,7 +57,7 @@ export default function Footer() {
 
         <div className={styles.bottom}>
           <p className={styles.text}>© {new Date().getFullYear()} {CLINIC.name}</p>
-          <A11yToggle className={styles.a11yBtn} />
+          <A11yTrigger className={styles.a11yBtn} />
         </div>
       </div>
     </footer>

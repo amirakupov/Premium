@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { FiMenu, FiSearch } from "react-icons/fi";
-import A11yToggle from "@/app/(site)/components/A11yToggle";
+import A11yTrigger from "@/app/(site)/components/a11y/A11yTrigger";
 import { useAdminData } from "../data/AdminDataProvider";
 import { useAdminUi } from "./AdminUiProvider";
 import SaveStatus from "./SaveStatus";
@@ -64,7 +64,7 @@ export default function Topbar({ onOpenDrawer }: { onOpenDrawer: () => void }) {
 
                 <SaveStatus state={save} />
 
-                <A11yToggle className={styles.a11y} />
+                <A11yTrigger className={styles.a11y} />
             </div>
         </header>
     );
