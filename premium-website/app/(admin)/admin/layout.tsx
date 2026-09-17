@@ -7,6 +7,7 @@ import AdminUiProvider, { useAdminUi } from "./components/shell/AdminUiProvider"
 import HotkeyLayer from "./components/shell/HotkeyLayer";
 import Sidebar from "./components/shell/Sidebar";
 import Topbar from "./components/shell/Topbar";
+import A11yPanel from "@/app/(site)/components/a11y/A11yPanel";
 import styles from "./layout.module.css";
 
 /** Уводит содержимое в глубину, когда открыт sheet. */
@@ -40,6 +41,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         <Content onOpenDrawer={() => setDrawer(true)}>{children}</Content>
                     </div>
                     <HotkeyLayer />
+                    <A11yPanel />
                 </AdminUiProvider>
             </AdminDataProvider>
         </ToastProvider>

@@ -1,6 +1,7 @@
 import Header from "@/app/(site)/components/Header";
 import Footer from "@/app/(site)/components/Footer";
-import A11yToggle from "@/app/(site)/components/A11yToggle";
+import A11yTrigger from "@/app/(site)/components/a11y/A11yTrigger";
+import A11yPanel from "@/app/(site)/components/a11y/A11yPanel";
 import CookieBanner from "@/app/(site)/components/CookieBanner";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             <div className="page-ground" id="page-ground" aria-hidden="true" />
             <Header />
             <div className="a11y-row">
-                <A11yToggle />
+                <A11yTrigger />
             </div>
             <main id="main" className="site-main" tabIndex={-1}>
                 {children}
@@ -27,6 +28,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 а не снят из дерева: так он всегда в серверном HTML и не моргает. */}
             <Footer />
             <CookieBanner />
+            <A11yPanel />
         </div>
     );
 }

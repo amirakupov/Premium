@@ -531,7 +531,7 @@ html[data-a11y="1"] body {
 }
 
 /* Подпись переключателя режима выбирает CSS по атрибуту, который стоит на <html>
-   до первого пейнта, — см. A11yToggle.tsx. */
+   до первого пейнта, — см. A11yTrigger.tsx. */
 html[data-a11y="1"] .a11y-label-off,
 html:not([data-a11y="1"]) .a11y-label-on {
   display: none;

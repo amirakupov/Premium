@@ -104,7 +104,7 @@ finish review, the verdict, and DESIGN.md.
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        /* suppressHydrationWarning: a11yInitScript ниже ставит data-a11y на
+        /* suppressHydrationWarning: A11Y_INIT_SCRIPT ниже ставит data-a11y на
            <html> ДО гидрации, чтобы страница не мигала обычной версией. Это
            намеренное расхождение серверной разметки с клиентской, и React
            должен знать, что оно ожидаемое. */
