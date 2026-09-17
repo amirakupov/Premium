@@ -17,12 +17,15 @@ import { A11Y_OPEN_EVENT } from "@/lib/a11y";
  * атрибуту на <html> (globals.css, .a11y-label-on/.a11y-label-off).
  */
 export default function A11yTrigger({ className = "" }: { className?: string }) {
+    // Базовый класс всегда на кнопке, а не только в className хозяйского
+    // стиля: зазор между иконкой и подписью не должен зависеть от того,
+    // передали ли className вообще (на витрине кнопка стоит и без него).
     return (
         <button
             type="button"
             onClick={() => window.dispatchEvent(new Event(A11Y_OPEN_EVENT))}
             aria-haspopup="dialog"
-            className={className}
+            className={`a11y-trigger ${className}`.trim()}
         >
             <FiEye aria-hidden="true" />
             <span className="a11y-label-off">Версия для слабовидящих</span>
