@@ -501,14 +501,69 @@ html[data-a11y="1"][data-a11y-scheme="black-on-white"] .admin-skin {
   --glow-soft: transparent;
 }
 
+/* Две другие схемы (белым по чёрному, коричневым по бежевому): та же задача,
+   но без ручного подбора конкретного розового на каждый фон — переводим
+   каждый токен, который объявляет базовый .admin-skin, на var(--a11y-*),
+   которыми эти же две схемы уже пользуются везде на сайте. Розовый бренд
+   здесь уступает нейтральной палитре схемы: в этих двух схемах важнее не
+   сохранить фирменный цвет, а не получить (как было) тёмный сливовый текст
+   на чёрном фоне — --ink оставался литералом схемы «чёрным по белому»,
+   --surface/--glass-bg-strong при этом наследовались с <html> и были
+   --a11y-bg (чёрным в «белым по чёрному»).
+
+   Намеренно НЕ перенесены сюда (и не были перенесены в блок «чёрным по
+   белому» выше) четыре токена, которые тоже объявляет базовый .admin-skin:
+   --scrim, --shadow-soft, --shadow-lift, --glass-tint. Все четыре —
+   декоративные (скрим за модалкой, тень карточки), не фон под текстом,
+   поэтому не воспроизводят баг «тёмное на тёмном»; --glass-tint вдобавок ни
+   один компонент админки не читает (его использует только Quote/doctors на
+   витрине). Тот же принцип уже во всём файле: --shadow-soft/--shadow-lift
+   не трогает даже общий блок html[data-a11y="1"] выше. */
+html[data-a11y="1"]:not([data-a11y-scheme="black-on-white"]) .admin-skin {
+  --paper: var(--a11y-bg);
+  --ink: var(--a11y-fg);
+  --ink-soft: var(--a11y-fg-soft);
+  --brand: var(--a11y-accent);
+  --brand-deep: var(--a11y-accent-deep);
+  --brand-line: var(--a11y-accent-deep);
+  --brand-tint: var(--a11y-bg);
+  --on-dark: var(--a11y-on-deep);
+  --on-dark-soft: var(--a11y-on-deep-soft);
+  --accent: var(--a11y-accent);
+  --accent-fill: var(--a11y-accent);
+  --accent-bright: var(--a11y-accent-bright);
+  --brass: var(--accent);
+  --brass-fill: var(--accent-fill);
+  --brass-bright: var(--accent-bright);
+  --border: var(--a11y-line);
+  --glass-dark-bg: var(--a11y-accent-deep);
+  --glass-sheen: none;
+  --glass-shadow: none;
+  --glass-primary: var(--a11y-accent);
+  --glass-row-hover: var(--a11y-row-hover);
+  --glass-dark-bg-nav: var(--a11y-accent-deep);
+  --ring-brand: 0 0 0 3px var(--a11y-accent);
+  --row-line: 0 1px 0 var(--a11y-line);
+  --shimmer: var(--a11y-shimmer);
+}
+
 html[data-a11y="1"] .admin-skin::before {
   display: none;
 }
 
 /* «Меньше прозрачности»: блок самодостаточен — гасит все стеклянные
-   токены, которые задаёт скин, а не полагается на порядок с :root. */
+   токены, которые задаёт скин, а не полагается на порядок с :root.
+
+   Разделён на два по схеме: розовые литералы ниже годятся только там, где
+   текст и так тёмный на светлом (без a11y-режима или в «чёрным по белому»).
+   Раньше блок был один и ничем не ограничен — под системной настройкой
+   «меньше прозрачности» он подменял --glass-bg/--glass-bg-strong на белый
+   даже в «белым по чёрному»/«коричневым по бежевому», где текст уже переведён
+   в var(--a11y-fg) (светлый) блоком выше: получались светлый текст на
+   белом фоне и поведение, зависящее от системной настройки, а не от схемы. */
 @media (prefers-reduced-transparency: reduce) {
-  .admin-skin {
+  html:not([data-a11y="1"]) .admin-skin,
+  html[data-a11y="1"][data-a11y-scheme="black-on-white"] .admin-skin {
     --glass-blur: none;
     --glass-bg: #ffffff;
     --glass-bg-strong: #ffffff;
@@ -521,6 +576,21 @@ html[data-a11y="1"] .admin-skin::before {
     --glass-primary: linear-gradient(180deg, #e0457f, #c2185b);
     --glass-row-hover: #ffeaf4;
     --glass-dark-bg-nav: #3d0a2c;
+  }
+
+  html[data-a11y="1"]:not([data-a11y-scheme="black-on-white"]) .admin-skin {
+    --glass-blur: none;
+    --glass-bg: var(--a11y-bg);
+    --glass-bg-strong: var(--a11y-bg);
+    --glass-border: var(--a11y-line);
+    --glass-tint: var(--a11y-bg);
+    --glass-dark-bg: var(--a11y-accent-deep);
+    --glass-sheen: none;
+    --glass-gloss: none;
+    --glass-shadow: none;
+    --glass-primary: var(--a11y-accent);
+    --glass-row-hover: var(--a11y-row-hover);
+    --glass-dark-bg-nav: var(--a11y-accent-deep);
   }
 }
 
