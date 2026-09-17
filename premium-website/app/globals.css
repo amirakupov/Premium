@@ -919,3 +919,11 @@ h1, h2, h3 {
   color: var(--danger);
   font-size: 0.9rem;
 }
+
+/* Тот же стиль ошибки, но без завязки на согласие: поля формы заявки (имя,
+   email, телефон, сообщение) используют этот класс — см. ContactForm.tsx. */
+.field-error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
