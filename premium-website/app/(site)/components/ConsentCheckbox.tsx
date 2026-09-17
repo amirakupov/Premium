@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 
 /**
@@ -8,7 +9,7 @@ import Link from "next/link";
  * заполнена, значит потерять заполненное.
  */
 export default function ConsentCheckbox({
-    id = "consent",
+    id,
     checked,
     onChange,
     error,
@@ -20,13 +21,19 @@ export default function ConsentCheckbox({
     error?: string;
     className?: string;
 }) {
-    const errorId = `${id}-error`;
+    // useId(), а не литерал "consent" по умолчанию: на одной странице скоро
+    // будут формы отзыва и обращений, и два экземпляра с одинаковым id
+    // сломали бы связку label/aria-describedby. Проп остаётся — для явного
+    // переопределения, если оно понадобится.
+    const generatedId = useId();
+    const fieldId = id ?? generatedId;
+    const errorId = `${fieldId}-error`;
 
     return (
         <div className={className}>
-            <label htmlFor={id} className="consent">
+            <label htmlFor={fieldId} className="consent">
                 <input
-                    id={id}
+                    id={fieldId}
                     type="checkbox"
                     checked={checked}
                     onChange={(e) => onChange(e.target.checked)}
