@@ -175,70 +175,160 @@
   --dur-slow: 420ms;
 }
 
+/* ── Режим для слабовидящих (ГОСТ Р 52872) ──────────────────────────────
+   Один блок режима на все схемы: стекло, сцена, фокус и плотность
+   поверхностей от схемы не зависят. Схема задаёт только палитру — набор
+   --a11y-*, объявленный здесь значениями схемы «чёрным по белому» и
+   переопределяемый блоками ниже.
+
+   Все объявления сидят на одном элементе <html>, поэтому переопределение
+   --a11y-bg в более специфичном блоке доходит и до --paper: var()
+   подставляется после каскада, на том же элементе. Оговорка про
+   `--brass: var(--accent)` ниже — про потомков, там правило другое. */
 html[data-a11y="1"] {
+  --a11y-bg: #ffffff;
+  --a11y-fg: #000000;
+  --a11y-fg-soft: #1f2937;
+  --a11y-accent: #0b3fb0;
+  --a11y-accent-deep: #08183a;
+  --a11y-accent-bright: #9cc4ff;
+  --a11y-on-deep: #ffffff;
+  --a11y-on-deep-soft: #e8f0fb;
+  --a11y-on-deep-line: rgba(255, 255, 255, 0.5);
+  --a11y-line: rgba(0, 0, 0, 0.35);
+  --a11y-danger: #8c1d16;
+  --a11y-success: #0a5c3d;
+  --a11y-row-hover: #eef4fd;
+  --a11y-shimmer: linear-gradient(90deg, #e8eef8 0%, #d6e2f4 40%, #e8eef8 80%);
+
   --font-scale: 1.25;
   --line: 1.7;
   --letter: 0.02em;
-  --paper: #ffffff;
-  --surface: #ffffff;
-  --ink: #000000;
-  --ink-soft: #1f2937;
-  --brand: #0b3fb0;
-  --brand-deep: #08183a;
-  --brand-line: #08183a;
-  --brand-tint: #ffffff;
-  --on-dark: #ffffff;
-  --on-dark-soft: #e8f0fb;
+  --paper: var(--a11y-bg);
+  --surface: var(--a11y-bg);
+  --ink: var(--a11y-fg);
+  --ink-soft: var(--a11y-fg-soft);
+  --brand: var(--a11y-accent);
+  --brand-deep: var(--a11y-accent-deep);
+  --brand-line: var(--a11y-accent-deep);
+  --brand-tint: var(--a11y-bg);
+  --on-dark: var(--a11y-on-deep);
+  --on-dark-soft: var(--a11y-on-deep-soft);
   /* Псевдонимы переобъявляются в каждом блоке: `--brass: var(--accent)`
      подставляется там, где объявлено, а не у потомка, — переопределения
      одного `--accent` было бы недостаточно. */
-  --accent: #0b3fb0;
-  --accent-fill: #0b3fb0;
-  --accent-bright: #9cc4ff;
+  --accent: var(--a11y-accent);
+  --accent-fill: var(--a11y-accent);
+  --accent-bright: var(--a11y-accent-bright);
   --brass: var(--accent);
   --brass-fill: var(--accent-fill);
   --brass-bright: var(--accent-bright);
   /* Режим доступности: страница не темнеет вообще, плашки сплошные.
      Инлайновые переменные сцены снимаются в pageTheme при включении режима,
      поэтому этот блок не приходится защищать от них !important-ом. */
-  --page-bg: #ffffff;
+  --page-bg: var(--a11y-bg);
   --scene-dark: 0;
-  --plate-a: #ffffff;
-  --plate-b: #ffffff;
+  --plate-a: var(--a11y-bg);
+  --plate-b: var(--a11y-bg);
   --panel-bg: transparent;
   --panel-filter: none;
   --scrim: 8, 24, 58;
-  --border: rgba(0, 0, 0, 0.35);
+  --border: var(--a11y-line);
   --focus: 5px;
 
   /* доступность: убираем прозрачность и размытие — только сплошные поверхности */
   --glass-blur: none;
-  --glass-bg: #ffffff;
-  --glass-bg-strong: #ffffff;
-  --glass-border: rgba(0, 0, 0, 0.35);
-  --glass-tint: #ffffff;
-  --glass-dark-bg: #08183a;
-  --glass-dark-border: rgba(255, 255, 255, 0.5);
+  --glass-bg: var(--a11y-bg);
+  --glass-bg-strong: var(--a11y-bg);
+  --glass-border: var(--a11y-line);
+  --glass-tint: var(--a11y-bg);
+  --glass-dark-bg: var(--a11y-accent-deep);
+  --glass-dark-border: var(--a11y-on-deep-line);
   --glass-sheen: none;
   --glass-gloss: none;
   --glass-shadow: none;
-  --glass-primary: #0b3fb0;
+  --glass-primary: var(--a11y-accent);
 
   /* админка: сплошные поверхности, максимальный контраст */
-  --danger: #8c1d16;
-  --danger-tint: #ffffff;
-  --danger-line: #8c1d16;
-  --danger-soft: #8c1d16;
-  --success: #0a5c3d;
-  --success-tint: #ffffff;
-  --glass-row-hover: #eef4fd;
-  --glass-dark-bg-nav: #08183a;
-  --pill-fill: #0b3fb0;
-  --ring-brand: 0 0 0 3px #0b3fb0;
-  --ring-danger: 0 0 0 3px #8c1d16;
-  --row-line: 0 1px 0 rgba(0, 0, 0, 0.35);
-  --shimmer: linear-gradient(90deg, #e8eef8 0%, #d6e2f4 40%, #e8eef8 80%);
+  --danger: var(--a11y-danger);
+  --danger-tint: var(--a11y-bg);
+  --danger-line: var(--a11y-danger);
+  --danger-soft: var(--a11y-danger);
+  --success: var(--a11y-success);
+  --success-tint: var(--a11y-bg);
+  --glass-row-hover: var(--a11y-row-hover);
+  --glass-dark-bg-nav: var(--a11y-accent-deep);
+  --pill-fill: var(--a11y-accent);
+  --ring-brand: 0 0 0 3px var(--a11y-accent);
+  --ring-danger: 0 0 0 3px var(--a11y-danger);
+  --row-line: 0 1px 0 var(--a11y-line);
+  --shimmer: var(--a11y-shimmer);
   --glow-soft: transparent;
+}
+
+/* Шаг шрифта и разрядка: ГОСТ требует выбор, а не одно фиксированное
+   увеличение. Множитель едет в html { font-size: calc(16px * --font-scale) }. */
+html[data-a11y="1"][data-a11y-font="large"] { --font-scale: 1.5; }
+html[data-a11y="1"][data-a11y-font="huge"] { --font-scale: 1.85; }
+html[data-a11y="1"][data-a11y-letter="wide"] { --letter: 0.12em; }
+
+/* Белым по чёрному. Акцент жёлтый: 14:1 на чёрном, тогда как фирменный синий
+   на нём не читается вовсе. */
+html[data-a11y="1"][data-a11y-scheme="white-on-black"] {
+  --a11y-bg: #000000;
+  --a11y-fg: #ffffff;
+  --a11y-fg-soft: #e6e6e6;
+  --a11y-accent: #ffd60a;
+  --a11y-accent-deep: #000000;
+  --a11y-accent-bright: #fff3b0;
+  --a11y-on-deep: #ffffff;
+  --a11y-on-deep-soft: #e6e6e6;
+  --a11y-on-deep-line: rgba(255, 255, 255, 0.7);
+  --a11y-line: rgba(255, 255, 255, 0.7);
+  --a11y-danger: #ff8a80;
+  --a11y-success: #7ee2b8;
+  --a11y-row-hover: #1a1a1a;
+  --a11y-shimmer: linear-gradient(90deg, #1a1a1a 0%, #333333 40%, #1a1a1a 80%);
+}
+
+/* Коричневым по бежевому — третья схема ГОСТа, самая мягкая по яркости. */
+html[data-a11y="1"][data-a11y-scheme="brown-on-beige"] {
+  --a11y-bg: #f7f3d6;
+  --a11y-fg: #3b2a12;
+  --a11y-fg-soft: #4d3a1d;
+  --a11y-accent: #6b3f10;
+  --a11y-accent-deep: #3b2a12;
+  --a11y-accent-bright: #a8742c;
+  --a11y-on-deep: #f7f3d6;
+  --a11y-on-deep-soft: #efe9c8;
+  --a11y-on-deep-line: rgba(247, 243, 214, 0.6);
+  --a11y-line: rgba(59, 42, 18, 0.55);
+  --a11y-danger: #7a1c14;
+  --a11y-success: #2f5d2a;
+  --a11y-row-hover: #efe9c8;
+  --a11y-shimmer: linear-gradient(90deg, #efe9c8 0%, #e2dab4 40%, #efe9c8 80%);
+}
+
+/* Изображения выключены. display:none, а не visibility: скрытый через
+   visibility элемент продолжает занимать место и оставляет дыры в сетке.
+   Альтернативный текст при этом пропадает и для скринридеров — режим
+   рассчитан на увеличение, а не на озвучивание. Сцена нейрона (canvas)
+   уходит вместе с картинками: это самый тяжёлый декоративный слой.
+
+   Требуется включённый режим (data-a11y="1"), а не только сама настройка:
+   images живёт в localStorage независимо от выключателя режима, и без этого
+   условия «скрыть картинки, затем выключить режим» оставило бы обычный сайт
+   без единой картинки и без 3D-сцены. */
+html[data-a11y="1"][data-a11y-images="off"] img,
+html[data-a11y="1"][data-a11y-images="off"] picture,
+html[data-a11y="1"][data-a11y-images="off"] video,
+html[data-a11y="1"][data-a11y-images="off"] canvas,
+html[data-a11y="1"][data-a11y-images="off"] iframe {
+  display: none !important;
+}
+
+html[data-a11y="1"][data-a11y-images="off"] .page-ground::before {
+  display: none;
 }
 
 /**
@@ -381,7 +471,7 @@ html[data-curtain="1"] footer {
 /* Режим для слабовидящих: розовое остаётся, прозрачность и пятна уходят.
    Селектор специфичнее общего html[data-a11y="1"], поэтому перекрывает
    его синий — иначе админка в этом режиме синела бы. */
-html[data-a11y="1"] .admin-skin {
+html[data-a11y="1"][data-a11y-scheme="black-on-white"] .admin-skin {
   --paper: #ffffff;
   --ink: #000000;
   --ink-soft: #3b1a2b;
@@ -434,8 +524,10 @@ html[data-a11y="1"] .admin-skin::before {
   }
 }
 
+/* В rem, а не в px: иначе шаг шрифта из панели (--font-scale на <html>)
+   до текста не доходит. */
 html[data-a11y="1"] body {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 /* Подпись переключателя режима выбирает CSS по атрибуту, который стоит на <html>

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Golos_Text, Prata } from "next/font/google";
 import { CLINIC, SITE_URL } from "@/lib/constants";
+import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import "./globals.css";
 
 const golos = Golos_Text({
@@ -54,12 +55,6 @@ const clinicJsonLd = {
     openingHours: ["Mo-Fr 09:00-20:00", "Sa-Su 09:00-18:00"],
     medicalSpecialty: "Neurology",
 };
-
-/**
- * Режим для слабовидящих применяем до отрисовки,
- * чтобы страница не «мигала» обычной версией после гидрации.
- */
-const a11yInitScript = `document.documentElement.dataset.a11y = localStorage.getItem("a11y") === "1" ? "1" : "0";`;
 
 /**
  * Занавес (прелоадер главной) решается тоже до пейнта, иначе при повторном
@@ -121,7 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
             {perfHarness ? <script dangerouslySetInnerHTML={{ __html: perfHarness }} /> : null}
             <script
-                dangerouslySetInnerHTML={{ __html: a11yInitScript + curtainInitScript + cookieInitScript }}
+                dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT + curtainInitScript + cookieInitScript }}
             />
             <script
                 type="application/ld+json"
