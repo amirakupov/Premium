@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
     DISCLOSURE_DOCS,
     REGULATORS,
+    REQUISITES,
     omsNotice,
 } from "./disclosure";
 
@@ -25,6 +26,28 @@ describe("DISCLOSURE_DOCS", () => {
     it("ссылки не повторяются", () => {
         const hrefs = DISCLOSURE_DOCS.map((doc) => doc.href);
         expect(new Set(hrefs).size).toBe(hrefs.length);
+    });
+});
+
+describe("REQUISITES", () => {
+    // Реквизиты переносятся руками из карты предприятия, а опечатка в ИНН на
+    // странице раскрытия — это неверные сведения о юрлице, а не косметика.
+    // Длины кодов заданы законом, поэтому их можно проверить, не зная значения.
+    it("ИНН — 10 цифр, КПП — 9, ОГРН — 13", () => {
+        expect(REQUISITES.inn).toMatch(/^\d{10}$/);
+        expect(REQUISITES.kpp).toMatch(/^\d{9}$/);
+        expect(REQUISITES.ogrn).toMatch(/^\d{13}$/);
+    });
+
+    it("дата регистрации в формате ДД.ММ.ГГГГ", () => {
+        expect(REQUISITES.registeredAt).toMatch(/^\d{2}\.\d{2}\.\d{4}$/);
+    });
+
+    it("наименования и адреса заполнены", () => {
+        expect(REQUISITES.legalName.trim().length).toBeGreaterThan(0);
+        expect(REQUISITES.shortName.trim().length).toBeGreaterThan(0);
+        expect(REQUISITES.legalAddress.trim().length).toBeGreaterThan(0);
+        expect(REQUISITES.actualAddress.trim().length).toBeGreaterThan(0);
     });
 });
 

@@ -47,7 +47,9 @@ export default function DisclosurePage() {
                 <h2>Реквизиты организации</h2>
                 <dl className={styles.requisites}>
                     <Requisite label="Полное наименование" value={REQUISITES.legalName} />
+                    <Requisite label="Сокращённое наименование" value={REQUISITES.shortName} />
                     <Requisite label="ИНН" value={REQUISITES.inn} />
+                    <Requisite label="КПП" value={REQUISITES.kpp} />
                     <Requisite label="ОГРН" value={REQUISITES.ogrn} />
                     <Requisite label="Дата регистрации" value={REQUISITES.registeredAt} />
                     <Requisite label="Юридический адрес" value={REQUISITES.legalAddress} />
@@ -82,7 +84,7 @@ export default function DisclosurePage() {
             <section id="oms" className={styles.section}>
                 <h2>Обязательное и добровольное медицинское страхование</h2>
 
-                <p className={styles.omsNotice}>{omsNotice(REQUISITES.legalName)}</p>
+                <p className={styles.omsNotice}>{omsNotice(REQUISITES.shortName)}</p>
 
                 {GUARANTEE_PROGRAM.href ? (
                     <p>
