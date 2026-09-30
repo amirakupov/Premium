@@ -4,9 +4,21 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import DocumentSheet from "../components/DocumentSheet";
 import DocumentTable from "../components/DocumentTable";
+import OrderedListTable from "../components/OrderedListTable";
 import RequisitesForm from "../components/RequisitesForm";
 import { useDisclosureData } from "../components/data/DisclosureDataProvider";
 import { useAdminUi } from "../components/shell/AdminUiProvider";
+import { validateDmsPartner, validateRegulator } from "@/lib/admin/validation";
+import {
+    actionCreateDmsPartner,
+    actionCreateRegulator,
+    actionDeleteDmsPartner,
+    actionDeleteRegulator,
+    actionPatchDmsPartner,
+    actionPatchRegulator,
+    actionReorderDmsPartners,
+    actionReorderRegulators,
+} from "./actions";
 import styles from "./disclosure.module.css";
 
 const TABS = [
@@ -28,7 +40,7 @@ function DisclosureScreen() {
     const params = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    const { data } = useDisclosureData();
+    const { data, run } = useDisclosureData();
     const raw = params.get("tab");
     const tab: TabKey = isTab(raw) ? raw : "documents";
     const { sheetOpen, setSheetOpen } = useAdminUi();
@@ -85,8 +97,51 @@ function DisclosureScreen() {
                     </>
                 ) : null}
                 {tab === "requisites" ? <RequisitesForm /> : null}
-                {tab === "dms" ? <p>Страховых компаний: {data?.dmsPartners.length ?? "…"}</p> : null}
-                {tab === "regulators" ? <p>Органов: {data?.regulators.length ?? "…"}</p> : null}
+                {tab === "dms" ? (
+                    <OrderedListTable
+                        title="Страховые компании-партнёры по ДМС"
+                        rows={data?.dmsPartners ?? []}
+                        columns={[
+                            { key: "name", label: "Название", placeholder: "Название компании", width: "minmax(200px, 2fr)" },
+                            { key: "site", label: "Сайт", placeholder: "https://", width: "minmax(180px, 1.5fr)" },
+                        ]}
+                        emptyTitle="Партнёров по ДМС пока нет"
+                        emptyDescription="Пока список пуст, сайт предлагает уточнить партнёров по телефону клиники."
+                        validate={(d) => validateDmsPartner({ name: d.name, site: d.site })}
+                        onCreate={(d) => run(() => actionCreateDmsPartner({ name: d.name, site: d.site }), "Компания добавлена")}
+                        onPatch={(id, key, value) => void run(() => actionPatchDmsPartner(id, { [key]: value }), "Сохранено")}
+                        onDelete={(id) => void run(() => actionDeleteDmsPartner(id), "Компания удалена")}
+                        onReorder={(ids) => void run(() => actionReorderDmsPartners(ids), "Порядок сохранён")}
+                        itemName={(row) => row.name}
+                    />
+                ) : null}
+                {tab === "regulators" ? (
+                    <OrderedListTable
+                        title="Контролирующие органы"
+                        rows={data?.regulators ?? []}
+                        columns={[
+                            { key: "name", label: "Название", placeholder: "Название органа", width: "minmax(200px, 2fr)" },
+                            { key: "address", label: "Адрес", placeholder: "Адрес", width: "minmax(180px, 1.5fr)" },
+                            { key: "phone", label: "Телефон", placeholder: "+7 …", width: "140px" },
+                            { key: "site", label: "Сайт", placeholder: "https://", width: "minmax(160px, 1fr)" },
+                        ]}
+                        emptyTitle="Органы не добавлены"
+                        emptyDescription="Постановление требует адреса, телефоны и сайты Минздрава РБ, Роспотребнадзора и Росздравнадзора."
+                        validate={(d) =>
+                            validateRegulator({ name: d.name, address: d.address, phone: d.phone, site: d.site })
+                        }
+                        onCreate={(d) =>
+                            run(
+                                () => actionCreateRegulator({ name: d.name, address: d.address, phone: d.phone, site: d.site }),
+                                "Орган добавлен",
+                            )
+                        }
+                        onPatch={(id, key, value) => void run(() => actionPatchRegulator(id, { [key]: value }), "Сохранено")}
+                        onDelete={(id) => void run(() => actionDeleteRegulator(id), "Орган удалён")}
+                        onReorder={(ids) => void run(() => actionReorderRegulators(ids), "Порядок сохранён")}
+                        itemName={(row) => row.name}
+                    />
+                ) : null}
             </div>
         </div>
     );

@@ -73,3 +73,21 @@
 .form { display: grid; gap: 14px; max-width: 640px; }
 
 .formActions { display: flex; justify-content: flex-end; gap: 8px; }
+
+.cellValue { font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+
+.cellEmpty { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+/* Строка добавления стоит в той же сетке, что строки таблицы. */
+.addRow {
+  display: grid;
+  grid-template-columns: var(--cols);
+  align-items: end;
+  gap: 12px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--glass-dark-border);
+}
+
+@media (max-width: 820px) {
+  .addRow { grid-template-columns: 1fr; }
+}
