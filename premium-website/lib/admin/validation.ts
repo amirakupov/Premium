@@ -1,6 +1,13 @@
 /** Валидация форм админки. Чистые функции: одна форма → карта ошибок по полям. */
 
-import type { DoctorPayload, ServicePayload } from "@/lib/types";
+import type {
+    ClinicRequisites,
+    DisclosureDocumentPayload,
+    DmsPartner,
+    DoctorPayload,
+    Regulator,
+    ServicePayload,
+} from "@/lib/types";
 
 export const DESCRIPTION_MAX = 160;
 export const BIO_MAX = 400;
@@ -65,4 +72,85 @@ export function firstErrorField<K extends string>(
 
 export function isPriceInput(raw: string): boolean {
     return PRICE_INPUT_RE.test(raw);
+}
+
+export const DOCUMENT_TITLE_MAX = 300;
+export const DOCUMENT_NOTE_MAX = 500;
+
+export type DocumentField = "category" | "title" | "url" | "note";
+export const DOCUMENT_FIELD_ORDER: DocumentField[] = ["category", "title", "url", "note"];
+
+export type RequisitesField = keyof ClinicRequisites;
+export const REQUISITES_FIELD_ORDER: RequisitesField[] = [
+    "legalName",
+    "shortName",
+    "inn",
+    "kpp",
+    "ogrn",
+    "registeredAt",
+    "legalAddress",
+    "actualAddress",
+];
+
+const FILE_URL_RE = /^\/uploads\/[0-9A-Za-z-]+\.pdf$/;
+const REGISTERED_AT_RE = /^\d{4}-\d{2}-\d{2}$/;
+const CODES: [RequisitesField, RegExp, string][] = [
+    ["inn", /^\d{10}$/, "ИНН — 10 цифр"],
+    ["kpp", /^\d{9}$/, "КПП — 9 цифр"],
+    ["ogrn", /^\d{13}$/, "ОГРН — 13 цифр"],
+];
+
+/** Те же правила, что у DisclosureValidator на бэкенде: https и есть хост. */
+export function isHttpsUrl(raw: string): boolean {
+    try {
+        const url = new URL(raw);
+        return url.protocol === "https:" && url.hostname.length > 0;
+    } catch {
+        return false;
+    }
+}
+
+export function validateDocument(v: DisclosureDocumentPayload): FieldErrors<DocumentField> {
+    const errors: FieldErrors<DocumentField> = {};
+    if (!v.title.trim()) errors.title = "Укажите название документа";
+    else if (v.title.length > DOCUMENT_TITLE_MAX) errors.title = `Не длиннее ${DOCUMENT_TITLE_MAX} символов`;
+    if (v.note.length > DOCUMENT_NOTE_MAX) errors.note = `Не длиннее ${DOCUMENT_NOTE_MAX} символов`;
+
+    const url = v.url.trim();
+    if (v.kind === "FILE") {
+        if (!url) errors.url = "Загрузите PDF";
+        else if (!FILE_URL_RE.test(url)) errors.url = "Файл должен быть загружен через админку";
+    } else if (!isHttpsUrl(url)) {
+        errors.url = "Ссылка должна начинаться с https://";
+    }
+    return errors;
+}
+
+export function validateRequisites(v: ClinicRequisites): FieldErrors<RequisitesField> {
+    const errors: FieldErrors<RequisitesField> = {};
+    for (const [field, re, message] of CODES) {
+        const value = v[field].trim();
+        if (value && !re.test(value)) errors[field] = message;
+    }
+    const date = v.registeredAt.trim();
+    if (date && !REGISTERED_AT_RE.test(date)) errors.registeredAt = "Дата в формате ГГГГ-ММ-ДД";
+    return errors;
+}
+
+export type ListItemField = "name" | "site";
+
+export function validateDmsPartner(v: Pick<DmsPartner, "name" | "site">): FieldErrors<ListItemField> {
+    const errors: FieldErrors<ListItemField> = {};
+    if (!v.name.trim()) errors.name = "Укажите название страховой компании";
+    if (v.site.trim() && !isHttpsUrl(v.site.trim())) errors.site = "Сайт должен начинаться с https://";
+    return errors;
+}
+
+export function validateRegulator(
+    v: Pick<Regulator, "name" | "address" | "phone" | "site">,
+): FieldErrors<ListItemField> {
+    const errors: FieldErrors<ListItemField> = {};
+    if (!v.name.trim()) errors.name = "Укажите название органа";
+    if (v.site.trim() && !isHttpsUrl(v.site.trim())) errors.site = "Сайт должен начинаться с https://";
+    return errors;
 }
