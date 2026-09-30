@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import DocumentSheet from "../components/DocumentSheet";
 import DocumentTable from "../components/DocumentTable";
+import RequisitesForm from "../components/RequisitesForm";
 import { useDisclosureData } from "../components/data/DisclosureDataProvider";
 import { useAdminUi } from "../components/shell/AdminUiProvider";
 import styles from "./disclosure.module.css";
@@ -83,7 +84,7 @@ function DisclosureScreen() {
                         <DocumentSheet open={sheet !== null} document={editing} onClose={() => setSheet(null)} />
                     </>
                 ) : null}
-                {tab === "requisites" ? <p>ИНН: {data?.requisites.inn || "не заполнен"}</p> : null}
+                {tab === "requisites" ? <RequisitesForm /> : null}
                 {tab === "dms" ? <p>Страховых компаний: {data?.dmsPartners.length ?? "…"}</p> : null}
                 {tab === "regulators" ? <p>Органов: {data?.regulators.length ?? "…"}</p> : null}
             </div>

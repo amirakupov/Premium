@@ -69,3 +69,7 @@
 }
 
 .kind label { display: flex; align-items: center; gap: 8px; }
+
+.form { display: grid; gap: 14px; max-width: 640px; }
+
+.formActions { display: flex; justify-content: flex-end; gap: 8px; }
