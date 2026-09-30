@@ -1,6 +1,7 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { type ReactNode, createContext, useContext, useEffect, useRef, useState } from "react";
+import { createLatestGate } from "@/lib/admin/disclosure";
 import type { Disclosure } from "@/lib/types";
 import { type ActionResult, actionLoadDisclosure } from "../../disclosure/actions";
 import { useToast } from "../ui/ToastProvider";
@@ -30,11 +31,16 @@ export default function DisclosureDataProvider({ children }: { children: ReactNo
     const { push } = useToast();
     const [data, setData] = useState<Disclosure | null>(null);
     const [loading, setLoading] = useState(true);
-    const [busy, setBusy] = useState(false);
+    // Счётчик, а не флаг: две правки подряд, и первая завершившаяся не должна
+    // разблокировать кнопки, пока вторая ещё в полёте.
+    const [inFlight, setInFlight] = useState(0);
+    const gate = useRef(createLatestGate()).current;
 
     async function reload() {
+        const request = gate.begin();
         setLoading(true);
         const result = await actionLoadDisclosure().catch(() => null);
+        if (!gate.isLatest(request)) return;
         setLoading(false);
         if (result?.ok) return setData(result.data);
         push({
@@ -51,14 +57,14 @@ export default function DisclosureDataProvider({ children }: { children: ReactNo
     }, []);
 
     async function run<T>(action: () => Promise<ActionResult<T>>, success: string) {
-        setBusy(true);
+        setInFlight((n) => n + 1);
         let result: ActionResult<T>;
         try {
             result = await action();
         } catch {
             result = { ok: false, error: "Сеть недоступна — изменения не сохранены" };
         }
-        setBusy(false);
+        setInFlight((n) => n - 1);
         if (result.ok) {
             push({ tone: "success", title: success });
             await reload();
@@ -69,6 +75,6 @@ export default function DisclosureDataProvider({ children }: { children: ReactNo
         return result;
     }
 
-    const value: DisclosureData = { data, loading, busy, reload, run };
+    const value: DisclosureData = { data, loading, busy: inFlight > 0, reload, run };
     return <DisclosureContext.Provider value={value}>{children}</DisclosureContext.Provider>;
 }

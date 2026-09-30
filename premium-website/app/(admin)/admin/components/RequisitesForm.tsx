@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ClinicRequisites } from "@/lib/types";
+import { changedRequisites } from "@/lib/admin/disclosure";
 import { isDirty } from "@/lib/admin/draft";
 import {
     type FieldErrors,
@@ -63,6 +64,9 @@ export default function RequisitesForm() {
     }, [data?.requisites]);
 
     const dirty = isDirty(form, saved);
+    // Пока раздел не загружен, форма показывала бы пустые поля как «сохранённые» —
+    // правка поверх них ушла бы на сервер как очистка остальных реквизитов.
+    const loaded = data !== null;
 
     async function submit() {
         const found = validateRequisites(form);
@@ -73,7 +77,7 @@ export default function RequisitesForm() {
             document.getElementById(`requisites-${first}`)?.focus();
             return;
         }
-        const result = await run(() => actionPatchRequisites(form), "Реквизиты сохранены");
+        const result = await run(() => actionPatchRequisites(changedRequisites(form, saved)), "Реквизиты сохранены");
         if (!result.ok) {
             const field = fieldOfBackendError(result.error);
             if (field) setErrors({ [field]: result.error });
@@ -95,6 +99,7 @@ export default function RequisitesForm() {
                     label={label}
                     hint={key === "registeredAt" ? "ГГГГ-ММ-ДД, например 2022-09-06" : hint}
                     inputMode={inputMode}
+                    disabled={!loaded}
                     value={form[key]}
                     error={errors[key]}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
@@ -104,7 +109,7 @@ export default function RequisitesForm() {
                 <Button variant="ghost" disabled={!dirty || busy} onClick={() => setForm(saved)}>
                     Отменить изменения
                 </Button>
-                <Button type="submit" variant="primary" disabled={!dirty} loading={busy} busyLabel="Сохраняем…">
+                <Button type="submit" variant="primary" disabled={!loaded || !dirty} loading={busy} busyLabel="Сохраняем…">
                     Сохранить
                 </Button>
             </div>

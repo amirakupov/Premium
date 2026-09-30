@@ -7,6 +7,7 @@ import DocumentTable from "../components/DocumentTable";
 import OrderedListTable from "../components/OrderedListTable";
 import RequisitesForm from "../components/RequisitesForm";
 import { useDisclosureData } from "../components/data/DisclosureDataProvider";
+import { tabAfterKey } from "@/lib/admin/disclosure";
 import { useAdminUi } from "../components/shell/AdminUiProvider";
 import { validateDmsPartner, validateRegulator } from "@/lib/admin/validation";
 import {
@@ -69,7 +70,19 @@ function DisclosureScreen() {
     return (
         <div className={styles.page}>
             <h1 className={styles.title}>Раскрытие информации</h1>
-            <div role="tablist" aria-label="Разделы раскрытия информации" className={styles.tabs}>
+            <div
+                role="tablist"
+                aria-label="Разделы раскрытия информации"
+                className={styles.tabs}
+                onKeyDown={(e) => {
+                    // Неактивные вкладки вне порядка Tab (tabIndex -1) — на них ведут стрелки.
+                    const next = tabAfterKey(TABS.map((t) => t.key), tab, e.key);
+                    if (!next) return;
+                    e.preventDefault();
+                    select(next);
+                    document.getElementById(`tab-${next}`)?.focus();
+                }}
+            >
                 {TABS.map((t) => (
                     <button
                         key={t.key}
@@ -77,7 +90,7 @@ function DisclosureScreen() {
                         role="tab"
                         id={`tab-${t.key}`}
                         aria-selected={tab === t.key}
-                        aria-controls={`panel-${t.key}`}
+                        aria-controls={tab === t.key ? `panel-${t.key}` : undefined}
                         tabIndex={tab === t.key ? 0 : -1}
                         className={`${styles.tab} ${tab === t.key ? styles.tabActive : ""}`}
                         onClick={() => select(t.key)}

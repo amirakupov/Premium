@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
-import type { DisclosureDocument, DocumentCategory } from "@/lib/types";
-import { backendErrorMessage, checkPdfFile, formatBytes, missingRequiredCategories, moveId } from "./disclosure";
+import type { ClinicRequisites, DisclosureDocument, DocumentCategory } from "@/lib/types";
+import {
+    backendErrorMessage,
+    changedRequisites,
+    checkPdfFile,
+    createLatestGate,
+    formatBytes,
+    missingRequiredCategories,
+    moveId,
+    restorableDraft,
+    tabAfterKey,
+} from "./disclosure";
 
 function doc(id: number, category: DocumentCategory): DisclosureDocument {
     return {
@@ -87,5 +97,67 @@ describe("formatBytes", () => {
     it("КБ и МБ с одним знаком", () => {
         expect(formatBytes(512)).toBe("1 КБ");
         expect(formatBytes(4_162_290)).toBe("4,0 МБ");
+    });
+});
+
+describe("changedRequisites", () => {
+    const saved: ClinicRequisites = {
+        legalName: "Общество",
+        shortName: "ООО «ПРЕМИУМ»",
+        inn: "0276970983",
+        kpp: "027401001",
+        ogrn: "1220200030710",
+        registeredAt: "2022-09-06",
+        legalAddress: "Уфа",
+        actualAddress: "Уфа",
+    };
+
+    it("отправляет только изменённые поля — пустая форма после сбоя загрузки не стирает реквизиты", () => {
+        const empty = { ...saved, legalName: "", shortName: "", kpp: "", ogrn: "", registeredAt: "", legalAddress: "", actualAddress: "", inn: "" };
+        expect(changedRequisites({ ...empty, inn: "0276970983" }, empty)).toEqual({ inn: "0276970983" });
+        expect(changedRequisites({ ...saved, kpp: "" }, saved)).toEqual({ kpp: "" });
+    });
+
+    it("ничего не изменилось — пустой объект", () => {
+        expect(changedRequisites(saved, saved)).toEqual({});
+    });
+});
+
+describe("tabAfterKey", () => {
+    const tabs = ["documents", "requisites", "dms", "regulators"] as const;
+
+    it("стрелки двигают по кругу, Home и End — к краям", () => {
+        expect(tabAfterKey(tabs, "documents", "ArrowRight")).toBe("requisites");
+        expect(tabAfterKey(tabs, "documents", "ArrowLeft")).toBe("regulators");
+        expect(tabAfterKey(tabs, "regulators", "ArrowRight")).toBe("documents");
+        expect(tabAfterKey(tabs, "dms", "Home")).toBe("documents");
+        expect(tabAfterKey(tabs, "dms", "End")).toBe("regulators");
+    });
+
+    it("прочие клавиши вкладку не меняют", () => {
+        expect(tabAfterKey(tabs, "dms", "Enter")).toBeNull();
+    });
+});
+
+describe("createLatestGate", () => {
+    it("ответ старого запроса, пришедший последним, отбрасывается", () => {
+        const gate = createLatestGate();
+        const first = gate.begin();
+        const second = gate.begin();
+        expect(gate.isLatest(second)).toBe(true);
+        expect(gate.isLatest(first)).toBe(false);
+    });
+});
+
+describe("restorableDraft", () => {
+    it("черновик восстанавливается, только если запись на сервере с тех пор не менялась", () => {
+        const stored = { value: { url: "/uploads/old.pdf" }, basis: "2026-09-30T10:00:00" };
+        expect(restorableDraft(stored, "2026-09-30T10:00:00")).toEqual({ url: "/uploads/old.pdf" });
+        expect(restorableDraft(stored, "2026-09-30T12:00:00")).toBeNull();
+    });
+
+    it("нет черновика или старый формат без basis — null", () => {
+        expect(restorableDraft(null, "")).toBeNull();
+        expect(restorableDraft({ url: "x" } as unknown as { value: unknown; basis: string }, "")).toBeNull();
     });
 });

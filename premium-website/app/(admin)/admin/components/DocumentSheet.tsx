@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DisclosureDocument, DisclosureDocumentPayload, DocumentKind } from "@/lib/types";
 import { CATEGORY_LABELS } from "@/lib/disclosure";
+import { type StoredDraft, restorableDraft } from "@/lib/admin/disclosure";
 import { clearDraft, isDirty, loadDraft, saveDraft } from "@/lib/admin/draft";
 import {
     DOCUMENT_FIELD_ORDER,
@@ -54,6 +55,7 @@ export default function DocumentSheet({
     const { setFormSubmit, modalOpen, setModalOpen } = useAdminUi();
     const draftId = document ? document.id : "new";
     const initial = useMemo(() => (document ? toPayload(document) : EMPTY), [document]);
+    const basis = document?.updatedAt ?? "";
 
     const [form, setForm] = useState<DisclosureDocumentPayload>(initial);
     const [errors, setErrors] = useState<FieldErrors<DocumentField>>({});
@@ -61,15 +63,16 @@ export default function DocumentSheet({
 
     useEffect(() => {
         if (!open) return;
-        setForm(loadDraft<DisclosureDocumentPayload>("document", draftId) ?? initial);
+        const stored = loadDraft<StoredDraft<DisclosureDocumentPayload>>("document", draftId);
+        setForm(restorableDraft(stored, basis) ?? initial);
         setErrors({});
-    }, [open, draftId, initial]);
+    }, [open, draftId, initial, basis]);
 
     const dirty = isDirty(form, initial);
 
     useEffect(() => {
-        if (open && dirty) saveDraft("document", draftId, form);
-    }, [open, dirty, form, draftId]);
+        if (open && dirty) saveDraft<StoredDraft<DisclosureDocumentPayload>>("document", draftId, { value: form, basis });
+    }, [open, dirty, form, draftId, basis]);
 
     useEffect(() => {
         if (!open || !dirty) return;

@@ -1,6 +1,6 @@
 /** Правила экрана «Раскрытие информации» в админке. Чистые функции. */
 
-import type { DisclosureDocument, DocumentCategory } from "@/lib/types";
+import type { ClinicRequisites, DisclosureDocument, DocumentCategory } from "@/lib/types";
 
 /** Без документа этих категорий раздел не соответствует Постановлению № 659. */
 export const REQUIRED_CATEGORIES: DocumentCategory[] = [
@@ -59,4 +59,51 @@ export function checkPdfFile(file: { name: string; type: string; size: number })
 export function formatBytes(bytes: number): string {
     if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} КБ`;
     return `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} МБ`;
+}
+
+/**
+ * Для PATCH реквизитов — только то, что правили. Пустая строка на бэкенде
+ * означает «очистить», поэтому отправка всей формы стёрла бы реквизиты, если
+ * форма открылась пустой (загрузка не удалась) или их правил коллега.
+ */
+export function changedRequisites(form: ClinicRequisites, saved: ClinicRequisites): Partial<ClinicRequisites> {
+    const changed: Partial<ClinicRequisites> = {};
+    for (const key of Object.keys(form) as (keyof ClinicRequisites)[]) {
+        if (form[key] !== saved[key]) changed[key] = form[key];
+    }
+    return changed;
+}
+
+/** Клавиатура по вкладкам (WAI-ARIA tabs): стрелки по кругу, Home и End. */
+export function tabAfterKey<T>(tabs: readonly T[], current: T, key: string): T | null {
+    const index = tabs.indexOf(current);
+    if (key === "ArrowRight") return tabs[(index + 1) % tabs.length];
+    if (key === "ArrowLeft") return tabs[(index - 1 + tabs.length) % tabs.length];
+    if (key === "Home") return tabs[0];
+    if (key === "End") return tabs[tabs.length - 1];
+    return null;
+}
+
+/**
+ * Два перечитывания подряд могут ответить в обратном порядке — тогда старый
+ * снимок затёр бы свежий. Принимается только ответ последнего запроса.
+ */
+export function createLatestGate() {
+    let latest = 0;
+    return {
+        begin: () => ++latest,
+        isLatest: (id: number) => id === latest,
+    };
+}
+
+export type StoredDraft<T> = { value: T; basis: string };
+
+/**
+ * Черновик помнит updatedAt записи, от которой его начали. Если запись с тех
+ * пор поменяли (коллега заменил прейскурант), черновик устарел: восстановив
+ * его, редактор молча вернул бы старый файл.
+ */
+export function restorableDraft<T>(stored: StoredDraft<T> | null, basis: string): T | null {
+    if (!stored || typeof stored !== "object" || !("basis" in stored)) return null;
+    return stored.basis === basis ? stored.value : null;
 }
