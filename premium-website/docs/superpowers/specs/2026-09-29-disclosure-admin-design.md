@@ -67,7 +67,7 @@
 
 Одна строка, `id = 1`. Поля: `legalName`, `shortName`, `inn`, `kpp`, `ogrn`,
 `registeredAt` (LocalDate), `legalAddress`, `actualAddress`. Все nullable:
-пустое поле сайт не печатает. Форматы строковых кодов — `@Pattern`, пустая строка
+пустое поле сайт не печатает. Форматы строковых кодов проверяет `DisclosureValidator`, пустая строка
 допустима: ИНН `^\d{10}$`, КПП `^\d{9}$`, ОГРН `^\d{13}$`.
 
 ### `DmsPartnerEntity` — `dms_partners`
@@ -146,8 +146,10 @@ server actions (`6mb` в `next.config.ts`) общий для всех actions, �
 
 ### Ошибки
 
-`@Valid` + `@Pattern` → 400 с текстом через `GlobalExceptionHandler`;
-админка выводит его у поля.
+Ручной `DisclosureValidator` бросает `IllegalArgumentException` → 400 с
+текстом через `GlobalExceptionHandler`; админка выводит его у поля.
+Не `@Valid`/`@Pattern`: `spring-boot-starter-validation` не подключён, а
+PATCH частичный — проверяется сущность после слияния, а не тело запроса.
 
 ## 3. Админка
 
@@ -189,12 +191,17 @@ server actions (`6mb` в `next.config.ts`) общий для всех actions, �
 
 ### После любого изменения
 
-Серверный action вызывает `revalidateTag("disclosure")`.
+Серверный action вызывает `revalidateTag("disclosure", { expire: 0 })`:
+в Next 16 форма с одним аргументом устарела, а `"max"` показал бы
+следующему посетителю старую версию.
 
 ## 4. Витрина
 
 - `lib/cms.ts`: `getDisclosure()` — `GET /api/cms/disclosure` с
   `next: { tags: ["disclosure"], revalidate: 3600 }`.
+- Страница `/documents` рендерится на запрос (`export const revalidate = 0`),
+  данные — из data cache по тегу. Так сборка образа не ходит на бэкенд и не
+  падает при его недоступности.
 - **При ошибке бэкенда `getDisclosure()` бросает**, а не возвращает `null`,
   как `fetchCms`. Иначе пустая страница раскрытия закешируется на час. При
   сбое фоновой ревалидации Next продолжит отдавать прошлую удачную версию;
@@ -225,7 +232,7 @@ server actions (`6mb` в `next.config.ts`) общий для всех actions, �
 
 ## 6. Тесты
 
-- **Бэкенд** (JUnit, как существующие `*Test`): `@Pattern` реквизитов,
+- **Бэкенд** (JUnit, как существующие `*Test`): форматы реквизитов,
   сигнатура PDF (не-PDF с расширением `.pdf` → 400), отказ для не-`https`
   ссылок и `FILE` вне `/uploads/`, upsert реквизитов, `/order` с неполным
   списком → 400, `GET /disclosure` не отдаёт документы врачей.
