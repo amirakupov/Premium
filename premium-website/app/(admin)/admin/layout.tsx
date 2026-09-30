@@ -3,6 +3,7 @@
 import { type ReactNode, useState } from "react";
 import ToastProvider from "./components/ui/ToastProvider";
 import AdminDataProvider from "./components/data/AdminDataProvider";
+import DisclosureDataProvider from "./components/data/DisclosureDataProvider";
 import AdminUiProvider, { useAdminUi } from "./components/shell/AdminUiProvider";
 import HotkeyLayer from "./components/shell/HotkeyLayer";
 import Sidebar from "./components/shell/Sidebar";
@@ -35,14 +36,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     return (
         <ToastProvider>
             <AdminDataProvider>
-                <AdminUiProvider>
-                    <div className={styles.shell}>
-                        <Sidebar drawerOpen={drawer} onCloseDrawer={() => setDrawer(false)} />
-                        <Content onOpenDrawer={() => setDrawer(true)}>{children}</Content>
-                    </div>
-                    <HotkeyLayer />
-                    <A11yPanel />
-                </AdminUiProvider>
+                <DisclosureDataProvider>
+                    <AdminUiProvider>
+                        <div className={styles.shell}>
+                            <Sidebar drawerOpen={drawer} onCloseDrawer={() => setDrawer(false)} />
+                            <Content onOpenDrawer={() => setDrawer(true)}>{children}</Content>
+                        </div>
+                        <HotkeyLayer />
+                        <A11yPanel />
+                    </AdminUiProvider>
+                </DisclosureDataProvider>
             </AdminDataProvider>
         </ToastProvider>
     );

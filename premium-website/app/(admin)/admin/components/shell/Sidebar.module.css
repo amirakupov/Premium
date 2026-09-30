@@ -124,7 +124,14 @@
 
 .itemIcon { flex: none; font-size: 18px; }
 
-.itemLabel { flex: 1; min-width: 0; }
+.itemLabel {
+  flex: 1;
+  min-width: 0;
+  /* «Раскрытие информации» длиннее ширины меню — обрезаем, а не переносим. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .count {
   font-size: 12px;
