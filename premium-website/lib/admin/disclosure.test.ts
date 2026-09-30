@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { DisclosureDocument, DocumentCategory } from "@/lib/types";
-import { backendErrorMessage, missingRequiredCategories, moveId } from "./disclosure";
+import { backendErrorMessage, checkPdfFile, formatBytes, missingRequiredCategories, moveId } from "./disclosure";
 
 function doc(id: number, category: DocumentCategory): DisclosureDocument {
     return {
@@ -65,5 +65,27 @@ describe("backendErrorMessage", () => {
     it("500 и пустой ответ — общая фраза", () => {
         expect(backendErrorMessage(500, "Internal server error")).toBe("Ошибка сервера — попробуйте позже");
         expect(backendErrorMessage(400, "")).toBe("Запрос отклонён сервером");
+    });
+});
+
+describe("checkPdfFile", () => {
+    it("PDF до 30 МБ проходит, в том числе с пустым MIME и расширением в верхнем регистре", () => {
+        expect(checkPdfFile({ name: "price.pdf", type: "application/pdf", size: 1024 })).toBeNull();
+        expect(checkPdfFile({ name: "LICENSE.PDF", type: "", size: 1024 })).toBeNull();
+    });
+
+    it("не PDF и слишком большой файл — текст ошибки", () => {
+        expect(checkPdfFile({ name: "scan.jpg", type: "image/jpeg", size: 10 })).toBe("Подойдёт только PDF");
+        expect(checkPdfFile({ name: "scan.pdf", type: "application/pdf", size: 30 * 1024 * 1024 + 1 })).toBe(
+            "Файл больше 30 МБ",
+        );
+        expect(checkPdfFile({ name: "empty.pdf", type: "application/pdf", size: 0 })).toBe("Файл пустой");
+    });
+});
+
+describe("formatBytes", () => {
+    it("КБ и МБ с одним знаком", () => {
+        expect(formatBytes(512)).toBe("1 КБ");
+        expect(formatBytes(4_162_290)).toBe("4,0 МБ");
     });
 });

@@ -40,3 +40,23 @@ export function backendErrorMessage(status: number, text: string): string {
     const message = text.startsWith(INVALID_PREFIX) ? text.slice(INVALID_PREFIX.length) : text;
     return message.trim() || "Запрос отклонён сервером";
 }
+
+export const PDF_MAX_BYTES = 30 * 1024 * 1024;
+
+/**
+ * Проверка до отправки — чтобы не гнать 30 МБ ради отказа. Окончательно
+ * решает бэкенд по сигнатуре файла; MIME в браузере бывает пустым, поэтому
+ * достаточно расширения.
+ */
+export function checkPdfFile(file: { name: string; type: string; size: number }): string | null {
+    const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) return "Подойдёт только PDF";
+    if (file.size === 0) return "Файл пустой";
+    if (file.size > PDF_MAX_BYTES) return "Файл больше 30 МБ";
+    return null;
+}
+
+export function formatBytes(bytes: number): string {
+    if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} КБ`;
+    return `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} МБ`;
+}
