@@ -48,6 +48,11 @@ const nextConfig: NextConfig = {
               ]
             : [],
     },
+    // PDF раздела раскрытия раньше лежали в public/docs/. Ссылки на них
+    // проиндексированы — ведём на страницу раздела, а не в 404.
+    async redirects() {
+        return [{ source: "/docs/:path*", destination: "/documents", permanent: true }];
+    },
     // Бэкенд отдаёт media как корневой путь «/uploads/<uuid>.<ext>», но сами
     // файлы лежат только у него. Без прокси Next искал бы их в public/ и
     // отвечал 404 — и на сайте, и в админке. Проксируем на бэкенд.

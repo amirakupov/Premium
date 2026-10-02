@@ -1,5 +1,6 @@
 import { normalizeImageSrc } from "./image";
-import type { BlogPost, Doctor, Service } from "./types";
+import { DISCLOSURE_TAG } from "./disclosure";
+import type { BlogPost, Disclosure, Doctor, Service } from "./types";
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
@@ -52,4 +53,39 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     const json = await fetchCms(`/api/cms/blog/${encodeURIComponent(slug)}`);
     if (!json || typeof json !== "object") return null;
     return json as BlogPost;
+}
+
+/**
+ * Проверка формы ответа: витрина печатает раздел по постановлению, и
+ * «пустой, потому что пришло не то» опаснее явной ошибки.
+ */
+export function normalizeDisclosure(raw: unknown): Disclosure {
+    const value = raw as Partial<Disclosure> | null;
+    if (
+        !value ||
+        typeof value.requisites !== "object" ||
+        value.requisites === null ||
+        !Array.isArray(value.documents) ||
+        !Array.isArray(value.dmsPartners) ||
+        !Array.isArray(value.regulators)
+    ) {
+        throw new Error("CMS: /api/cms/disclosure вернул данные неверной формы");
+    }
+    return value as Disclosure;
+}
+
+/**
+ * В отличие от fetchCms, бросает. Пустой раздел раскрытия, закешированный на
+ * час, — это нарушение постановления, а не деградация. Если сбой случится при
+ * фоновой ревалидации, Next продолжит отдавать прошлые данные; если данных
+ * ещё не было — страница покажет error.tsx.
+ */
+export async function getDisclosure(): Promise<Disclosure> {
+    if (!BACKEND_URL) throw new Error("CMS: переменная BACKEND_URL не задана");
+    const response = await fetch(`${BACKEND_URL}/api/cms/disclosure`, {
+        headers: { accept: "application/json" },
+        next: { tags: [DISCLOSURE_TAG], revalidate: REVALIDATE_SECONDS },
+    });
+    if (!response.ok) throw new Error(`CMS: GET /api/cms/disclosure → ${response.status}`);
+    return normalizeDisclosure(await response.json());
 }
