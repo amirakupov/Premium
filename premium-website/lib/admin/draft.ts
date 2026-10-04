@@ -1,6 +1,6 @@
 /** Черновики форм админки: набранное не теряется при закрытии панели. */
 
-export type DraftScope = "service" | "doctor";
+export type DraftScope = "service" | "doctor" | "document";
 export type DraftId = number | "new";
 
 export interface DraftStorage {

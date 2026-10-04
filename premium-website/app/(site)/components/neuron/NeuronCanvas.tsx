@@ -9,6 +9,7 @@ import { SCENE_SCRIPT } from './sceneScript';
 import Neuron from './Neuron';
 import PerformanceGuard from './PerformanceGuard';
 import FrameDriver from './FrameDriver';
+import { frameloopFor } from './frameloop';
 import styles from './NeuronCanvas.module.css';
 
 /**
@@ -32,13 +33,21 @@ function dbgFlag(name: string): boolean {
     return new URLSearchParams(window.location.search).has(name);
 }
 
-export default function NeuronCanvas() {
+export default function NeuronCanvas({ live }: { live: boolean }) {
     const reduced = useMemo(() => {
         if (typeof window === 'undefined') return false;
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }, []);
 
     const [tier, setTier] = useState<Tier>(() => detectTier());
+    /* Прогрев: Neuron сообщает, когда шейдеры скомпилированы и один кадр
+       отрисован вручную. До этого и до снятия занавеса сцена не рисует и
+       слой скрыт — иначе первый кадр компилировал бы всё синхронно
+       (docs/perf-v4/report.md, провал #1). */
+    const [warmed, setWarmed] = useState(false);
+    const onWarmed = useCallback(() => setWarmed(true), []);
+    /* reduced-motion прогрева не ждёт: там один статичный кадр по требованию. */
+    const running = live && (warmed || reduced);
     /* antialias фиксируется при создании контекста и после дауншифта не
        меняется, поэтому решается по стартовому тиру: нативный MSAA нужен только
        там, где нет постпроцессинга (low) — с композитором он не работает. */
@@ -108,15 +117,21 @@ export default function NeuronCanvas() {
     const start = SCENE_SCRIPT[0].camera;
 
     return (
-        <div className={reduced ? styles.layerStatic : styles.layer} aria-hidden="true">
+        <div
+            className={`${reduced ? styles.layerStatic : styles.layer} ${
+                running || reduced ? '' : styles.layerWarming
+            }`}
+            aria-hidden="true"
+        >
             <Canvas
                 className={styles.canvas}
                 dpr={[1, profile.dpr]}
-                /* 'always' — сцена идёт вровень с монитором; 'demand' — только
-                   там, где такт задаёт FrameDriver с потолком (low) или где
-                   нужен ровно один кадр (reduced-motion). В фоновой вкладке
-                   браузер сам останавливает rAF, GPU не греется. */
-                frameloop={reduced || profile.fps ? 'demand' : 'always'}
+                /* 'never' — до прогрева и снятия занавеса; 'always' — сцена идёт
+                   вровень с монитором; 'demand' — только там, где такт задаёт
+                   FrameDriver с потолком (low) или где нужен ровно один кадр
+                   (reduced-motion). См. frameloop.ts. В фоновой вкладке браузер
+                   сам останавливает rAF, GPU не греется. */
+                frameloop={frameloopFor({ reduced, fps: profile.fps, live: running })}
                 /* Указатель слушаем на body: сам слой — pointer-events: none
                    (сцена не должна перехватывать скролл и клики), а значит на
                    canvas pointermove не приходит, и параллакс мыши в v2 был
@@ -152,9 +167,9 @@ export default function NeuronCanvas() {
                     });
                 }}
             >
-                <Neuron profile={profile} reduced={reduced} smaa={!dbgFlag('nosmaa')} />
-                {!reduced && !hidden && profile.fps ? <FrameDriver fps={profile.fps} /> : null}
-                {guarded && !hidden ? <PerformanceGuard onDowngrade={onDowngrade} /> : null}
+                <Neuron profile={profile} reduced={reduced} smaa={!dbgFlag('nosmaa')} onWarmed={onWarmed} />
+                {running && !reduced && !hidden && profile.fps ? <FrameDriver fps={profile.fps} /> : null}
+                {running && guarded && !hidden ? <PerformanceGuard onDowngrade={onDowngrade} /> : null}
             </Canvas>
             {/* Без композитора зерно и виньетку рисует CSS: статичный тайл шума
                 и радиальный градиент, стоимость — ноль на кадр. */}

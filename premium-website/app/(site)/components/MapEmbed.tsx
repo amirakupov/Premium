@@ -13,9 +13,15 @@ const MAP_LINK =
  * Карта в футере грузится только после согласия на cookies: виджет Яндекс Карт
  * ставит свои cookies, и именно про него говорит текст баннера. До решения и
  * при отказе — плашка со ссылкой на карту в новой вкладке.
+ *
+ * После согласия карта тоже не вставляется сама: iframe виджета стоил кадр в
+ * 183 мс на подходе к футеру и показывал внутри футера чужую рекламу
+ * (docs/perf-v4/report.md, 4.3 и UI 5). Теперь — кнопка «Показать карту»;
+ * ссылка «Открыть в Яндекс Картах» остаётся для тех, кому виджет не нужен.
  */
 export default function MapEmbed() {
   const [consent, setConsent] = useState<CookieConsent>(null);
+  const [opened, setOpened] = useState(false);
 
   useEffect(() => {
     const sync = () => setConsent(readCookieConsent());
@@ -24,14 +30,13 @@ export default function MapEmbed() {
     return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sync);
   }, []);
 
-  if (consent === 'accepted') {
+  if (consent === 'accepted' && opened) {
     return (
       <iframe
         src={WIDGET_SRC}
         width="500"
         height="400"
         frameBorder="0"
-        loading="lazy"
         title="Клиника «Премиум» на карте"
       />
     );
@@ -40,13 +45,22 @@ export default function MapEmbed() {
   return (
     <div className={styles.mapPlaceholder}>
       <p className={styles.text}>
-        {consent === 'declined'
-          ? 'Карта не загружена: вы отклонили использование cookies.'
-          : 'Карта загрузится после согласия на использование cookies.'}
+        {consent === 'accepted'
+          ? 'Интерактивная карта Яндекса откроется по нажатию.'
+          : consent === 'declined'
+            ? 'Карта не загружена: вы отклонили использование cookies.'
+            : 'Карта загрузится после согласия на использование cookies.'}
       </p>
-      <a href={MAP_LINK} target="_blank" rel="noopener noreferrer" className={styles.link}>
-        Открыть в Яндекс Картах
-      </a>
+      <div className={styles.mapActions}>
+        {consent === 'accepted' ? (
+          <button type="button" className={styles.mapButton} onClick={() => setOpened(true)}>
+            Показать карту
+          </button>
+        ) : null}
+        <a href={MAP_LINK} target="_blank" rel="noopener noreferrer" className={styles.mapButton}>
+          Открыть в Яндекс Картах
+        </a>
+      </div>
     </div>
   );
 }

@@ -30,7 +30,12 @@
   color: var(--ink);
 }
 
+/* Поля сверху и снизу — цель касания ~40px вместо 25px строки;
+   отрицательный margin не сдвигает строку относительно заголовка. */
 .viewAllLink {
+  display: inline-block;
+  padding: 8px 0;
+  margin: -8px 0;
   font-size: 1rem;
   font-weight: 600;
   color: var(--brand);

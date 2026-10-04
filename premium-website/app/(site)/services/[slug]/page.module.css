@@ -59,10 +59,27 @@
   line-height: 1.7;
   color: var(--ink-soft);
   margin: 0 0 2rem;
+  /* Текст приходит из textarea админки: абзацы разделены переводами строк. */
+  white-space: pre-line;
+}
+
+.bookRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
 }
 
 .bookButton {
   align-self: flex-start;
+}
+
+.price {
+  font-family: var(--font-body);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brand);
 }
 
 /* ── Таблица анализов ─────────────────────────────────────────────── */
@@ -165,6 +182,11 @@
   .longDescription {
     font-size: 1rem;
     margin-bottom: 1.5rem;
+  }
+
+  .bookButton {
+    flex: 1 1 auto;
+    text-align: center;
   }
 
   .analysisTable th,

@@ -1,0 +1,37 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 26px;
+  color: var(--ink);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 8px 14px;
+  border: 1px solid var(--glass-dark-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tabActive {
+  border-color: var(--brass-bright);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.tab:focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 2px; }

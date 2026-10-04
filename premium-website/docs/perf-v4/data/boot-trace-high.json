@@ -1,0 +1,146 @@
+{
+  "label": "boot-trace-high",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-10-04T12:04:02.913Z",
+  "trace": {
+    "windowMs": 7355,
+    "mainBusyPct": 15,
+    "gpuPct": 10.7,
+    "top": [
+      [
+        "FunctionCall",
+        721
+      ],
+      [
+        "RunMicrotasks",
+        101
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        72
+      ],
+      [
+        "Commit",
+        59
+      ],
+      [
+        "PrePaint",
+        33
+      ],
+      [
+        "FireAnimationFrame",
+        26
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        26
+      ],
+      [
+        "Layout",
+        11
+      ],
+      [
+        "RunTask",
+        11
+      ],
+      [
+        "V8.HandleInterrupts",
+        8
+      ]
+    ],
+    "longTasks": [
+      {
+        "at": 276,
+        "dur": 57.2,
+        "top": [
+          "FunctionCall 1znrws5-vi517.js P: 52.1ms",
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE: 1.4ms",
+          "V8.HandleInterrupts: 0.7ms",
+          "V8.BytecodeBudgetInterrupt: 0.4ms",
+          "V8.GC_SCAVENGER_SCAVENGE_ROOTS: 0.4ms",
+          "V8.GC_SCAVENGER_SCAVENGE_FINALIZE: 0.3ms",
+          "RunMicrotasks: 0.3ms",
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL: 0.3ms"
+        ]
+      },
+      {
+        "at": 363,
+        "dur": 98.4,
+        "top": [
+          "RunMicrotasks: 95.3ms",
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE: 0.8ms",
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL: 0.5ms",
+          "Decode Image: 0.5ms",
+          "FunctionCall: 0.3ms",
+          "V8.HandleInterrupts: 0.2ms",
+          "V8.BytecodeBudgetInterrupt: 0.1ms",
+          "V8.GC_SCAVENGER_SCAVENGE_FINALIZE: 0.1ms"
+        ]
+      }
+    ]
+  },
+  "firstSceneFrameAt": 0,
+  "spikes": [
+    {
+      "t": 116.6,
+      "dt": 83.2,
+      "programs": 46,
+      "renders": 95
+    },
+    {
+      "t": 216.6,
+      "dt": 33.2,
+      "programs": 46,
+      "renders": 318
+    },
+    {
+      "t": 3666.5,
+      "dt": 33.3,
+      "programs": 47,
+      "renders": 7528
+    }
+  ],
+  "programsTimeline": [
+    {
+      "t": 16.7,
+      "programs": 16,
+      "dt": 16.7
+    },
+    {
+      "t": 33.4,
+      "programs": 46,
+      "dt": 16.7
+    },
+    {
+      "t": 2499.9,
+      "programs": 47,
+      "dt": 16.7
+    }
+  ],
+  "marks": [
+    {
+      "name": "neuron:build:start:high",
+      "t": 378
+    },
+    {
+      "name": "neuron:build:end:high",
+      "t": 405
+    },
+    {
+      "name": "neuron:gl-created",
+      "t": 417
+    },
+    {
+      "name": "neuron:warm:start",
+      "t": 417
+    },
+    {
+      "name": "neuron:first-frame",
+      "t": 466
+    },
+    {
+      "name": "neuron:warm:end",
+      "t": 564
+    }
+  ]
+}

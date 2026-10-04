@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { listAllServices } from '@/lib/cms';
+import { formatPrice } from '@/lib/format';
 import { analysesData } from '../data/analysesData';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -45,15 +46,27 @@ export default async function ServiceDetailPage({ params }: Params) {
         </div>
         <div className={styles.textWrapper}>
           <h1 className={styles.title}>{service.serviceName}</h1>
-          <p className={styles.subtitle}>
-            Откройте для себя преимущества нашей услуги
-          </p>
-          <h2 className={styles.sectionHeader}>Подробное описание</h2>
-          <p className={styles.longDescription}>{service.longDescription}</p>
+          {/* Подзаголовок — короткое описание из карточки, а не общая фраза:
+              на телефоне человек приходит сюда из ленты и теряет контекст. */}
+          {service.description ? (
+            <p className={styles.subtitle}>{service.description}</p>
+          ) : null}
+          {service.longDescription ? (
+            <>
+              <h2 className={styles.sectionHeader}>Подробное описание</h2>
+              <p className={styles.longDescription}>{service.longDescription}</p>
+            </>
+          ) : null}
 
-          <Link href="/contacts" className={`btn btn--primary ${styles.bookButton}`}>
-            Записаться
-          </Link>
+          {/* Цена рядом с записью: на карточке она была, на странице — нет. */}
+          <div className={styles.bookRow}>
+            <Link href="/contacts" className={`btn btn--primary ${styles.bookButton}`}>
+              Записаться
+            </Link>
+            {service.price > 0 ? (
+              <span className={styles.price}>{formatPrice(service.price)}</span>
+            ) : null}
+          </div>
         </div>
       </div>
 

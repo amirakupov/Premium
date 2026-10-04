@@ -1,0 +1,59 @@
+{
+  "label": "boot-mid",
+  "url": "http://localhost:3100/?tier=mid",
+  "at": "2026-10-03T21:48:18.666Z",
+  "firstSceneFrameAt": 366.7,
+  "spikes": [
+    {
+      "t": 450,
+      "dt": 83.3,
+      "programs": 21,
+      "renders": 54
+    },
+    {
+      "t": 483.3,
+      "dt": 33.3,
+      "programs": 21,
+      "renders": 75
+    }
+  ],
+  "programsTimeline": [
+    {
+      "t": 366.7,
+      "programs": 1,
+      "dt": 16.7
+    },
+    {
+      "t": 450,
+      "programs": 21,
+      "dt": 83.3
+    },
+    {
+      "t": 2833.2,
+      "programs": 22,
+      "dt": 16.7
+    }
+  ],
+  "marks": [
+    {
+      "name": "neuron:build:start:mid",
+      "t": 443
+    },
+    {
+      "name": "neuron:build:end:mid",
+      "t": 473
+    },
+    {
+      "name": "neuron:gl-created",
+      "t": 482
+    },
+    {
+      "name": "neuron:first-frame",
+      "t": 485
+    },
+    {
+      "name": "neuron:first-frame",
+      "t": 544
+    }
+  ]
+}

@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type CSSProperties, useEffect, useState } from "react";
-import { FiChevronLeft, FiGrid, FiLogOut, FiPackage, FiUsers } from "react-icons/fi";
+import { FiChevronLeft, FiFileText, FiGrid, FiLogOut, FiPackage, FiUsers } from "react-icons/fi";
 import Button from "../ui/Button";
 import { useAdminData } from "../data/AdminDataProvider";
+import { useDisclosureData } from "../data/DisclosureDataProvider";
 import styles from "./Sidebar.module.css";
 
 const COLLAPSE_KEY = "admin:sidebar";
@@ -16,6 +17,7 @@ const ITEMS = [
     { href: "/admin", label: "Обзор", Icon: FiGrid },
     { href: "/admin/services", label: "Услуги", Icon: FiPackage },
     { href: "/admin/doctors", label: "Врачи", Icon: FiUsers },
+    { href: "/admin/disclosure", label: "Раскрытие информации", Icon: FiFileText },
 ] as const;
 
 const HOTKEYS = [
@@ -35,6 +37,7 @@ export default function Sidebar({
 }) {
     const pathname = usePathname();
     const { services, doctors } = useAdminData();
+    const { data: disclosure } = useDisclosureData();
     const [collapsed, setCollapsed] = useState(false);
 
     useEffect(() => {
@@ -51,6 +54,7 @@ export default function Sidebar({
         "/admin": null,
         "/admin/services": services.length,
         "/admin/doctors": doctors.length,
+        "/admin/disclosure": disclosure ? disclosure.documents.length : null,
     };
 
     // Самый длинный совпадающий путь: /admin/services не должен подсвечивать «Обзор».

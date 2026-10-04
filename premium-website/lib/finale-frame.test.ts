@@ -252,3 +252,44 @@ describe('SVG-орнамент и профиль записи', () => {
         expect(check.status).toBe(0);
     });
 });
+
+describe('появление текста финала', () => {
+    const MOTION = read('app/(site)/components/SectionMotion.tsx');
+
+    it('заголовок появляется не раньше прилипания коробки', () => {
+        /* До прилипания DOM едет, а 3D стоит: любое `top N%` с N > 0 въезжает
+           в нарисованную сетку (docs/perf-v4/report.md, UI-дефект 1). */
+        const m = /const start = \(\) => \(stuck\(\) \? '([^']+)' : '([^']+)'\)/.exec(MOTION);
+        expect(m, 'в SectionMotion нет выбора точки старта по высоте секции').not.toBeNull();
+        expect(m![1]).toBe('top top');
+    });
+
+    it('абзац, кнопка и обвязка ведутся scrub-твином, который заканчивается в момент прилипания', () => {
+        /* Однократного появления мало: доскроллив до стоп-кадра и чуть
+           вернувшись, пользователь отклеивает коробку снова — текст должен
+           гаснуть вместе с ней. */
+        const end = /const fadeEnd = \(\) => \(stuck\(\) \? '([^']+)' : '([^']+)'\)/.exec(MOTION);
+        expect(end).not.toBeNull();
+        expect(end![1]).toBe('top top');
+        const verdictTween = /toArray<HTMLElement>\('\[data-reveal="verdict"\]'[\s\S]*?scrollTrigger: \{[\s\S]*?\}/.exec(MOTION);
+        expect(verdictTween).not.toBeNull();
+        expect(verdictTween![0]).toMatch(/scrub: true/);
+        expect(verdictTween![0]).not.toMatch(/once: true/);
+    });
+
+    it('scrub абзаца и кнопки не трогает transform: у кнопки свой hover/active на transform', () => {
+        /* Бессрочный scrub-твин оставляет инлайновый transform навсегда, а
+           инлайн побеждает :hover/:active кнопки «Записаться» (globals.css,
+           .btn). Поэтому по скроллу ведётся только непрозрачность. */
+        const verdictTween = /toArray<HTMLElement>\('\[data-reveal="verdict"\]'[\s\S]*?scrollTrigger: \{[\s\S]*?\}/.exec(MOTION);
+        expect(verdictTween).not.toBeNull();
+        expect(verdictTween![0]).not.toMatch(/\by: ?\d/);
+    });
+
+    it('в режимах деградации (короткая секция) остаётся ранний старт', () => {
+        const m = /const start = \(\) => \(stuck\(\) \? '([^']+)' : '([^']+)'\)/.exec(MOTION);
+        expect(m![2]).toBe('top 80%');
+        const fs = /const fadeStart = \(\) => \(stuck\(\) \? '([^']+)' : '([^']+)'\)/.exec(MOTION);
+        expect(fs![2]).toBe('top 80%');
+    });
+});

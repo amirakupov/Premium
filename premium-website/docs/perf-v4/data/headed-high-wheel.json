@@ -1,0 +1,324 @@
+{
+  "label": "headed-high-wheel",
+  "url": "http://localhost:3100/?tier=high",
+  "seconds": 12,
+  "mobile": false,
+  "cold": true,
+  "wheel": true,
+  "at": "2026-10-03T21:50:15.161Z",
+  "tier": "high",
+  "dpr": 1.25,
+  "canvas": {
+    "w": 1800,
+    "h": 1125
+  },
+  "programsAfterLoad": 34,
+  "idleHero": {
+    "fps": 60.3,
+    "rendersPerSec": 2110.5,
+    "median": 16.7,
+    "p95": 18.4,
+    "max": 18.7
+  },
+  "glassHero": {
+    "count": 2,
+    "areaPct": 8,
+    "sample": [
+      "Header-module__jWEcMq__header",
+      "Searchbar-module__ds1S3q__searchForm"
+    ]
+  },
+  "programsAfterWarm": 34,
+  "scrollDown": {
+    "frames": 651,
+    "seconds": 12.6,
+    "fps": 51.6,
+    "renders": 22785,
+    "rendersPerSec": 1806,
+    "dt": {
+      "median": 16.7,
+      "p90": 17.9,
+      "p95": 18.3,
+      "p99": 164.7,
+      "max": 250
+    },
+    "slowFrames": 13,
+    "slowFramesPct": 2,
+    "programsStart": 34,
+    "programsEnd": 35,
+    "rootWrites": 272,
+    "groundWrites": 113,
+    "drawCalls": 0,
+    "triangles": 0,
+    "byChapter": {
+      "0": {
+        "frames": 152,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 109,
+        "slow": 8,
+        "rootWrites": 272,
+        "meanDt": 26
+      },
+      "2": {
+        "frames": 109,
+        "slow": 2,
+        "rootWrites": 0,
+        "meanDt": 20.8
+      },
+      "3": {
+        "frames": 178,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 101,
+        "slow": 3,
+        "rootWrites": 0,
+        "meanDt": 19.8
+      }
+    },
+    "spikes": [
+      {
+        "t": 3083.2,
+        "dt": 33.4,
+        "scrollY": 1245,
+        "p": 1.25,
+        "lag": 0.07,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3265.1,
+        "dt": 181.9,
+        "scrollY": 1245,
+        "p": 1.268,
+        "lag": 0.05,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3449.9,
+        "dt": 184.8,
+        "scrollY": 1279,
+        "p": 1.292,
+        "lag": 0.07,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3631.2,
+        "dt": 164.7,
+        "scrollY": 1313,
+        "p": 1.325,
+        "lag": 0.08,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3799.8,
+        "dt": 150.7,
+        "scrollY": 1346,
+        "p": 1.361,
+        "lag": 0.08,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 4733.2,
+        "dt": 150,
+        "scrollY": 1683,
+        "p": 1.781,
+        "lag": 0.07,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      },
+      {
+        "t": 5349.7,
+        "dt": 250,
+        "scrollY": 1851,
+        "p": 1.984,
+        "lag": 0.08,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 5383.1,
+        "dt": 33.4,
+        "scrollY": 1851,
+        "p": 1.992,
+        "lag": 0.07,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      },
+      {
+        "t": 6783,
+        "dt": 233.3,
+        "scrollY": 2356,
+        "p": 2.648,
+        "lag": 0.08,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      },
+      {
+        "t": 7633,
+        "dt": 250,
+        "scrollY": 2625,
+        "p": 2.992,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      },
+      {
+        "t": 12266.1,
+        "dt": 201.3,
+        "scrollY": 4442,
+        "p": 4.48,
+        "lag": 0.05,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      },
+      {
+        "t": 12432.8,
+        "dt": 133.3,
+        "scrollY": 4476,
+        "p": 4.509,
+        "lag": 0.05,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      },
+      {
+        "t": 12566.1,
+        "dt": 33.3,
+        "scrollY": 4543,
+        "p": 4.552,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      }
+    ]
+  },
+  "scrollUp": {
+    "frames": 422,
+    "seconds": 7,
+    "fps": 60.1,
+    "renders": 14770,
+    "rendersPerSec": 2105.1,
+    "dt": {
+      "median": 16.7,
+      "p90": 17.8,
+      "p95": 18.2,
+      "p99": 18.5,
+      "max": 18.7
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 35,
+    "programsEnd": 35,
+    "rootWrites": 170,
+    "groundWrites": 54,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 42,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 170,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 41,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 61,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 37,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 33,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.6
+      },
+      "8": {
+        "frames": 26,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "9": {
+        "frames": 31,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "rootProps": {
+    "--paper": 27,
+    "--surface": 27,
+    "--ink": 27,
+    "--ink-soft": 27,
+    "--border": 27,
+    "--brand": 27,
+    "--brand-tint": 27,
+    "--glass-bg": 27,
+    "--glass-bg-strong": 27,
+    "--glass-border": 27,
+    "--glass-tint": 27,
+    "--plate-a": 27,
+    "--plate-b": 27,
+    "--panel-bg": 27,
+    "--panel-filter": 27,
+    "--glass-gloss": 27,
+    "--glass-sheen": 27
+  }
+}

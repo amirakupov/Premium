@@ -1,0 +1,284 @@
+{
+  "label": "hd-B-nopanel",
+  "url": "http://localhost:3100/?tier=high",
+  "seconds": 12,
+  "mobile": false,
+  "cold": true,
+  "wheel": true,
+  "at": "2026-10-03T21:56:41.016Z",
+  "tier": "high",
+  "dpr": 1.25,
+  "canvas": {
+    "w": 1800,
+    "h": 1125
+  },
+  "programsAfterLoad": 34,
+  "idleHero": {
+    "fps": 60.4,
+    "rendersPerSec": 2112.6,
+    "median": 16.7,
+    "p95": 18.4,
+    "max": 18.7
+  },
+  "glassHero": {
+    "count": 2,
+    "areaPct": 8,
+    "sample": [
+      "Header-module__jWEcMq__header",
+      "Searchbar-module__ds1S3q__searchForm"
+    ]
+  },
+  "programsAfterWarm": 34,
+  "scrollDown": {
+    "frames": 748,
+    "seconds": 12.6,
+    "fps": 59.4,
+    "renders": 26180,
+    "rendersPerSec": 2077.7,
+    "dt": {
+      "median": 16.7,
+      "p90": 17.6,
+      "p95": 18.1,
+      "p99": 33.3,
+      "max": 33.5
+    },
+    "slowFrames": 9,
+    "slowFramesPct": 1.2,
+    "programsStart": 34,
+    "programsEnd": 35,
+    "rootWrites": 374,
+    "groundWrites": 131,
+    "drawCalls": 0,
+    "triangles": 0,
+    "byChapter": {
+      "0": {
+        "frames": 152,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 121,
+        "slow": 4,
+        "rootWrites": 374,
+        "meanDt": 17.2
+      },
+      "2": {
+        "frames": 114,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 174,
+        "slow": 5,
+        "rootWrites": 0,
+        "meanDt": 17.1
+      },
+      "4": {
+        "frames": 185,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": [
+      {
+        "t": 3051.1,
+        "dt": 33.4,
+        "scrollY": 1245,
+        "p": 1.235,
+        "lag": 0.08,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3184.4,
+        "dt": 33.3,
+        "scrollY": 1279,
+        "p": 1.297,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 3284.4,
+        "dt": 33.3,
+        "scrollY": 1313,
+        "p": 1.342,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 4584.4,
+        "dt": 33.3,
+        "scrollY": 1851,
+        "p": 1.971,
+        "lag": 0.09,
+        "programsDelta": 0,
+        "rootWrites": 17,
+        "groundWrites": 1
+      },
+      {
+        "t": 6584.3,
+        "dt": 33.4,
+        "scrollY": 2659,
+        "p": 3.018,
+        "lag": 0.07,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      },
+      {
+        "t": 7334.2,
+        "dt": 33.3,
+        "scrollY": 2961,
+        "p": 3.274,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      },
+      {
+        "t": 7499.1,
+        "dt": 31.6,
+        "scrollY": 3029,
+        "p": 3.329,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      },
+      {
+        "t": 7667.6,
+        "dt": 33.5,
+        "scrollY": 3096,
+        "p": 3.384,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 0
+      },
+      {
+        "t": 7750.9,
+        "dt": 33.3,
+        "scrollY": 3130,
+        "p": 3.412,
+        "lag": 0.06,
+        "programsDelta": 0,
+        "rootWrites": 0,
+        "groundWrites": 1
+      }
+    ]
+  },
+  "scrollUp": {
+    "frames": 422,
+    "seconds": 7,
+    "fps": 60.2,
+    "renders": 14770,
+    "rendersPerSec": 2105.5,
+    "dt": {
+      "median": 16.7,
+      "p90": 17.8,
+      "p95": 18.1,
+      "p99": 18.5,
+      "max": 18.7
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 35,
+    "programsEnd": 35,
+    "rootWrites": 170,
+    "groundWrites": 54,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 42,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.6
+      },
+      "1": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 170,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 40,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 62,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.6
+      },
+      "4": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 37,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 33,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 26,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "9": {
+        "frames": 31,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "rootProps": {
+    "--paper": 33,
+    "--surface": 33,
+    "--ink": 33,
+    "--ink-soft": 33,
+    "--border": 33,
+    "--brand": 33,
+    "--brand-tint": 33,
+    "--glass-bg": 33,
+    "--glass-bg-strong": 33,
+    "--glass-border": 33,
+    "--glass-tint": 33,
+    "--plate-a": 33,
+    "--plate-b": 33,
+    "--panel-bg": 33,
+    "--panel-filter": 33,
+    "--glass-gloss": 33,
+    "--glass-sheen": 33
+  }
+}

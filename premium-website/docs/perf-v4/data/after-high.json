@@ -1,0 +1,349 @@
+{
+  "label": "after-high",
+  "url": "http://localhost:3100/?tier=high",
+  "seconds": 14,
+  "mobile": false,
+  "cold": false,
+  "wheel": false,
+  "at": "2026-10-04T12:24:43.240Z",
+  "tier": "high",
+  "dpr": 1.25,
+  "canvas": {
+    "w": 1800,
+    "h": 1125
+  },
+  "programsAfterLoad": 47,
+  "idleHero": {
+    "fps": 60.3,
+    "rendersPerSec": 2111.6,
+    "median": 16.7,
+    "p95": 16.7,
+    "max": 16.8
+  },
+  "glassHero": {
+    "count": 2,
+    "areaPct": 8,
+    "sample": [
+      "Header-module__jWEcMq__header",
+      "Searchbar-module__ds1S3q__searchForm"
+    ]
+  },
+  "glassByChapter": {
+    "#hero": {
+      "count": 2,
+      "areaPct": 8,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm"
+      ]
+    },
+    "#symptom": {
+      "count": 2,
+      "areaPct": 8,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm"
+      ]
+    },
+    "#diagnostics": {
+      "count": 2,
+      "areaPct": 8,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm"
+      ]
+    },
+    "#quote": {
+      "count": 4,
+      "areaPct": 47,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm",
+        "Quote-module__d_WUUW__quote",
+        "Quote-module__d_WUUW__doctorImageWrapper"
+      ]
+    },
+    "#services": {
+      "count": 11,
+      "areaPct": 77,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card"
+      ]
+    },
+    "#clinic-photos": {
+      "count": 7,
+      "areaPct": 59,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ServiceCard-module__YOXxWa__card",
+        "ClinicFotos-module__BM2VFa__slide",
+        "ClinicFotos-module__BM2VFa__slide"
+      ]
+    },
+    "#doctors": {
+      "count": 4,
+      "areaPct": 20,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm",
+        "ClinicFotos-module__BM2VFa__slide",
+        "ClinicFotos-module__BM2VFa__slide"
+      ]
+    },
+    "#outro-verdict": {
+      "count": 2,
+      "areaPct": 8,
+      "sample": [
+        "Header-module__jWEcMq__header",
+        "Searchbar-module__ds1S3q__searchForm"
+      ]
+    }
+  },
+  "programsAfterWarm": 48,
+  "scrollDown": {
+    "frames": 842,
+    "seconds": 14,
+    "fps": 60.1,
+    "renders": 29470,
+    "rendersPerSec": 2102.6,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 48,
+    "programsEnd": 48,
+    "rootWrites": 256,
+    "groundWrites": 108,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 109,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 87,
+        "slow": 0,
+        "rootWrites": 256,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 81,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 128,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 130,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 73,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 65,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 93,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 74,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "netDuringScroll": [],
+  "trace": {
+    "windowMs": 14333,
+    "mainBusyPct": 12.2,
+    "gpuPct": 9.1,
+    "top": [
+      [
+        "FunctionCall",
+        1091
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        128
+      ],
+      [
+        "Commit",
+        103
+      ],
+      [
+        "UpdateLayoutTree",
+        81
+      ],
+      [
+        "PrePaint",
+        67
+      ],
+      [
+        "Layerize",
+        46
+      ],
+      [
+        "EventDispatch",
+        41
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        40
+      ],
+      [
+        "Paint",
+        25
+      ],
+      [
+        "FireAnimationFrame",
+        23
+      ]
+    ],
+    "longTasks": []
+  },
+  "scrollUp": {
+    "frames": 482,
+    "seconds": 8,
+    "fps": 60.1,
+    "renders": 16870,
+    "rendersPerSec": 2104.5,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 48,
+    "programsEnd": 48,
+    "rootWrites": 176,
+    "groundWrites": 62,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 48,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 50,
+        "slow": 0,
+        "rootWrites": 176,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 47,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 72,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 73,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 38,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 50,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 28,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "9": {
+        "frames": 31,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "rootProps": {
+    "--paper": 43,
+    "--surface": 43,
+    "--ink": 43,
+    "--ink-soft": 43,
+    "--border": 43,
+    "--brand": 43,
+    "--brand-tint": 43,
+    "--glass-bg": 43,
+    "--glass-bg-strong": 43,
+    "--glass-border": 43,
+    "--glass-tint": 43,
+    "--plate-a": 43,
+    "--plate-b": 43,
+    "--panel-bg": 43,
+    "--glass-gloss": 43,
+    "--glass-sheen": 43
+  }
+}
