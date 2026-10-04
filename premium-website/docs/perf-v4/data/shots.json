@@ -1,0 +1,83 @@
+{
+  "desktop": {
+    "name": "desk",
+    "checks": {
+      "overflowX": {
+        "docW": 1722,
+        "vw": 1440,
+        "wide": [
+          ".ServiceCard-module__YOXxWa__card r=1722",
+          ".ServiceCard-module__YOXxWa__imageContainer r=1711",
+          ".ServiceCard-module__YOXxWa__image r=1711",
+          ".ServiceCard-module__YOXxWa__descriptionContainer r=1711",
+          ".ServiceCard-module__YOXxWa__name r=1699",
+          ".ServiceCard-module__YOXxWa__shortDescription r=1699",
+          ".ServiceCard-module__YOXxWa__priceRow r=1699",
+          ".ServiceCard-module__YOXxWa__more r=1699"
+        ]
+      }
+    },
+    "logs": [
+      "warning THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    ],
+    "verdict": {
+      "verdictH": 1350,
+      "rig": "{\"x\":250,\"y\":7055.046875,\"width\":940,\"height\":338,\"top\":7055.046875,\"right\":1190,\"bottom\":7393.046875,\"left\":250}",
+      "ctaRect": "{\"x\":120,\"y\":6967.859375,\"width\":231.3125,\"height\":51.1875,\"top\":6967.859375,\"right\":351.3125,\"bottom\":7019.046875,\"left\":120}"
+    }
+  },
+  "mobile": {
+    "name": "mob",
+    "checks": {
+      "overflowX": {
+        "docW": 390,
+        "vw": 390,
+        "wide": [
+          ".ServiceCard-module__YOXxWa__card r=588",
+          ".ServiceCard-module__YOXxWa__imageContainer r=577",
+          ".ServiceCard-module__YOXxWa__image r=577",
+          ".ServiceCard-module__YOXxWa__descriptionContainer r=577",
+          ".ServiceCard-module__YOXxWa__name r=565",
+          ".ServiceCard-module__YOXxWa__nameLink r=471",
+          ".ServiceCard-module__YOXxWa__shortDescription r=565",
+          ".ServiceCard-module__YOXxWa__priceRow r=565"
+        ]
+      }
+    },
+    "logs": [
+      "warning THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    ],
+    "verdict": {
+      "verdictH": 1170,
+      "rig": "{\"x\":15.59375,\"y\":6736.59375,\"width\":358.796875,\"height\":129.015625,\"top\":6736.59375,\"right\":374.390625,\"bottom\":6865.609375,\"left\":15.59375}",
+      "ctaRect": "{\"x\":16,\"y\":6654.21875,\"width\":231.3125,\"height\":51.1875,\"top\":6654.21875,\"right\":247.3125,\"bottom\":6705.40625,\"left\":16}"
+    }
+  },
+  "laptop": {
+    "name": "lap",
+    "checks": {
+      "overflowX": {
+        "docW": 1642,
+        "vw": 1280,
+        "wide": [
+          ".ServiceCard-module__YOXxWa__card r=1642",
+          ".ServiceCard-module__YOXxWa__imageContainer r=1631",
+          ".ServiceCard-module__YOXxWa__image r=1631",
+          ".ServiceCard-module__YOXxWa__descriptionContainer r=1631",
+          ".ServiceCard-module__YOXxWa__name r=1619",
+          ".ServiceCard-module__YOXxWa__shortDescription r=1619",
+          ".ServiceCard-module__YOXxWa__priceRow r=1619",
+          ".ServiceCard-module__YOXxWa__more r=1619"
+        ]
+      }
+    },
+    "logs": [
+      "warning THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    ],
+    "verdict": {
+      "verdictH": 1080,
+      "rig": "{\"x\":222.40625,\"y\":6321.5625,\"width\":835.1875,\"height\":300.3125,\"top\":6321.5625,\"right\":1057.59375,\"bottom\":6621.875,\"left\":222.40625}",
+      "ctaRect": "{\"x\":40,\"y\":6241.578125,\"width\":231.3125,\"height\":51.1875,\"top\":6241.578125,\"right\":271.3125,\"bottom\":6292.765625,\"left\":40}"
+    }
+  }
+}

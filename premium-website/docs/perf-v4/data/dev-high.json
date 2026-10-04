@@ -1,0 +1,266 @@
+{
+  "label": "dev-high",
+  "url": "http://localhost:3101/?tier=high",
+  "seconds": 12,
+  "mobile": false,
+  "cold": true,
+  "wheel": false,
+  "at": "2026-10-04T08:14:53.062Z",
+  "tier": "high",
+  "dpr": 1.25,
+  "canvas": {
+    "w": 1800,
+    "h": 1125
+  },
+  "programsAfterLoad": 34,
+  "idleHero": {
+    "fps": 60.3,
+    "rendersPerSec": 2111.7,
+    "median": 16.7,
+    "p95": 16.7,
+    "max": 16.8
+  },
+  "glassHero": {
+    "count": 2,
+    "areaPct": 8,
+    "sample": [
+      "Header-module__jWEcMq__header",
+      "Searchbar-module__ds1S3q__searchForm"
+    ]
+  },
+  "programsAfterWarm": 34,
+  "scrollDown": {
+    "frames": 722,
+    "seconds": 12,
+    "fps": 60.1,
+    "renders": 25270,
+    "rendersPerSec": 2103,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 34,
+    "programsEnd": 35,
+    "rootWrites": 289,
+    "groundWrites": 97,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 96,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 74,
+        "slow": 0,
+        "rootWrites": 289,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 69,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 107,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 109,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 54,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 78,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 70,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "netDuringScroll": [],
+  "trace": {
+    "windowMs": 12328,
+    "mainBusyPct": 12.3,
+    "gpuPct": 10.4,
+    "top": [
+      [
+        "FunctionCall",
+        742
+      ],
+      [
+        "UpdateLayoutTree",
+        183
+      ],
+      [
+        "ThreadControllerImpl::RunTask",
+        123
+      ],
+      [
+        "Layerize",
+        86
+      ],
+      [
+        "Commit",
+        75
+      ],
+      [
+        "PrePaint",
+        63
+      ],
+      [
+        "Paint",
+        62
+      ],
+      [
+        "Layout",
+        30
+      ],
+      [
+        "EventDispatch",
+        27
+      ],
+      [
+        "IntersectionObserverController::computeIntersections",
+        25
+      ]
+    ],
+    "longTasks": []
+  },
+  "scrollUp": {
+    "frames": 422,
+    "seconds": 7,
+    "fps": 60.1,
+    "renders": 14770,
+    "rendersPerSec": 2105.1,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.8,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 35,
+    "programsEnd": 35,
+    "rootWrites": 170,
+    "groundWrites": 54,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 42,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 170,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 41,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 61,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 37,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 33,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 26,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "9": {
+        "frames": 31,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "rootProps": {
+    "--paper": 28,
+    "--surface": 28,
+    "--ink": 28,
+    "--ink-soft": 28,
+    "--border": 28,
+    "--brand": 28,
+    "--brand-tint": 28,
+    "--glass-bg": 28,
+    "--glass-bg-strong": 28,
+    "--glass-border": 28,
+    "--glass-tint": 28,
+    "--plate-a": 28,
+    "--plate-b": 28,
+    "--panel-bg": 28,
+    "--panel-filter": 28,
+    "--glass-gloss": 28,
+    "--glass-sheen": 28
+  }
+}
