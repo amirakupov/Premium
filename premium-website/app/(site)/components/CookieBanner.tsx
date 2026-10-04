@@ -53,7 +53,7 @@ export default function CookieBanner() {
   return (
     <div className={styles.banner} role="region" aria-label="Использование cookies">
       <p className={styles.message}>
-        Мы используем Cookies для улучшения работы сайта и корректного отображения карты. Подробнее в&nbsp;
+        Сайт использует cookies для своей работы и показа карты. Подробнее в&nbsp;
         <Link href="/privacy" className={styles.link}>
           Политике конфиденциальности
         </Link>.

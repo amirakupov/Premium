@@ -81,8 +81,22 @@
   background: rgba(var(--scrim), 0.35);
 }
 
-/* Кнопка в плашке карты: на тёмном стекле футера — светлая пилюля, как ссылки. */
+/* Действия в плашке: «Показать карту» и ссылка на Яндекс Карты в один ряд. */
+.mapActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Кнопка в плашке карты: на тёмном стекле футера — светлая пилюля. Тем же
+   классом оформлена и ссылка «Открыть в Яндекс Картах», чтобы она читалась
+   как действие, а не как строка текста. */
 .mapButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   padding: 10px 18px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -90,6 +104,7 @@
   color: var(--on-dark);
   font: inherit;
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -118,9 +133,11 @@
   color: var(--brass-bright);
 }
 
+/* Поля сверху и снизу вместо внешнего отступа: строка остаётся на том же
+   месте, но целью касания становится вся высота ~40px, а не 25px текста. */
 .link {
   display: block;
-  margin-bottom: 0.55rem;
+  padding: 7px 0;
   color: var(--on-dark);
   text-decoration: none;
   transition: color 0.2s ease;
@@ -137,7 +154,9 @@
 }
 
 .text .link {
-  display: inline;
+  display: inline-block;
+  padding: 6px 0;
+  margin: -6px 0;
 }
 
 /* Нижний блок */
@@ -186,6 +205,14 @@
   }
   .mapWrapper iframe {
     height: 220px;
+  }
+  /* До согласия и нажатия карта — не пустой экран в 300px, а короткая
+     плашка с действиями; при открытии карты футер подрастёт, но это
+     ответ на нажатие, а не самопроизвольный скачок. */
+  .mapPlaceholder {
+    height: auto;
+    min-height: 0;
+    padding: 20px 16px;
   }
   .columns {
     flex-direction: column;

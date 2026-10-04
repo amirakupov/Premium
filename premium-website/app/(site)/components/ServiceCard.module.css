@@ -17,7 +17,12 @@
   /* Карточки вне вьюпорта не рендерятся. Высота карточки зависит от текста,
      поэтому до первого показа подставляется оценка; после — запомненный размер. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 480px;
+  /* Оценка — только по высоте. Одно значение задаёт и ширину: пока карточка
+     не показана, её «внутренняя» ширина была 480px, и в одноколоночной сетке
+     /services это растягивало вьюпорт телефона до 518px (горизонтальный
+     скролл всей страницы). */
+  contain-intrinsic-width: auto none;
+  contain-intrinsic-height: auto 480px;
 }
 
 /* блик на поверхности линзы — поверх фото и текста */
@@ -104,6 +109,7 @@
 .priceRow {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
   margin-top: 4px;

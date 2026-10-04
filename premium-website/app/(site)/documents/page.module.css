@@ -7,10 +7,16 @@
 .toc {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 18px;
+  gap: 0 18px;
   margin-bottom: 32px;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
+}
+
+/* Поля вместо зазора: каждая ссылка оглавления — цель касания ~40px. */
+.toc a {
+  display: inline-block;
+  padding: 8px 0;
 }
 
 .section {
@@ -76,7 +82,14 @@
   margin: 0;
   padding-left: 1.2em;
   display: grid;
-  gap: 6px;
+  gap: 0;
+}
+
+/* Ссылки в списках — цель касания ~36px, а не строка текста в 20px. */
+.partners a,
+.regulatorLine a {
+  display: inline-block;
+  padding: 6px 0;
 }
 
 .regulators {
@@ -99,6 +112,6 @@
 }
 
 .regulatorLine {
-  margin: 0 0 4px;
+  margin: 0;
   color: var(--ink-soft);
 }

@@ -29,6 +29,13 @@
 }
 
 @media (max-width: 767px) {
+  /* 2rem на 390px давали пять строк заголовка над лентой; ограничение по
+     ширине на телефоне не нужно — строка и так короче 22ch. */
+  .title {
+    font-size: 1.75rem;
+    max-width: none;
+  }
+
   .subtitle {
     font-size: 1rem;
     margin-bottom: 1.75rem;

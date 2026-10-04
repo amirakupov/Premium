@@ -30,44 +30,54 @@ export default function Header() {
       if (e.key === 'Escape') setMenuOpen(false);
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    /* Пока меню открыто, страница под ним не прокручивается: иначе на телефоне
+       жест по меню листал бы главную вместе со сценой. */
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      root.style.overflow = prevOverflow;
+    };
   }, [menuOpen]);
 
   return (
     <header className={styles.header}>
-      <Link
-        href="/"
-        className={styles.logo}
-        aria-label="На главную"
-        onClick={closeMenu}
-      >
-        <span className={styles.logoName}>Премиум</span>
-        <span className={styles.logoNote}>клиника неврологии</span>
-      </Link>
+      {/* Стекло — на .bar, а не на <header>: см. комментарий в CSS. */}
+      <div className={styles.bar}>
+        <Link
+          href="/"
+          className={styles.logo}
+          aria-label="На главную"
+          onClick={closeMenu}
+        >
+          <span className={styles.logoName}>Премиум</span>
+          <span className={styles.logoNote}>клиника неврологии</span>
+        </Link>
 
-      <nav className={styles.nav} aria-label="Основная навигация">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            aria-current={isCurrent(link.href) ? 'page' : undefined}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+        <nav className={styles.nav} aria-label="Основная навигация">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
 
-      <a
-        href={CLINIC.phoneHref}
-        className={styles.headerPhone}
-        aria-label={`Позвонить: ${CLINIC.phone}`}
-      >
-        <FiPhone aria-hidden="true" />
-        <span className={styles.headerPhoneNumber}>{CLINIC.phone}</span>
-      </a>
+        <a
+          href={CLINIC.phoneHref}
+          className={styles.headerPhone}
+          aria-label={`Позвонить: ${CLINIC.phone}`}
+        >
+          <FiPhone aria-hidden="true" />
+          <span className={styles.headerPhoneNumber}>{CLINIC.phone}</span>
+        </a>
 
-      <div className={styles.desktopSearch}>
-        <SearchBar />
+        <div className={styles.desktopSearch}>
+          <SearchBar />
       </div>
 
       <button
@@ -79,6 +89,7 @@ export default function Header() {
       >
         {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
       </button>
+      </div>
 
       {/* Закрытое меню всегда в DOM ради CSS-анимации открытия, поэтому оно
           inert + aria-hidden: его ссылки и поиск не фокусируются табом и не

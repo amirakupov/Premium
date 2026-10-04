@@ -51,14 +51,16 @@ export default function MapEmbed() {
             ? 'Карта не загружена: вы отклонили использование cookies.'
             : 'Карта загрузится после согласия на использование cookies.'}
       </p>
-      {consent === 'accepted' ? (
-        <button type="button" className={styles.mapButton} onClick={() => setOpened(true)}>
-          Показать карту
-        </button>
-      ) : null}
-      <a href={MAP_LINK} target="_blank" rel="noopener noreferrer" className={styles.link}>
-        Открыть в Яндекс Картах
-      </a>
+      <div className={styles.mapActions}>
+        {consent === 'accepted' ? (
+          <button type="button" className={styles.mapButton} onClick={() => setOpened(true)}>
+            Показать карту
+          </button>
+        ) : null}
+        <a href={MAP_LINK} target="_blank" rel="noopener noreferrer" className={styles.mapButton}>
+          Открыть в Яндекс Картах
+        </a>
+      </div>
     </div>
   );
 }

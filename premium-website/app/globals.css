@@ -1017,9 +1017,9 @@ h1, h2, h3 {
 /* Галочка не должна сжиматься при длинной подписи в две-три строки. */
 .consent input {
   flex: none;
-  margin-top: 0.2em;
-  width: 18px;
-  height: 18px;
+  margin-top: 0.1em;
+  width: 22px;
+  height: 22px;
 }
 
 .consent a {
