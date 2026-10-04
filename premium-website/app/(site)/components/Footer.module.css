@@ -81,6 +81,23 @@
   background: rgba(var(--scrim), 0.35);
 }
 
+/* Кнопка в плашке карты: на тёмном стекле футера — светлая пилюля, как ссылки. */
+.mapButton {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--on-dark);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mapButton:hover,
+.mapButton:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+}
+
 /* Колонки ссылок/контактов */
 .columns {
   flex: 1;
