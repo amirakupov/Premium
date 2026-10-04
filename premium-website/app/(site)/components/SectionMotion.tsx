@@ -195,14 +195,16 @@ export default function SectionMotion() {
                         },
                     );
                 }
+                /* Только непрозрачность, без сдвига: scrub-твин бессрочный, и
+                   инлайновый transform остался бы на кнопке навсегда, перебив
+                   её собственные :hover/:active (globals.css, .btn). */
                 const rest = gsap.utils.toArray<HTMLElement>('[data-reveal="verdict"]', verdict);
                 if (rest.length) {
                     gsap.fromTo(
                         rest,
-                        { opacity: 0, y: 18 },
+                        { opacity: 0 },
                         {
                             opacity: 1,
-                            y: 0,
                             ease: 'none',
                             scrollTrigger: {
                                 trigger: verdict,

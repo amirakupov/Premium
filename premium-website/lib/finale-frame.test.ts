@@ -277,6 +277,15 @@ describe('появление текста финала', () => {
         expect(verdictTween![0]).not.toMatch(/once: true/);
     });
 
+    it('scrub абзаца и кнопки не трогает transform: у кнопки свой hover/active на transform', () => {
+        /* Бессрочный scrub-твин оставляет инлайновый transform навсегда, а
+           инлайн побеждает :hover/:active кнопки «Записаться» (globals.css,
+           .btn). Поэтому по скроллу ведётся только непрозрачность. */
+        const verdictTween = /toArray<HTMLElement>\('\[data-reveal="verdict"\]'[\s\S]*?scrollTrigger: \{[\s\S]*?\}/.exec(MOTION);
+        expect(verdictTween).not.toBeNull();
+        expect(verdictTween![0]).not.toMatch(/\by: ?\d/);
+    });
+
     it('в режимах деградации (короткая секция) остаётся ранний старт', () => {
         const m = /const start = \(\) => \(stuck\(\) \? '([^']+)' : '([^']+)'\)/.exec(MOTION);
         expect(m![2]).toBe('top 80%');

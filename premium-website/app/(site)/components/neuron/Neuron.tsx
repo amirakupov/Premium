@@ -408,26 +408,46 @@ export default function Neuron({
         };
         performance.mark('neuron:warm:start');
         const fallback = window.setTimeout(finish, 1500);
-        const warmComposer = async () => {
+        /* Ключ программы в three зависит от того, КУДА рисуется кадр: при
+           активной render-цели тональная компрессия и выходное пространство
+           в шейдер не попадают (WebGLPrograms.getParameters), и вариант «в
+           буфер» — другая программа, чем вариант «на экран». С композитором
+           сцена рисуется в его буфер, и прогревать надо именно буферный
+           вариант; без композитора (low) — экранный. Проходы композитора
+           рисуют в буферы все, кроме последнего — им нужны оба. compileAsync
+           вызывает compile() синхронно, поэтому цель достаточно привязать на
+           время вызова. Без этого прогрев собирал ~13 программ впустую, а
+           настоящие компилировались в ручном кадре (ревью perf-v4, п. 1). */
+        const warmTarget = new THREE.WebGLRenderTarget(1, 1);
+        const compileFor = (stage: THREE.Scene, toBuffer: boolean) => {
+            if (toBuffer) gl.setRenderTarget(warmTarget);
+            try {
+                return gl.compileAsync(stage, camera);
+            } finally {
+                if (toBuffer) gl.setRenderTarget(null);
+            }
+        };
+        const warm = async () => {
             const composer = composerRef.current;
+            await compileFor(scene, composer !== null);
             if (!composer) return;
             const quad = new THREE.PlaneGeometry(2, 2);
             const stage = new THREE.Scene();
             for (const pass of composer.passes) {
-                const material = (pass as { fullscreenMaterial?: THREE.Material | null }).fullscreenMaterial;
+                const material = pass.fullscreenMaterial;
                 if (material) stage.add(new THREE.Mesh(quad, material));
             }
             try {
-                await gl.compileAsync(stage, camera);
+                await compileFor(stage, true);
+                await compileFor(stage, false);
             } finally {
                 quad.dispose();
             }
         };
-        gl.compileAsync(scene, camera)
-            .catch(() => undefined)
-            .then(() => warmComposer())
+        warm()
             .catch(() => undefined)
             .then(() => {
+                warmTarget.dispose();
                 window.clearTimeout(fallback);
                 finish();
             });

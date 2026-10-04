@@ -1,0 +1,63 @@
+{
+  "label": "fix-boot-high-2",
+  "url": "http://localhost:3100/?tier=high",
+  "at": "2026-10-04T12:44:03.410Z",
+  "firstSceneFrameAt": 299.9,
+  "spikes": [
+    {
+      "t": 333.2,
+      "dt": 33.3,
+      "programs": 14,
+      "renders": 33
+    },
+    {
+      "t": 400,
+      "dt": 33.4,
+      "programs": 33,
+      "renders": 95
+    }
+  ],
+  "programsTimeline": [
+    {
+      "t": 299.9,
+      "programs": 14,
+      "dt": 16.6
+    },
+    {
+      "t": 366.6,
+      "programs": 33,
+      "dt": 16.7
+    },
+    {
+      "t": 2783.1,
+      "programs": 34,
+      "dt": 16.6
+    }
+  ],
+  "marks": [
+    {
+      "name": "neuron:build:start:high",
+      "t": 377
+    },
+    {
+      "name": "neuron:build:end:high",
+      "t": 405
+    },
+    {
+      "name": "neuron:gl-created",
+      "t": 414
+    },
+    {
+      "name": "neuron:warm:start",
+      "t": 415
+    },
+    {
+      "name": "neuron:first-frame",
+      "t": 448
+    },
+    {
+      "name": "neuron:warm:end",
+      "t": 489
+    }
+  ]
+}
