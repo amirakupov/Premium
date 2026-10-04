@@ -99,7 +99,14 @@ function analyze(events) {
   const gpuKeys = Object.entries(procNames).filter(([, n]) => /GPU/i.test(n)).map(([p]) => Number(p));
   const gpu = events.filter((e) => gpuKeys.includes(e.pid) && e.ph === 'X' && e.name === 'GPUTask').reduce((a, e) => a + e.dur, 0);
   const span = t1 - t0;
-  const longTasks = main.filter((e) => /RunTask/.test(e.name) && e.dur >= 50000).map((t) => ({ at: +((t.ts - t0) / 1000).toFixed(0), dur: +(t.dur / 1000).toFixed(1) }));
+  const seen = new Set();
+  const longTasks = main.filter((e) => /RunTask/.test(e.name) && e.dur >= (Number(process.env.TASK_MS) || 50) * 1000).filter((t) => { const k = Math.round(t.ts / 1000); if (seen.has(k)) return false; seen.add(k); return true; }).map((t) => {
+    const kids = main.filter((e) => e.ts >= t.ts && e.ts + e.dur <= t.ts + t.dur && e !== t);
+    const agg = {};
+    for (const k of kids) { const st = k.dur - (k.child || 0); if (st <= 0) continue; let label = k.name; const d = k.args?.data || {}; if (d.url) label += ' ' + String(d.url).split('/').pop().slice(0, 40) + (d.functionName ? ' ' + d.functionName : ''); if (d.type) label += ' ' + d.type; agg[label] = (agg[label] || 0) + st; }
+    const top = Object.entries(agg).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([n, v]) => `${n}: ${(v / 1000).toFixed(1)}ms`);
+    return { at: +((t.ts - t0) / 1000).toFixed(0), dur: +(t.dur / 1000).toFixed(1), top };
+  });
   return {
     windowMs: +(span / 1000).toFixed(0), mainBusyPct: +((busy / span) * 100).toFixed(1), gpuPct: +((gpu / span) * 100).toFixed(1),
     top: Object.entries(byName).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([n, v]) => [n, +(v / 1000).toFixed(0)]),
@@ -199,6 +206,11 @@ async function main() {
   const [label, url] = process.argv.slice(2);
   const b = await browser();
   const page = await openPage(b, false);
+  /* FIRST_VISIT=1 — первый заход: занавес играет, ключ sessionStorage снимается
+     вторым скриптом (они выполняются по порядку). */
+  if (process.env.FIRST_VISIT) {
+    await page.s('Page.addScriptToEvaluateOnNewDocument', { source: `try{sessionStorage.removeItem('preloaderSeen');}catch(e){}` });
+  }
   const out = { label, url, at: new Date().toISOString() };
   try {
     // стартуем рекордер сразу после load, до появления сцены (занавес уже снят через sessionStorage)
@@ -207,7 +219,15 @@ async function main() {
     await l;
     const t0 = Date.now();
     while (Date.now() - t0 < 20000) { if (await page.eval(`document.documentElement.dataset.curtain !== '1'`)) break; await sleep(50); }
-    const rows = await page.eval(BOOT);
+    let rows;
+    if (process.env.TRACE) {
+      /* TRACE=1 — трасса старта: что внутри длинных задач первых секунд (TASK_MS — порог). */
+      const r = await withTrace(b, page, () => page.eval(BOOT));
+      rows = r.result;
+      out.trace = analyze(r.events);
+    } else {
+      rows = await page.eval(BOOT);
+    }
     const first = rows.findIndex((r) => r[2] >= 0);
     const spikes = rows.filter((r, i) => i > 1 && r[1] > 25).map((r) => ({ t: r[0], dt: r[1], programs: r[3], renders: r[2] }));
     const programsTimeline = [];

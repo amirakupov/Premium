@@ -15,6 +15,7 @@ import {
 import type {
     BloomEffect,
     DepthOfFieldEffect,
+    EffectComposer as EffectComposerImpl,
     NoiseEffect,
     SSAOEffect,
     VignetteEffect,
@@ -85,19 +86,23 @@ export default function Neuron({
     profile,
     reduced,
     smaa = true,
+    onWarmed,
 }: {
     profile: TierProfile;
     reduced: boolean;
     /** SMAA в композиторе; false — только для A/B-замера */
     smaa?: boolean;
+    /** шейдеры скомпилированы и один кадр отрисован — сцену можно показывать */
+    onWarmed: () => void;
 }) {
     const director = useScrollDirector(!reduced);
-    const { camera, scene, invalidate, gl, size, viewport } = useThree();
+    const { camera, scene, invalidate, advance, gl, size, viewport } = useThree();
 
     const groupRef = useRef<THREE.Group>(null);
     const membraneRef = useRef<THREE.Mesh>(null);
     const coreRef = useRef<THREE.Mesh>(null);
     const neighboursRef = useRef<THREE.InstancedMesh>(null);
+    const composerRef = useRef<EffectComposerImpl>(null);
     const bloomRef = useRef<BloomEffect>(null);
     const ssaoRef = useRef<SSAOEffect>(null);
     const dofRef = useRef<DepthOfFieldEffect>(null);
@@ -371,6 +376,69 @@ export default function Neuron({
         growClipOn.current = true;
         alphaOn.current = profile.somaTransmission;
     }, [built, profile.somaTransmission]);
+
+    /**
+     * Прогрев. `compileAsync` собирает программы всех материалов сцены через
+     * KHR_parallel_shader_compile и резолвится, когда драйвер их дособрал,
+     * не блокируя главный поток. Проходы композитора в сцене не числятся, а
+     * стоят дороже самой сцены (замер perf-v4: ручной кадр 7 мс на low без
+     * композитора, 33 на mid, 100 на high) — поэтому их полноэкранные
+     * материалы компилируются вторым заходом на временной сцене из квадов.
+     * Остаток (внутренние проходы эффектов, запекание окружения
+     * Environment frames={1}) добирает один ручной кадр `advance()`: он идёт
+     * за скрытым слоем или под занавесом. Потом NeuronCanvas переводит цикл в
+     * always/demand и показывает слой.
+     *
+     * Страховка по времени: без расширения, при потере контекста или если
+     * обещание не резолвится, сцена всё равно обязана появиться — иначе
+     * повторный заход (без занавеса) остался бы с пустым слоем.
+     * Повторный прогрев при смене профиля (дауншифт) безвреден: onWarmed
+     * идемпотентен.
+     */
+    useEffect(() => {
+        if (reduced) return;
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            try {
+                advance(performance.now());
+            } catch {
+                /* ручной кадр — оптимизация, не условие показа */
+            }
+            performance.mark('neuron:warm:end');
+            onWarmed();
+        };
+        performance.mark('neuron:warm:start');
+        const fallback = window.setTimeout(finish, 1500);
+        const warmComposer = async () => {
+            const composer = composerRef.current;
+            if (!composer) return;
+            const quad = new THREE.PlaneGeometry(2, 2);
+            const stage = new THREE.Scene();
+            for (const pass of composer.passes) {
+                const material = (pass as { fullscreenMaterial?: THREE.Material | null }).fullscreenMaterial;
+                if (material) stage.add(new THREE.Mesh(quad, material));
+            }
+            try {
+                await gl.compileAsync(stage, camera);
+            } finally {
+                quad.dispose();
+            }
+        };
+        gl.compileAsync(scene, camera)
+            .catch(() => undefined)
+            .then(() => warmComposer())
+            .catch(() => undefined)
+            .then(() => {
+                window.clearTimeout(fallback);
+                finish();
+            });
+        return () => {
+            done = true;
+            window.clearTimeout(fallback);
+        };
+    }, [built, reduced, gl, scene, camera, advance, onWarmed]);
 
     /* Возврат из фоновой вкладки: за время паузы страницу могли прокрутить, а
        сглаженная позиция директора осталась старой — первый кадр догонял бы
@@ -892,7 +960,7 @@ export default function Neuron({
                 сглаживание тонких веток до блума; MSAA с постпроцессингом не
                 работает, поэтому multisampling={0}. */}
             {profile.postprocessing ? (
-            <EffectComposer multisampling={0} enableNormalPass={profile.ssao}>
+            <EffectComposer ref={composerRef} multisampling={0} enableNormalPass={profile.ssao}>
                 {smaa ? <SMAA /> : null}
                 {profile.ssao ? (
                     <SSAO
