@@ -58,7 +58,10 @@
 /* Desktop-навигация */
 .nav {
   display: flex;
-  gap: clamp(16px, 2.2vw, 32px);
+  /* Верх 24px, а не 32: на 1440 семь пунктов плюс телефон и поиск
+     заполняли строку без остатка, auto-отступ справа схлопывался, и
+     «Адрес» прилипал к иконке телефона (docs/perf-v4/report.md, UI 3). */
+  gap: clamp(14px, 1.6vw, 24px);
   margin: 0 auto 0 1.5rem;
   align-items: center;
 }
@@ -87,6 +90,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  /* Зазор от навигации не зависит от того, остался ли у .nav auto-отступ. */
+  margin-left: clamp(12px, 1.5vw, 24px);
   color: var(--brand);
   font-weight: 600;
   text-decoration: none;
