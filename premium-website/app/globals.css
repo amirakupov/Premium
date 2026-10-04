@@ -774,12 +774,39 @@ h1, h2, h3 {
   outline: none;
 }
 
+/**
+ * Кнопка режима для слабовидящих на витрине. В потоке она стояла под
+ * фиксированной шапкой на всех страницах, а на телефоне торчала из-под её
+ * скруглённого угла (docs/perf-v4/report.md, UI 2). Теперь — как skip-link:
+ * фиксирована у верхнего края, появляется только когда фокус внутри.
+ * Мышью режим включается кнопкой в футере.
+ */
 .a11y-row {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 12px var(--gutter) 0;
-  display: flex;
-  justify-content: flex-end;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: calc(var(--z-overlay) + 1);
+  margin: 0;
+  padding: 0;
+  transform: translateY(-200%);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.a11y-row:focus-within {
+  transform: none;
+  opacity: 1;
+}
+
+.a11y-row .a11y-trigger {
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--surface);
+  color: var(--brand);
+  font-weight: 600;
+  box-shadow: var(--shadow-lift);
+  cursor: pointer;
 }
 
 /* ── Liquid glass: базовый стеклянный материал ─────────────────────── */

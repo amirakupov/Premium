@@ -16,7 +16,7 @@ const { targetId } = await b.send('Target.createTarget', { url: 'about:blank' })
 const { sessionId } = await b.send('Target.attachToTarget', { targetId, flatten: true });
 const s = (m, p) => b.send(m, p, sessionId);
 await s('Page.enable'); await s('Runtime.enable');
-await s('Emulation.setDeviceMetricsOverride', vp === 'mob' ? { width: 390, height: 780, deviceScaleFactor: 2, mobile: true } : { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+await s('Emulation.setDeviceMetricsOverride', vp === 'mob' ? { width: 390, height: 780, deviceScaleFactor: 2, mobile: true } : vp === 'lap' ? { width: 1280, height: 720, deviceScaleFactor: 1, mobile: false } : { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
 await s('Page.addScriptToEvaluateOnNewDocument', { source: `try{sessionStorage.setItem('preloaderSeen','1');}catch(e){}` });
 const loaded = new Promise((res) => { const fn = (m) => { if (m.method === 'Page.loadEventFired' && m.sessionId === sessionId) { b.off(fn); res(); } }; b.on(fn); });
 await s('Page.navigate', { url }); await loaded;
