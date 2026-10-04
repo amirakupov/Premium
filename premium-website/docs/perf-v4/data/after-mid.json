@@ -1,0 +1,217 @@
+{
+  "label": "after-mid",
+  "url": "http://localhost:3100/?tier=mid",
+  "seconds": 12,
+  "mobile": false,
+  "cold": true,
+  "wheel": false,
+  "at": "2026-10-04T12:25:21.017Z",
+  "tier": "mid",
+  "dpr": 1.25,
+  "canvas": {
+    "w": 1800,
+    "h": 1125
+  },
+  "programsAfterLoad": 35,
+  "idleHero": {
+    "fps": 60.3,
+    "rendersPerSec": 1267,
+    "median": 16.7,
+    "p95": 16.7,
+    "max": 16.8
+  },
+  "glassHero": {
+    "count": 2,
+    "areaPct": 8,
+    "sample": [
+      "Header-module__jWEcMq__header",
+      "Searchbar-module__ds1S3q__searchForm"
+    ]
+  },
+  "programsAfterWarm": 35,
+  "scrollDown": {
+    "frames": 722,
+    "seconds": 12,
+    "fps": 60.1,
+    "renders": 15162,
+    "rendersPerSec": 1261.8,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.8,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 35,
+    "programsEnd": 37,
+    "rootWrites": 240,
+    "groundWrites": 95,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 94,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 73,
+        "slow": 0,
+        "rootWrites": 240,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 70,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 107,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 110,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 55,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 78,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 70,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "netDuringScroll": [],
+  "scrollUp": {
+    "frames": 422,
+    "seconds": 7,
+    "fps": 60.1,
+    "renders": 8862,
+    "rendersPerSec": 1263,
+    "dt": {
+      "median": 16.7,
+      "p90": 16.7,
+      "p95": 16.7,
+      "p99": 16.8,
+      "max": 16.8
+    },
+    "slowFrames": 0,
+    "slowFramesPct": 0,
+    "programsStart": 37,
+    "programsEnd": 37,
+    "rootWrites": 160,
+    "groundWrites": 54,
+    "drawCalls": 1,
+    "triangles": 1,
+    "byChapter": {
+      "0": {
+        "frames": 40,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "1": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 160,
+        "meanDt": 16.7
+      },
+      "2": {
+        "frames": 41,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "3": {
+        "frames": 63,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "4": {
+        "frames": 62,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "5": {
+        "frames": 38,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "6": {
+        "frames": 33,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "7": {
+        "frames": 43,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "8": {
+        "frames": 26,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      },
+      "9": {
+        "frames": 31,
+        "slow": 0,
+        "rootWrites": 0,
+        "meanDt": 16.7
+      }
+    },
+    "spikes": []
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "rootProps": {
+    "--paper": 26,
+    "--surface": 26,
+    "--ink": 26,
+    "--ink-soft": 26,
+    "--border": 26,
+    "--brand": 26,
+    "--brand-tint": 26,
+    "--glass-bg": 26,
+    "--glass-bg-strong": 26,
+    "--glass-border": 26,
+    "--glass-tint": 26,
+    "--plate-a": 26,
+    "--plate-b": 26,
+    "--panel-bg": 26,
+    "--glass-gloss": 26,
+    "--glass-sheen": 26
+  }
+}

@@ -1,0 +1,5 @@
+# профили headed Chrome и локальные результаты прогонов (tools/hd.sh, prof.mjs)
+.chrome-*
+.chrome-*.log
+tools/results/
+tools/shots/
