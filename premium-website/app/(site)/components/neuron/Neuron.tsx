@@ -149,10 +149,7 @@ export default function Neuron({
 
     const state = useMemo(() => createSceneState(), []);
     /* Переход фона выключен при reduced-motion: страница остаётся светлой. */
-    const theme = useMemo(
-        () => createPageTheme(!reduced, profile.pageGlass),
-        [reduced, profile.pageGlass],
-    );
+    const theme = useMemo(() => createPageTheme(!reduced), [reduced]);
     useEffect(() => () => theme.dispose(), [theme]);
 
     /* — Геометрия и материалы: строятся один раз на профиль тира — */

@@ -1,6 +1,7 @@
 'use client';
 
-import { clamp01, smoothstep } from './utils';
+import { clamp01 } from './utils';
+import { bandOf, swapOf } from './themeMath';
 
 /**
  * ─────────────── ПЕРЕХОД ФОНА: ОДИН ИСТОЧНИК ПРАВДЫ ───────────────
@@ -173,20 +174,6 @@ const PARSED = TOKENS.map(([name, light, lightBand, dark, darkBand]) => ({
     darkBand: parseColor(darkBand ?? dark),
 }));
 
-/**
- * Граница переброса по ЛИНЕЙНОЙ яркости фона. Значение выбрано так, что крупный
- * текст держит 3:1 по обе стороны: тёмная краска даёт ~3.9:1, светлая ~3.3:1.
- */
-const SWAP_LUMINANCE = 0.22;
-
-/**
- * Полоса, внутри которой поверхности обязаны стать самодостаточными. Границы —
- * яркости фона, при которых активная краска перестаёт давать 4.5:1: светлая
- * сторона выдыхается ниже L≈0.56, тёмная — выше L≈0.07.
- */
-const BAND_LIGHT_EDGE = [0.62, 0.5] as const;
-const BAND_DARK_EDGE = [0.04, 0.07] as const;
-
 /** мс между записями непрерывных значений */
 const MIN_WRITE_INTERVAL = 90;
 
@@ -204,18 +191,21 @@ export type PageTheme = {
 };
 
 /**
- * `glass: false` — низкий тир: размытие на странице выключено целиком
- * (см. globals.css, html[data-scene-tier="low"]). Инлайновый стиль победил бы
- * тот CSS-блок, поэтому фильтр подложки здесь просто не пишется.
+ * Размытие подложки (`--panel-filter`) сцена больше не пишет: в полосе
+ * подложка густеет до 0,96 и размытие под ней не читается, а анимация
+ * радиуса blur(1…18px) давала восемнадцать разных растровых эффектов на
+ * самом нагруженном отрезке скролла (docs/perf-v4/report.md, 4.2).
+ * В globals.css значение по умолчанию — `none`; reset() снимает старый
+ * инлайн на случай живого переключения режима.
  */
-export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
+export function createPageTheme(enabled: boolean): PageTheme {
     const root = typeof document === 'undefined' ? null : document.documentElement;
     /* Подложка может отсутствовать (сцена смонтирована вне витрины) — тогда
        непрерывные величины уходят на :root, как в v2: дороже, но корректно. */
     const ground: HTMLElement | null =
         (typeof document === 'undefined' ? null : document.getElementById('page-ground')) ?? root;
     let lastDark = -1;
-    let lastSwap = -1;
+    let lastSwap: -1 | 0 | 1 = -1;
     let lastBand = -1;
     let lastBackground = '';
     let lastWriteAt = Number.NEGATIVE_INFINITY;
@@ -256,13 +246,8 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
             if (!root || !enabled || a11y) return;
 
             const quantizedDark = Math.round(clamp01(dark) * 200) / 200;
-            const swap = lum < SWAP_LUMINANCE ? 1 : 0;
-            const band =
-                Math.round(
-                    smoothstep(BAND_LIGHT_EDGE[0], BAND_LIGHT_EDGE[1], lum) *
-                        smoothstep(BAND_DARK_EDGE[0], BAND_DARK_EDGE[1], lum) *
-                        100,
-                ) / 100;
+            const swap = swapOf(lum, lastSwap);
+            const band = bandOf(lum);
 
             if (
                 quantizedDark === lastDark &&
@@ -295,13 +280,6 @@ export function createPageTheme(enabled: boolean, glass: boolean): PageTheme {
                 const dense = swap ? darkBand : lightBand;
                 root.style.setProperty(name, format(mix(base, dense, band)));
             });
-
-            /* Прозрачная подложка всё равно размывала бы фон за собой, поэтому
-               вне полосы фильтр гасится целиком, а не в blur(0). */
-            root.style.setProperty(
-                '--panel-filter',
-                !glass || band < 0.02 ? 'none' : `blur(${Math.round(band * 18)}px) saturate(150%)`,
-            );
 
             /* Блики стекла живут не цветом, а альфой белого: на тёмном грунте их
                надо приглушить, иначе кромка карточки светится сильнее самой
